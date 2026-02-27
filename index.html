@@ -4724,7 +4724,7 @@
       submitterName:   (formData.name || '').trim(),
       submitterOrg:    (formData.org  || '').trim(),
       showAttribution: !!formData.attribution,
-      communityVotes:  Math.floor(Math.random() * 23) + 3,
+      communityVotes:  0,
       ownerKey:        currentOwnerKey(),
       createdAt:       new Date().toISOString(),
     };
