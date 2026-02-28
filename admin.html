@@ -1107,7 +1107,7 @@
     ).filter(Boolean);
 
     const payload = {
-      id:               id || undefined,
+      id:               id || crypto.randomUUID(),
       phase:            document.getElementById('cms-phase').value,
       audience:         document.getElementById('cms-audience').value,
       title:            document.getElementById('cms-title').value.trim(),
