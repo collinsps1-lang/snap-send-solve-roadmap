@@ -3225,7 +3225,7 @@
     // Inject vote count badge (top-right of illustration) for non-launched cards
     if (card.dataset.phase !== 'launched') {
       const voteBadge = document.createElement('div');
-      voteBadge.className = 'card-vote-badge';
+      voteBadge.className = 'card-vote-badge visible';
       voteBadge.innerHTML = `<span class="card-vote-badge-count">0</span><span class="card-vote-badge-label">votes</span>`;
       illus.appendChild(voteBadge);
     }
@@ -3591,7 +3591,7 @@
         : 0;
       const displayCount = base + count;
       voteBadge.querySelector('.card-vote-badge-count').textContent = displayCount;
-      voteBadge.classList.toggle('visible', displayCount > 0);
+      voteBadge.classList.add('visible');
     }
   }
 
@@ -4572,7 +4572,7 @@
 
     // Top-right illustration vote badge (same style as phase cards)
     const illusVoteBadge = document.createElement('div');
-    illusVoteBadge.className = 'card-vote-badge' + (idea.communityVotes > 0 ? ' visible' : '');
+    illusVoteBadge.className = 'card-vote-badge visible';
     illusVoteBadge.innerHTML = `<span class="card-vote-badge-count">${idea.communityVotes}</span><span class="card-vote-badge-label">votes</span>`;
     illusDiv.appendChild(illusVoteBadge);
 
