@@ -3240,18 +3240,6 @@
     }
   });
 
-  // Simulated community vote counts (random, stable per session)
-  const simulatedVotes = {};
-  document.querySelectorAll('.card[data-id]').forEach(card => {
-    if (card.dataset.phase !== 'launched') {
-      simulatedVotes[card.dataset.id] = Math.floor(Math.random() * 180) + 20;
-      const badge = card.querySelector('.card-vote-badge');
-      if (badge) {
-        badge.querySelector('.card-vote-badge-count').textContent = simulatedVotes[card.dataset.id];
-        badge.classList.add('visible');
-      }
-    }
-  });
 
   // Inject Learn more (+ Book a Demo for launched) buttons into each card body
   document.querySelectorAll('.card').forEach(card => {
@@ -3600,7 +3588,7 @@
     if (voteBadge) {
       const base = id.startsWith('comm-')
         ? (communityIdeas.find(i => i.id === id)?.communityVotes || 0)
-        : (simulatedVotes[id] || 0);
+        : 0;
       const displayCount = base + count;
       voteBadge.querySelector('.card-vote-badge-count').textContent = displayCount;
       voteBadge.classList.toggle('visible', displayCount > 0);
@@ -3925,8 +3913,8 @@
         const phaseCards = [...phaseGrid.children];
         phaseCards.sort((a, b) => {
           if (sort === 'popular-desc' || sort === 'popular-asc') {
-            const aVotes = (simulatedVotes[a.dataset.id] || 0) + (voteData[a.dataset.id]?.votes || 0);
-            const bVotes = (simulatedVotes[b.dataset.id] || 0) + (voteData[b.dataset.id]?.votes || 0);
+            const aVotes = (voteData[a.dataset.id]?.votes || 0);
+            const bVotes = (voteData[b.dataset.id]?.votes || 0);
             return sort === 'popular-asc' ? aVotes - bVotes : bVotes - aVotes;
           }
           const diff = getCardDate(a) - getCardDate(b);
