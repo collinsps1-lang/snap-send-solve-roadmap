@@ -2470,10 +2470,6 @@
         <input type="text" id="reg-org" placeholder="e.g. City of Melbourne" required autocomplete="organization" />
       </div>
       <div class="modal-field">
-        <label for="reg-email">Email address</label>
-        <input type="email" id="reg-email" placeholder="e.g. sarah@melbourne.vic.gov.au" required autocomplete="email" />
-      </div>
-      <div class="modal-field">
         <label for="reg-role">Role title</label>
         <select id="reg-role" required>
           <option value="" disabled selected>Select your role…</option>
@@ -2521,14 +2517,20 @@
           </optgroup>
         </select>
       </div>
+      <div class="modal-field">
+        <label for="reg-email">Email address</label>
+        <input type="email" id="reg-email" placeholder="e.g. sarah@melbourne.vic.gov.au" required autocomplete="email" />
+        <p class="modal-hint">We'll send you a magic link to verify your email and you'll then receive your roadmap votes.</p>
+      </div>
       <p class="modal-hint" id="reg-magic-error" style="color:red;display:none;"></p>
-      <button type="button" class="modal-submit-btn" id="reg-submit-btn">Get my votes →</button>
+      <button type="button" class="modal-submit-btn" id="reg-submit-btn">Send magic link <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
     </div>
     <div class="reg-step hidden" id="reg-step-pending">
-      <p class="modal-sub" style="text-align:center;margin-bottom:20px;">
-        We've sent a sign-in link to<br/><strong id="reg-pending-email"></strong>.<br/><br/>
-        Click the link in your email to continue.
-      </p>
+      <div style="text-align:center;padding:8px 0 20px;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--solver);margin-bottom:12px;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        <p style="font-size:14px;font-weight:600;color:var(--warm-black);margin-bottom:4px;">Check your inbox</p>
+        <p style="font-size:13px;color:var(--text-muted);"><strong id="reg-pending-email" style="color:var(--warm-black);"></strong></p>
+      </div>
       <button type="button" class="reset-btn" id="reg-resend-btn">← Start over</button>
     </div>
   </div>
