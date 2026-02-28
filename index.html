@@ -2855,13 +2855,15 @@
 
   async function loadRoadmapCards() {
     let cardRows, error;
-    // Retry up to 3 times — the Supabase SDK may be busy exchanging the auth
-    // token from a magic-link URL on first load, causing the first attempt to fail.
+    // Retry up to 3 times. Two failure modes:
+    // 1. error != null  — network/auth/cold-start hard fail
+    // 2. empty array, no error — RLS blocking anon reads or project waking up
     for (let attempt = 0; attempt < 3; attempt++) {
       if (attempt > 0) await new Promise(r => setTimeout(r, 2000));
       ({ data: cardRows, error } = await _supabase.from('cards').select('*').order('sort_order'));
-      if (!error) break;
-      console.error(`loadRoadmapCards attempt ${attempt + 1} error:`, error);
+      if (!error && cardRows && cardRows.length > 0) break;
+      if (error) console.error(`loadRoadmapCards attempt ${attempt + 1} error:`, error);
+      else console.warn(`[SSS] loadRoadmapCards attempt ${attempt + 1}: 0 rows returned (RLS missing "Public read" policy? or cold start)`);
     }
     if (error) { console.error('loadRoadmapCards failed:', error); cardsLoadedResolve(); return; }
 
