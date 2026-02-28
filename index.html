@@ -4127,12 +4127,18 @@
             applyCommunitySort(li.dataset.value);
           });
 
-          // Group both dropdowns on the right
+          // Group both dropdowns + search on the right
+          const commSearch = document.createElement('input');
+          commSearch.type = 'search';
+          commSearch.className = 'phase-search-input';
+          commSearch.placeholder = 'Search community ideas…';
+          commSearch.setAttribute('aria-label', 'Search community ideas');
           const ddGroup = document.createElement('div');
           ddGroup.id = 'community-dd-group';
           ddGroup.style.cssText = 'display:flex; align-items:center; gap:8px; flex-shrink:0;';
           ddGroup.appendChild(dd);
           ddGroup.appendChild(sortDd);
+          ddGroup.appendChild(commSearch);
           headerRow.appendChild(ddGroup);
           section.appendChild(headerRow);
         } else {
@@ -4182,15 +4188,22 @@
             phaseSort[key] = li.dataset.value;
             applyFilters();
           });
-          if (key === 'launched') {
-            const searchInput = document.createElement('input');
-            searchInput.type = 'search';
-            searchInput.className = 'phase-search-input';
-            searchInput.placeholder = 'Search launched features…';
-            searchInput.setAttribute('aria-label', 'Search launched features');
-            headerRow.appendChild(searchInput);
-          }
-          headerRow.appendChild(sortDd);
+          const searchPlaceholders = {
+            'in-development': 'Search in development…',
+            'coming-next':    'Search coming next…',
+            'longer-term':    'Search longer term…',
+            'launched':       'Search launched features…',
+          };
+          const phaseSearch = document.createElement('input');
+          phaseSearch.type = 'search';
+          phaseSearch.className = 'phase-search-input';
+          phaseSearch.placeholder = searchPlaceholders[key] || 'Search…';
+          phaseSearch.setAttribute('aria-label', phaseSearch.placeholder);
+          const rightGroup = document.createElement('div');
+          rightGroup.style.cssText = 'display:flex; align-items:center; gap:8px; flex-shrink:0;';
+          rightGroup.appendChild(sortDd);
+          rightGroup.appendChild(phaseSearch);
+          headerRow.appendChild(rightGroup);
           section.appendChild(headerRow);
         }
       }
