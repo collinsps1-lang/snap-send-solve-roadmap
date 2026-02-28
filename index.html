@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snap Send Solve — 2026 Platform Roadmap</title>
+  <title>Snap Send Solve - Roadmap</title>
   <link rel="icon" type="image/svg+xml" href="Logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -841,7 +841,7 @@
       padding: 14px 16px 12px;
       margin-top: auto;
       color: var(--white);
-      overflow: hidden;
+      overflow: visible;
       flex-shrink: 0;
     }
     .budget-widget-top {
@@ -2822,22 +2822,41 @@
   const cardsLoadedPromise = new Promise(res => { cardsLoadedResolve = res; });
 
   async function loadRoadmapCards() {
-    const { data: cardRows, error } = await _supabase.from('cards').select('*').order('sort_order');
-    if (error) { console.warn('loadRoadmapCards:', error); cardsLoadedResolve(); return; }
+    let cardRows, error;
+    // Retry up to 3 times — the Supabase SDK may be busy exchanging the auth
+    // token from a magic-link URL on first load, causing the first attempt to fail.
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 2000));
+      ({ data: cardRows, error } = await _supabase.from('cards').select('*').order('sort_order'));
+      if (!error) break;
+      console.error(`loadRoadmapCards attempt ${attempt + 1} error:`, error);
+    }
+    if (error) { console.error('loadRoadmapCards failed:', error); cardsLoadedResolve(); return; }
+
     const phaseGridMap = {
       'now':      document.querySelector('#section-now .card-grid'),
       'next':     document.querySelector('#section-next .card-grid'),
       'after':    document.querySelector('#section-after .card-grid'),
       'launched': document.querySelector('#section-launched .card-grid'),
     };
+    console.log(`[SSS] loadRoadmapCards: ${cardRows?.length} rows fetched. Grids found:`,
+      Object.fromEntries(Object.entries(phaseGridMap).map(([k,v]) => [k, !!v])));
+
+    let added = 0;
     (cardRows || []).forEach(c => {
       const grid = phaseGridMap[c.phase];
       if (grid) {
-        const card = buildRoadmapCard(c);
-        grid.appendChild(card);
-        cards.push(card);
+        try {
+          const card = buildRoadmapCard(c);
+          grid.appendChild(card);
+          cards.push(card);
+          added++;
+        } catch(e) { console.error(`buildRoadmapCard error (id=${c.id}):`, e); }
+      } else {
+        console.warn(`[SSS] No grid for phase "${c.phase}" (card id=${c.id})`);
       }
     });
+    console.log(`[SSS] loadRoadmapCards: ${added} cards added to DOM`);
     cardsLoadedResolve();
   }
 
