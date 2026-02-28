@@ -4131,8 +4131,8 @@
           const commSearch = document.createElement('input');
           commSearch.type = 'search';
           commSearch.className = 'phase-search-input';
-          commSearch.placeholder = 'Search community ideas…';
-          commSearch.setAttribute('aria-label', 'Search community ideas');
+          commSearch.placeholder = 'Search';
+          commSearch.setAttribute('aria-label', 'Search');
           const ddGroup = document.createElement('div');
           ddGroup.id = 'community-dd-group';
           ddGroup.style.cssText = 'display:flex; align-items:center; gap:8px; flex-shrink:0;';
@@ -4188,17 +4188,11 @@
             phaseSort[key] = li.dataset.value;
             applyFilters();
           });
-          const searchPlaceholders = {
-            'in-development': 'Search in development…',
-            'coming-next':    'Search coming next…',
-            'longer-term':    'Search longer term…',
-            'launched':       'Search launched features…',
-          };
           const phaseSearch = document.createElement('input');
           phaseSearch.type = 'search';
           phaseSearch.className = 'phase-search-input';
-          phaseSearch.placeholder = searchPlaceholders[key] || 'Search…';
-          phaseSearch.setAttribute('aria-label', phaseSearch.placeholder);
+          phaseSearch.placeholder = 'Search';
+          phaseSearch.setAttribute('aria-label', 'Search');
           const rightGroup = document.createElement('div');
           rightGroup.style.cssText = 'display:flex; align-items:center; gap:8px; flex-shrink:0;';
           rightGroup.appendChild(sortDd);
