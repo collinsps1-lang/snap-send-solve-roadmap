@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSS Admin — Roadmap Insights</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --warm-black:  #2C2927;
+      --warm-grey:   #F4F2EF;
+      --high-vis:    #E0FF89;
+      --white:       #FFFFFF;
+      --border:      #E3DED7;
+      --text-dark:   #2C2927;
+      --text-muted:  #9A948E;
+      --bg:          #F4F2EF;
+      --card-bg:     #FFFFFF;
+      --solver:      #FF964A;
+      --snapper:     #5BCFF4;
+      --now:         #E0FF89;
+      --next:        #B8F0FF;
+      --after:       #FFD9B8;
+      --launched:    #D4F0D4;
+    }
+    html, body { height: 100%; background: var(--bg); font-family: 'Space Grotesk', -apple-system, sans-serif; color: var(--text-dark); }
+
+    /* ── Auth screen ── */
+    .auth-screen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 24px;
+    }
+    .auth-card {
+      background: var(--card-bg); border-radius: 16px; padding: 40px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 4px 24px rgba(44,41,39,0.10);
+    }
+    .auth-logo { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .auth-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
+    .auth-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .auth-input {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 14px; font-family: inherit;
+      outline: none; transition: border-color 0.15s;
+    }
+    .auth-input:focus { border-color: var(--warm-black); }
+    .auth-btn {
+      margin-top: 16px; width: 100%; padding: 12px;
+      background: var(--warm-black); color: var(--white);
+      border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer; transition: opacity 0.15s;
+    }
+    .auth-btn:hover { opacity: 0.85; }
+    .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .auth-msg { margin-top: 14px; font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+    .auth-msg.error { color: #c0392b; }
+
+    /* ── Top nav ── */
+    .topnav {
+      display: flex; align-items: center; gap: 0;
+      background: var(--warm-black); padding: 0 24px; height: 56px;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topnav-brand {
+      font-size: 15px; font-weight: 700; color: var(--white);
+      margin-right: 32px; white-space: nowrap; flex-shrink: 0;
+    }
+    .topnav-brand span { color: var(--high-vis); }
+    .topnav-tabs { display: flex; gap: 4px; flex: 1; }
+    .nav-tab {
+      padding: 8px 16px; border-radius: 8px; border: none; background: transparent;
+      color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500;
+      font-family: inherit; cursor: pointer; transition: color 0.15s, background 0.15s;
+    }
+    .nav-tab:hover { color: var(--white); background: rgba(255,255,255,0.08); }
+    .nav-tab.active { color: var(--warm-black); background: var(--high-vis); font-weight: 700; }
+    .topnav-right { margin-left: auto; }
+    .signout-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7); padding: 7px 14px; border-radius: 8px;
+      font-size: 13px; font-family: inherit; cursor: pointer; transition: all 0.15s;
+    }
+    .signout-btn:hover { border-color: rgba(255,255,255,0.6); color: var(--white); }
+
+    /* ── Main content ── */
+    #admin-app { display: none; flex-direction: column; height: 100vh; }
+    .tab-panel { display: none; flex: 1; overflow-y: auto; padding: 32px 24px; }
+    .tab-panel.active { display: block; }
+
+    /* ── Page heading ── */
+    .page-heading { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .page-sub { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
+
+    /* ── Loading / empty states ── */
+    .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; }
+    .empty-msg { color: var(--text-muted); font-size: 14px; font-style: italic; padding: 20px 0; }
+
+    /* ── Cards / tables ── */
+    .data-card {
+      background: var(--card-bg); border-radius: 12px;
+      border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px;
+    }
+    .data-card-header {
+      padding: 16px 20px; font-size: 13px; font-weight: 600; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th {
+      text-align: left; padding: 10px 16px; background: #F9F8F6;
+      font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); border-bottom: 1px solid var(--border);
+    }
+    .data-table td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr.clickable { cursor: pointer; transition: background 0.1s; }
+    .data-table tr.clickable:hover { background: #FAFAF8; }
+
+    /* ── Phase / audience badges ── */
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px;
+      border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .badge-now      { background: var(--now);      color: #2C5A00; }
+    .badge-next     { background: var(--next);     color: #006080; }
+    .badge-after    { background: var(--after);    color: #7A3C00; }
+    .badge-launched { background: var(--launched); color: #1B5E20; }
+    .badge-snappers { background: #BDECFB; color: #0B5E80; }
+    .badge-solvers  { background: #FFCDA8; color: #7A2E00; }
+    .badge-cs       { background: #F0E6FF; color: #5B21B6; }
+    .badge-df       { background: #FFF3CD; color: #7A5300; }
+    .badge-it       { background: #E0F2F1; color: #004D40; }
+
+    /* ── Vote bar ── */
+    .vote-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 140px; }
+    .vote-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .vote-bar-fill { height: 100%; background: var(--warm-black); border-radius: 3px; transition: width 0.4s; }
+    .vote-bar-count { font-weight: 700; font-size: 13px; min-width: 28px; text-align: right; }
+
+    /* ── Rank number ── */
+    .rank { font-weight: 700; font-size: 16px; color: var(--text-muted); min-width: 28px; }
+    .rank-1 { color: #C9A227; }
+    .rank-2 { color: #888; }
+    .rank-3 { color: #A0522D; }
+
+    /* ── Drill-down panel ── */
+    .drill-panel {
+      position: fixed; top: 56px; right: 0; bottom: 0; width: 480px;
+      background: var(--card-bg); border-left: 1px solid var(--border);
+      overflow-y: auto; padding: 24px;
+      transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+      z-index: 200;
+    }
+    .drill-panel.open { transform: translateX(0); }
+    .drill-close {
+      position: absolute; top: 16px; right: 16px;
+      background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .drill-close:hover { color: var(--text-dark); }
+    .drill-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(44,41,39,0.25);
+      z-index: 199;
+    }
+    .drill-overlay.open { display: block; }
+    .drill-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; padding-right: 32px; }
+    .drill-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .drill-desc { font-size: 14px; line-height: 1.6; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .drill-section-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+
+    /* ── CMS ── */
+    .cms-phase-group { margin-bottom: 32px; }
+    .cms-phase-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px; }
+    .cms-card-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 10px; margin-bottom: 6px;
+    }
+    .cms-card-title { flex: 1; font-size: 14px; font-weight: 500; }
+    .cms-card-aud { font-size: 12px; color: var(--text-muted); margin-right: 8px; }
+    .btn-sm {
+      padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 600;
+      font-family: inherit; cursor: pointer; border: 1px solid var(--border);
+      background: var(--white); color: var(--text-dark); transition: all 0.15s;
+    }
+    .btn-sm:hover { background: var(--bg); }
+    .btn-sm.danger { border-color: #fca5a5; color: #c0392b; }
+    .btn-sm.danger:hover { background: #fee2e2; }
+    .btn-primary {
+      padding: 10px 20px; border-radius: 9px; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer; border: none;
+      background: var(--warm-black); color: var(--white); transition: opacity 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-outline {
+      padding: 10px 20px; border-radius: 9px; font-size: 14px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--white); color: var(--text-dark);
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: var(--warm-black); }
+    .btn-add {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-bottom: 24px; padding: 10px 18px; border-radius: 9px; font-size: 14px;
+      font-weight: 600; font-family: inherit; cursor: pointer;
+      background: var(--high-vis); color: var(--warm-black); border: none; transition: opacity 0.15s;
+    }
+    .btn-add:hover { opacity: 0.85; }
+
+    /* ── Modal / form ── */
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(44,41,39,0.45); z-index: 300;
+      align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: var(--card-bg); border-radius: 16px; padding: 32px;
+      width: 100%; max-width: 640px; position: relative;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+    .form-row { margin-bottom: 16px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%; padding: 9px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 14px; font-family: inherit;
+      outline: none; transition: border-color 0.15s; background: var(--white);
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--warm-black); }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+    .upload-status { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .upload-preview { max-width: 100%; max-height: 120px; border-radius: 6px; margin-top: 6px; display: none; }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .form-section-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; }
+    .detail-images-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ── Voter expand row ── */
+    .voter-expand { display: none; }
+    .voter-expand.open { display: table-row; }
+    .voter-expand td { background: #F9F8F6; }
+    .voter-sub-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .voter-sub-table th { padding: 6px 12px; text-align: left; font-weight: 600; color: var(--text-muted); }
+    .voter-sub-table td { padding: 6px 12px; border-top: 1px solid var(--border); }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .topnav-tabs { gap: 2px; }
+      .nav-tab { padding: 7px 10px; font-size: 12px; }
+      .tab-panel { padding: 20px 16px; }
+      .drill-panel { width: 100%; }
+      .form-row-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Auth screen ── -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">Snap Send Solve <span style="color:var(--text-muted);font-weight:400;font-size:15px;">Admin</span></div>
+    <p class="auth-subtitle">Sign in with your Snap Send Solve team email to access the admin panel.</p>
+
+    <div id="auth-form-view">
+      <label class="auth-label" for="admin-email">Email address</label>
+      <input class="auth-input" type="email" id="admin-email" placeholder="you@snapsendsolve.com" autocomplete="email" />
+      <button class="auth-btn" id="auth-send-btn">Send magic link →</button>
+      <p id="auth-msg" class="auth-msg" style="display:none;"></p>
+    </div>
+
+    <div id="auth-pending-view" style="display:none;">
+      <p class="auth-msg">We've sent a sign-in link to<br/><strong id="auth-pending-email"></strong>.<br/><br/>Click the link in your email to continue.</p>
+      <button class="auth-btn" id="auth-back-btn" style="margin-top:16px;">← Use a different email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Admin app (hidden until signed in) ── -->
+<div id="admin-app">
+  <nav class="topnav">
+    <div class="topnav-brand">Snap Send Solve <span>Admin</span></div>
+    <div class="topnav-tabs">
+      <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+      <button class="nav-tab" data-tab="voters">Voters</button>
+      <button class="nav-tab" data-tab="features">Features</button>
+      <button class="nav-tab" data-tab="cms">CMS</button>
+    </div>
+    <div class="topnav-right">
+      <button class="signout-btn" id="signout-btn">Sign out</button>
+    </div>
+  </nav>
+
+  <!-- ── Tab 1: Dashboard ── -->
+  <div class="tab-panel active" id="tab-dashboard">
+    <div class="page-heading">Vote Leaderboard</div>
+    <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
+    <div id="dashboard-content"><div class="loading">Loading…</div></div>
+  </div>
+
+  <!-- ── Tab 2: Voters ── -->
+  <div class="tab-panel" id="tab-voters">
+    <div class="page-heading">Voters</div>
+    <p class="page-sub">All registered voters and how they've allocated their votes.</p>
+    <div id="voters-content"><div class="loading">Loading…</div></div>
+  </div>
+
+  <!-- ── Tab 3: Features ── -->
+  <div class="tab-panel" id="tab-features">
+    <div class="page-heading">Features</div>
+    <p class="page-sub">Click any feature to see a full voter breakdown.</p>
+    <div id="features-content"><div class="loading">Loading…</div></div>
+  </div>
+
+  <!-- ── Tab 4: CMS ── -->
+  <div class="tab-panel" id="tab-cms">
+    <div class="page-heading">Card CMS</div>
+    <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
+    <button class="btn-add" id="cms-add-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Add new card
+    </button>
+    <div id="cms-content"><div class="loading">Loading…</div></div>
+  </div>
+</div>
+
+<!-- ── Feature drill-down panel ── -->
+<div class="drill-overlay" id="drill-overlay"></div>
+<div class="drill-panel" id="drill-panel">
+  <button class="drill-close" id="drill-close">×</button>
+  <div id="drill-content"></div>
+</div>
+
+<!-- ── CMS card editor modal ── -->
+<div class="modal-backdrop" id="cms-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="cms-modal-title">Add new card</div>
+    <form id="cms-form" novalidate>
+      <input type="hidden" id="cms-id" />
+
+      <div class="form-row">
+        <label class="form-label" for="cms-title">Title <span style="color:#c0392b">*</span></label>
+        <input class="form-input" type="text" id="cms-title" required />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="cms-desc">Description <span style="color:#c0392b">*</span></label>
+        <textarea class="form-textarea" id="cms-desc" required></textarea>
+      </div>
+
+      <div class="form-row-2">
+        <div>
+          <label class="form-label" for="cms-phase">Phase</label>
+          <select class="form-select" id="cms-phase">
+            <option value="now">In Development</option>
+            <option value="next">Coming Next</option>
+            <option value="after">Longer Term</option>
+            <option value="launched">Recently Launched</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="cms-audience">Audience</label>
+          <select class="form-select" id="cms-audience">
+            <option value="customer-service">For Customer Service</option>
+            <option value="snappers">For Snappers</option>
+            <option value="solvers">For Solvers</option>
+            <option value="depot-field">For Depot &amp; Field Teams</option>
+            <option value="it-teams">For IT Teams</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div>
+          <label class="form-label" for="cms-category">Category</label>
+          <select class="form-select" id="cms-category">
+            <option value="customer-facing">Customer Facing</option>
+            <option value="data">Data &amp; Insights</option>
+            <option value="api">API &amp; Integrations</option>
+            <option value="innovation">Innovation</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="cms-sort">Sort order</label>
+          <input class="form-input" type="number" id="cms-sort" value="0" min="0" />
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div>
+          <label class="form-label" for="cms-added">Added date label</label>
+          <input class="form-input" type="text" id="cms-added" placeholder="e.g. 15/01/2026" />
+          <p class="form-hint">DD/MM/YYYY — shown on non-launched cards</p>
+        </div>
+        <div>
+          <label class="form-label" for="cms-launched">Launched date label</label>
+          <input class="form-input" type="text" id="cms-launched" placeholder="e.g. January 2026" />
+          <p class="form-hint">Month YYYY — shown on launched cards</p>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="cms-tags">Tags (comma-separated)</label>
+        <input class="form-input" type="text" id="cms-tags" placeholder="e.g. AI, Beta, New" />
+      </div>
+
+      <hr class="section-divider" />
+      <div class="form-section-head">Images</div>
+
+      <div class="form-row">
+        <label class="form-label" for="cms-header-img">Header image</label>
+        <input type="file" id="cms-header-img" accept="image/*" />
+        <img class="upload-preview" id="cms-header-preview" alt="" />
+        <p class="upload-status" id="cms-header-status"></p>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Detail images (up to 5)</label>
+        <div class="detail-images-grid">
+          <div>
+            <input type="file" id="cms-detail-0" accept="image/*" data-idx="0" class="detail-img-input" />
+            <img class="upload-preview" id="cms-detail-preview-0" alt="" />
+            <p class="upload-status" id="cms-detail-status-0"></p>
+          </div>
+          <div>
+            <input type="file" id="cms-detail-1" accept="image/*" data-idx="1" class="detail-img-input" />
+            <img class="upload-preview" id="cms-detail-preview-1" alt="" />
+            <p class="upload-status" id="cms-detail-status-1"></p>
+          </div>
+          <div>
+            <input type="file" id="cms-detail-2" accept="image/*" data-idx="2" class="detail-img-input" />
+            <img class="upload-preview" id="cms-detail-preview-2" alt="" />
+            <p class="upload-status" id="cms-detail-status-2"></p>
+          </div>
+          <div>
+            <input type="file" id="cms-detail-3" accept="image/*" data-idx="3" class="detail-img-input" />
+            <img class="upload-preview" id="cms-detail-preview-3" alt="" />
+            <p class="upload-status" id="cms-detail-status-3"></p>
+          </div>
+          <div>
+            <input type="file" id="cms-detail-4" accept="image/*" data-idx="4" class="detail-img-input" />
+            <img class="upload-preview" id="cms-detail-preview-4" alt="" />
+            <p class="upload-status" id="cms-detail-status-4"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-outline" id="cms-cancel-btn">Cancel</button>
+        <button type="submit" class="btn-primary" id="cms-save-btn">Save card</button>
+      </div>
+      <p id="cms-save-msg" style="margin-top:10px;font-size:13px;color:var(--text-muted);display:none;text-align:right;"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  /* ── Supabase client (same project as index.html) ── */
+  const SUPABASE_URL      = 'https://yelknwdlhpkiezswpqcr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_RHWj0-X_e9kVehuXQ5FmKw_Z56gE_RQ';
+  const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  /* ── Admin email allowlist — replace with real team emails ── */
+  const ADMIN_EMAILS = [
+    'pete@snapsendsolve.com',
+    'pete.collins@snapsendsolve.com',
+  ];
+
+  /* ══════════════════════════════════════════════════════════════
+     AUTH
+  ══════════════════════════════════════════════════════════════ */
+  const authScreen    = document.getElementById('auth-screen');
+  const adminApp      = document.getElementById('admin-app');
+  const authFormView  = document.getElementById('auth-form-view');
+  const authPendView  = document.getElementById('auth-pending-view');
+  const authMsgEl     = document.getElementById('auth-msg');
+
+  function showAuthMsg(text, isError = false) {
+    authMsgEl.textContent = text;
+    authMsgEl.className   = 'auth-msg' + (isError ? ' error' : '');
+    authMsgEl.style.display = '';
+  }
+
+  document.getElementById('auth-send-btn').addEventListener('click', async () => {
+    const email = document.getElementById('admin-email').value.trim();
+    if (!email) return;
+    const btn = document.getElementById('auth-send-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    const { error } = await _supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin + window.location.pathname },
+    });
+    btn.disabled = false;
+    btn.textContent = 'Send magic link →';
+    if (error) {
+      showAuthMsg(error.message, true);
+    } else {
+      document.getElementById('auth-pending-email').textContent = email;
+      authFormView.style.display  = 'none';
+      authPendView.style.display  = '';
+    }
+  });
+
+  document.getElementById('auth-back-btn').addEventListener('click', () => {
+    authPendView.style.display = 'none';
+    authFormView.style.display = '';
+    authMsgEl.style.display    = 'none';
+  });
+
+  document.getElementById('signout-btn').addEventListener('click', async () => {
+    await _supabase.auth.signOut();
+    adminApp.style.display  = 'none';
+    authScreen.style.display = '';
+    authFormView.style.display = '';
+    authPendView.style.display = 'none';
+  });
+
+  _supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      const email = session.user.email;
+      if (!ADMIN_EMAILS.includes(email.toLowerCase())) {
+        _supabase.auth.signOut();
+        showAuthMsg('Access denied. This email is not on the admin allowlist.', true);
+        return;
+      }
+      authScreen.style.display = 'none';
+      adminApp.style.display   = 'flex';
+      initAdmin();
+    }
+    if (event === 'SIGNED_OUT') {
+      adminApp.style.display  = 'none';
+      authScreen.style.display = '';
+    }
+  });
+
+  /* Check for existing session on load */
+  (async () => {
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (session) {
+      const email = session.user.email;
+      if (!ADMIN_EMAILS.includes(email.toLowerCase())) {
+        await _supabase.auth.signOut();
+        showAuthMsg('Access denied. This email is not on the admin allowlist.', true);
+        return;
+      }
+      authScreen.style.display = 'none';
+      adminApp.style.display   = 'flex';
+      initAdmin();
+    }
+  })();
+
+  /* ══════════════════════════════════════════════════════════════
+     NAVIGATION
+  ══════════════════════════════════════════════════════════════ */
+  let activeTab = 'dashboard';
+
+  document.querySelectorAll('.nav-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      if (tab === activeTab) return;
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      activeTab = tab;
+      refreshTab(tab);
+    });
+  });
+
+  function refreshTab(tab) {
+    if (tab === 'dashboard') loadDashboard();
+    if (tab === 'voters')    loadVoters();
+    if (tab === 'features')  loadFeatures();
+    if (tab === 'cms')       loadCms();
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════════════ */
+  const PHASE_LABELS = {
+    now: 'In Development', next: 'Coming Next',
+    after: 'Longer Term', launched: 'Launched',
+  };
+  const AUD_LABELS = {
+    snappers: 'Snappers', solvers: 'Solvers',
+    'customer-service': 'Customer Service',
+    'depot-field': 'Depot & Field', 'it-teams': 'IT Teams',
+  };
+
+  function phaseBadge(p) {
+    const cls = { now:'badge-now', next:'badge-next', after:'badge-after', launched:'badge-launched' }[p] || '';
+    return `<span class="badge ${cls}">${PHASE_LABELS[p] || p}</span>`;
+  }
+  function audBadge(a) {
+    const cls = { snappers:'badge-snappers', solvers:'badge-solvers',
+      'customer-service':'badge-cs', 'depot-field':'badge-df', 'it-teams':'badge-it' }[a] || '';
+    return `<span class="badge ${cls}">${AUD_LABELS[a] || a}</span>`;
+  }
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     TAB 1 — DASHBOARD (Vote Leaderboard)
+  ══════════════════════════════════════════════════════════════ */
+  async function loadDashboard() {
+    const el = document.getElementById('dashboard-content');
+    el.innerHTML = '<div class="loading">Loading…</div>';
+
+    const [{ data: votes, error: vErr }, { data: cardRows, error: cErr }] = await Promise.all([
+      _supabase.from('votes').select('card_id, votes'),
+      _supabase.from('cards').select('id, title, phase, audience'),
+    ]);
+
+    if (vErr || cErr) {
+      el.innerHTML = `<div class="loading">Error loading data.</div>`;
+      return;
+    }
+
+    // Aggregate totals per card
+    const totals = {};
+    (votes || []).forEach(v => {
+      totals[v.card_id] = (totals[v.card_id] || 0) + (v.votes || 0);
+    });
+
+    const cardMap = {};
+    (cardRows || []).forEach(c => { cardMap[c.id] = c; });
+
+    const ranked = Object.entries(totals)
+      .map(([id, total]) => ({ id, total, card: cardMap[id] }))
+      .filter(r => r.card)
+      .sort((a, b) => b.total - a.total);
+
+    if (ranked.length === 0) {
+      el.innerHTML = '<div class="empty-msg">No votes recorded yet. Votes will appear here once customers start allocating.</div>';
+      return;
+    }
+
+    const maxVotes = ranked[0].total;
+
+    el.innerHTML = `
+      <div class="data-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:40px;">#</th>
+              <th>Feature</th>
+              <th>Phase</th>
+              <th>Audience</th>
+              <th>Votes</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ranked.map((r, i) => `
+              <tr>
+                <td><span class="rank ${i<3?`rank-${i+1}`:''}">${i+1}</span></td>
+                <td style="font-weight:500;">${escHtml(r.card.title)}</td>
+                <td>${phaseBadge(r.card.phase)}</td>
+                <td>${audBadge(r.card.audience)}</td>
+                <td>
+                  <div class="vote-bar-wrap">
+                    <div class="vote-bar-bg">
+                      <div class="vote-bar-fill" style="width:${Math.round((r.total/maxVotes)*100)}%"></div>
+                    </div>
+                    <span class="vote-bar-count">${r.total}</span>
+                  </div>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     TAB 2 — VOTERS (CRM)
+  ══════════════════════════════════════════════════════════════ */
+  async function loadVoters() {
+    const el = document.getElementById('voters-content');
+    el.innerHTML = '<div class="loading">Loading…</div>';
+
+    const [{ data: votes, error: vErr }, { data: cardRows }] = await Promise.all([
+      _supabase.from('votes').select('*'),
+      _supabase.from('cards').select('id, title, phase'),
+    ]);
+
+    if (vErr) { el.innerHTML = '<div class="loading">Error loading data.</div>'; return; }
+
+    const cardMap = {};
+    (cardRows || []).forEach(c => { cardMap[c.id] = c; });
+
+    // Group by user_email
+    const voterMap = {};
+    (votes || []).forEach(v => {
+      if (!voterMap[v.user_email]) {
+        voterMap[v.user_email] = {
+          email:    v.user_email,
+          name:     v.user_name,
+          org:      v.user_org,
+          role:     v.user_role,
+          budget:   v.user_budget || 5,
+          rows:     [],
+        };
+      }
+      voterMap[v.user_email].rows.push(v);
+    });
+
+    const voters = Object.values(voterMap)
+      .map(voter => {
+        voter.allocated = voter.rows.reduce((s, r) => s + (r.votes || 0), 0);
+        return voter;
+      })
+      .sort((a, b) => b.allocated - a.allocated);
+
+    if (voters.length === 0) {
+      el.innerHTML = '<div class="empty-msg">No voters yet.</div>';
+      return;
+    }
+
+    const rows = voters.map((voter, i) => {
+      const pct = voter.budget > 0 ? Math.round((voter.allocated / voter.budget) * 100) : 0;
+      const subRows = voter.rows
+        .filter(r => r.votes > 0)
+        .sort((a, b) => b.votes - a.votes)
+        .map(r => {
+          const c = cardMap[r.card_id];
+          return `<tr>
+            <td>${c ? escHtml(c.title) : r.card_id}</td>
+            <td>${c ? phaseBadge(c.phase) : ''}</td>
+            <td style="font-weight:600">${r.votes}</td>
+            <td>${r.notify ? '✓' : '—'}</td>
+            <td>${r.research ? '✓' : '—'}</td>
+            <td style="max-width:220px;word-break:break-word">${escHtml(r.reason || '—')}</td>
+          </tr>`;
+        }).join('');
+
+      return `
+        <tr class="clickable" data-voter-idx="${i}">
+          <td style="font-weight:500">${escHtml(voter.name || '—')}</td>
+          <td>${escHtml(voter.org || '—')}</td>
+          <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(voter.role || '—')}</td>
+          <td>${escHtml(voter.email)}</td>
+          <td style="font-weight:600">${voter.budget}</td>
+          <td>
+            <div class="vote-bar-wrap" style="min-width:100px">
+              <div class="vote-bar-bg"><div class="vote-bar-fill" style="width:${pct}%"></div></div>
+              <span class="vote-bar-count">${voter.allocated}</span>
+            </div>
+          </td>
+          <td style="color:var(--text-muted)">${pct}%</td>
+        </tr>
+        <tr class="voter-expand" id="voter-expand-${i}">
+          <td colspan="7" style="padding:0">
+            <table class="voter-sub-table">
+              <thead>
+                <tr>
+                  <th>Feature</th><th>Phase</th><th>Votes</th>
+                  <th>Notify</th><th>Research</th><th>Reason</th>
+                </tr>
+              </thead>
+              <tbody>${subRows || '<tr><td colspan="6" style="color:var(--text-muted);padding:8px 12px">No votes allocated</td></tr>'}</tbody>
+            </table>
+          </td>
+        </tr>`;
+    }).join('');
+
+    el.innerHTML = `
+      <div class="data-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Organisation</th><th>Role</th>
+              <th>Email</th><th>Budget</th><th>Votes Allocated</th><th>% Used</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+
+    el.querySelectorAll('.clickable[data-voter-idx]').forEach(row => {
+      row.addEventListener('click', () => {
+        const idx = row.dataset.voterIdx;
+        const expand = document.getElementById(`voter-expand-${idx}`);
+        expand.classList.toggle('open');
+      });
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     TAB 3 — FEATURES (Per-feature drill-down)
+  ══════════════════════════════════════════════════════════════ */
+  async function loadFeatures() {
+    const el = document.getElementById('features-content');
+    el.innerHTML = '<div class="loading">Loading…</div>';
+
+    const [{ data: cards, error: cErr }, { data: votes, error: vErr }] = await Promise.all([
+      _supabase.from('cards').select('*').order('sort_order'),
+      _supabase.from('votes').select('*'),
+    ]);
+
+    if (cErr || vErr) { el.innerHTML = '<div class="loading">Error loading data.</div>'; return; }
+
+    const totalsByCard = {};
+    (votes || []).forEach(v => {
+      totalsByCard[v.card_id] = (totalsByCard[v.card_id] || 0) + (v.votes || 0);
+    });
+
+    const maxVotes = Math.max(1, ...Object.values(totalsByCard));
+
+    const phases = ['now', 'next', 'after', 'launched'];
+    const phaseCards = {};
+    phases.forEach(p => { phaseCards[p] = (cards||[]).filter(c => c.phase === p); });
+
+    const sections = phases.map(p => {
+      const pCards = phaseCards[p];
+      if (!pCards.length) return '';
+      const rows = pCards.map(c => `
+        <tr class="clickable" data-card-id="${escHtml(c.id)}">
+          <td style="font-weight:500">${escHtml(c.title)}</td>
+          <td>${audBadge(c.audience)}</td>
+          <td>
+            <div class="vote-bar-wrap" style="min-width:120px">
+              <div class="vote-bar-bg">
+                <div class="vote-bar-fill" style="width:${Math.round(((totalsByCard[c.id]||0)/maxVotes)*100)}%"></div>
+              </div>
+              <span class="vote-bar-count">${totalsByCard[c.id] || 0}</span>
+            </div>
+          </td>
+        </tr>`).join('');
+      return `
+        <div class="data-card" style="margin-bottom:20px">
+          <div class="data-card-header">${phaseBadge(p)}</div>
+          <table class="data-table">
+            <thead><tr><th>Feature</th><th>Audience</th><th>Total votes</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }).join('');
+
+    el.innerHTML = sections || '<div class="empty-msg">No cards found.</div>';
+
+    // Bind click → drill-down
+    el.querySelectorAll('.clickable[data-card-id]').forEach(row => {
+      row.addEventListener('click', () => {
+        const cardId = row.dataset.cardId;
+        const card   = (cards || []).find(c => c.id === cardId);
+        const cardVotes = (votes || []).filter(v => v.card_id === cardId && v.votes > 0)
+          .sort((a, b) => b.votes - a.votes);
+        openDrill(card, cardVotes);
+      });
+    });
+  }
+
+  /* ── Drill-down panel ── */
+  const drillPanel   = document.getElementById('drill-panel');
+  const drillOverlay = document.getElementById('drill-overlay');
+  const drillContent = document.getElementById('drill-content');
+
+  function openDrill(card, cardVotes) {
+    if (!card) return;
+    const voterRows = cardVotes.map(v => `
+      <tr>
+        <td style="font-weight:500">${escHtml(v.user_name || '—')}</td>
+        <td>${escHtml(v.user_org || '—')}</td>
+        <td style="font-weight:700">${v.votes}</td>
+        <td>${v.notify ? '✓' : '—'}</td>
+        <td>${v.research ? '✓' : '—'}</td>
+        <td style="max-width:180px;word-break:break-word">${escHtml(v.reason || '—')}</td>
+      </tr>`).join('');
+
+    drillContent.innerHTML = `
+      <div class="drill-title">${escHtml(card.title)}</div>
+      <div class="drill-meta">${phaseBadge(card.phase)} ${audBadge(card.audience)}</div>
+      <p class="drill-desc">${escHtml(card.description)}</p>
+      <div class="drill-section-head">Voter Breakdown (${cardVotes.length} voter${cardVotes.length !== 1 ? 's' : ''})</div>
+      ${cardVotes.length === 0
+        ? '<div class="empty-msg">No votes for this feature yet.</div>'
+        : `<table class="data-table">
+             <thead><tr><th>Name</th><th>Org</th><th>Votes</th><th>Notify</th><th>Research</th><th>Reason</th></tr></thead>
+             <tbody>${voterRows}</tbody>
+           </table>`
+      }`;
+    drillPanel.classList.add('open');
+    drillOverlay.classList.add('open');
+  }
+
+  document.getElementById('drill-close').addEventListener('click', closeDrill);
+  drillOverlay.addEventListener('click', closeDrill);
+  function closeDrill() {
+    drillPanel.classList.remove('open');
+    drillOverlay.classList.remove('open');
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     TAB 4 — CMS
+  ══════════════════════════════════════════════════════════════ */
+  let cmsCards = [];
+
+  async function loadCms() {
+    const el = document.getElementById('cms-content');
+    el.innerHTML = '<div class="loading">Loading…</div>';
+
+    const { data: cards, error } = await _supabase.from('cards').select('*').order('sort_order');
+    if (error) { el.innerHTML = '<div class="loading">Error loading cards.</div>'; return; }
+    cmsCards = cards || [];
+
+    const phases = ['now', 'next', 'after', 'launched'];
+    const sections = phases.map(p => {
+      const pCards = cmsCards.filter(c => c.phase === p);
+      if (!pCards.length) return '';
+      return `
+        <div class="cms-phase-group">
+          <div class="cms-phase-label">${PHASE_LABELS[p]}</div>
+          ${pCards.map(c => `
+            <div class="cms-card-row" data-card-id="${escHtml(c.id)}">
+              <div class="cms-card-title">${escHtml(c.title)}</div>
+              <span class="cms-card-aud">${audBadge(c.audience)}</span>
+              <button class="btn-sm cms-edit-btn" data-card-id="${escHtml(c.id)}">Edit</button>
+              <button class="btn-sm danger cms-del-btn" data-card-id="${escHtml(c.id)}">Delete</button>
+            </div>`).join('')}
+        </div>`;
+    }).join('');
+
+    el.innerHTML = sections || '<div class="empty-msg">No cards yet. Add one above.</div>';
+
+    el.querySelectorAll('.cms-edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => openCmsEdit(btn.dataset.cardId));
+    });
+    el.querySelectorAll('.cms-del-btn').forEach(btn => {
+      btn.addEventListener('click', () => deleteCmsCard(btn.dataset.cardId));
+    });
+  }
+
+  /* ── CMS Editor ── */
+  const cmsModal    = document.getElementById('cms-modal');
+  const cmsForm     = document.getElementById('cms-form');
+  let editingCardId = null;
+  // Tracks uploaded image URLs for the current edit session
+  let pendingHeaderUrl  = null;
+  let pendingDetailUrls = [null, null, null, null, null];
+
+  function openCmsEdit(cardId) {
+    editingCardId    = cardId || null;
+    pendingHeaderUrl = null;
+    pendingDetailUrls = [null, null, null, null, null];
+
+    const card = cardId ? cmsCards.find(c => c.id === cardId) : null;
+    document.getElementById('cms-modal-title').textContent = card ? 'Edit card' : 'Add new card';
+    document.getElementById('cms-id').value         = card ? card.id : '';
+    document.getElementById('cms-title').value      = card ? card.title : '';
+    document.getElementById('cms-desc').value       = card ? card.description : '';
+    document.getElementById('cms-phase').value      = card ? card.phase : 'now';
+    document.getElementById('cms-audience').value   = card ? card.audience : 'customer-service';
+    document.getElementById('cms-category').value   = card ? (card.category || 'customer-facing') : 'customer-facing';
+    document.getElementById('cms-sort').value       = card ? (card.sort_order || 0) : 0;
+    document.getElementById('cms-added').value      = card ? (card.added_label || '') : '';
+    document.getElementById('cms-launched').value   = card ? (card.launched_label || '') : '';
+    document.getElementById('cms-tags').value       = card && Array.isArray(card.tags) ? card.tags.join(', ') : '';
+
+    // Show existing header image
+    const headerPrev = document.getElementById('cms-header-preview');
+    const headerStat = document.getElementById('cms-header-status');
+    headerPrev.src     = card && card.header_image_url ? card.header_image_url : '';
+    headerPrev.style.display = card && card.header_image_url ? 'block' : 'none';
+    headerStat.textContent   = '';
+    document.getElementById('cms-header-img').value = '';
+
+    // Show existing detail images
+    const existingDetails = card && Array.isArray(card.detail_images) ? card.detail_images : [];
+    for (let i = 0; i < 5; i++) {
+      const prev = document.getElementById(`cms-detail-preview-${i}`);
+      const stat = document.getElementById(`cms-detail-status-${i}`);
+      const url  = existingDetails[i] || '';
+      prev.src = url; prev.style.display = url ? 'block' : 'none';
+      stat.textContent = '';
+      document.getElementById(`cms-detail-${i}`).value = '';
+    }
+
+    document.getElementById('cms-save-msg').style.display = 'none';
+    cmsModal.classList.add('open');
+  }
+
+  document.getElementById('cms-add-btn').addEventListener('click', () => openCmsEdit(null));
+  document.getElementById('cms-cancel-btn').addEventListener('click', () => cmsModal.classList.remove('open'));
+
+  /* ── Image upload helper ── */
+  async function uploadImage(file, path) {
+    const { error } = await _supabase.storage.from('card-images').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data: { publicUrl } } = _supabase.storage.from('card-images').getPublicUrl(path);
+    return publicUrl;
+  }
+
+  /* ── Header image picker ── */
+  document.getElementById('cms-header-img').addEventListener('change', async function() {
+    const file = this.files[0];
+    if (!file) return;
+    const stat = document.getElementById('cms-header-status');
+    const prev = document.getElementById('cms-header-preview');
+    stat.textContent = 'Uploading…';
+    const id = document.getElementById('cms-id').value || ('new-' + Date.now());
+    try {
+      const url = await uploadImage(file, `${id}/header`);
+      pendingHeaderUrl = url;
+      prev.src = url; prev.style.display = 'block';
+      stat.textContent = 'Uploaded ✓';
+    } catch(e) {
+      stat.textContent = 'Upload failed: ' + e.message;
+    }
+  });
+
+  /* ── Detail image pickers ── */
+  document.querySelectorAll('.detail-img-input').forEach(input => {
+    input.addEventListener('change', async function() {
+      const idx  = parseInt(this.dataset.idx, 10);
+      const file = this.files[0];
+      if (!file) return;
+      const stat = document.getElementById(`cms-detail-status-${idx}`);
+      const prev = document.getElementById(`cms-detail-preview-${idx}`);
+      stat.textContent = 'Uploading…';
+      const id = document.getElementById('cms-id').value || ('new-' + Date.now());
+      try {
+        const url = await uploadImage(file, `${id}/detail-${idx}`);
+        pendingDetailUrls[idx] = url;
+        prev.src = url; prev.style.display = 'block';
+        stat.textContent = 'Uploaded ✓';
+      } catch(e) {
+        stat.textContent = 'Upload failed: ' + e.message;
+      }
+    });
+  });
+
+  /* ── Save card ── */
+  cmsForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('cms-save-btn');
+    const saveMsg = document.getElementById('cms-save-msg');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
+    saveMsg.style.display = 'none';
+
+    const id       = document.getElementById('cms-id').value.trim();
+    const tagsRaw  = document.getElementById('cms-tags').value.trim();
+    const tags     = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+    // Merge pending image URLs with existing
+    const existingCard = editingCardId ? cmsCards.find(c => c.id === editingCardId) : null;
+    const headerImageUrl = pendingHeaderUrl !== null
+      ? pendingHeaderUrl
+      : (existingCard ? existingCard.header_image_url : null);
+
+    const existingDetails = existingCard && Array.isArray(existingCard.detail_images)
+      ? [...existingCard.detail_images]
+      : [null, null, null, null, null];
+    const detailImages = existingDetails.map((url, i) =>
+      pendingDetailUrls[i] !== null ? pendingDetailUrls[i] : url
+    ).filter(Boolean);
+
+    const payload = {
+      id:               id || undefined,
+      phase:            document.getElementById('cms-phase').value,
+      audience:         document.getElementById('cms-audience').value,
+      title:            document.getElementById('cms-title').value.trim(),
+      description:      document.getElementById('cms-desc').value.trim(),
+      category:         document.getElementById('cms-category').value,
+      sort_order:       parseInt(document.getElementById('cms-sort').value, 10) || 0,
+      added_label:      document.getElementById('cms-added').value.trim() || null,
+      launched_label:   document.getElementById('cms-launched').value.trim() || null,
+      tags,
+      header_image_url: headerImageUrl || null,
+      detail_images:    detailImages.length ? detailImages : [],
+      updated_at:       new Date().toISOString(),
+    };
+
+    if (!payload.title || !payload.description) {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save card';
+      saveMsg.textContent = 'Title and description are required.';
+      saveMsg.style.color = '#c0392b';
+      saveMsg.style.display = '';
+      return;
+    }
+
+    const { error } = await _supabase.from('cards').upsert(payload, { onConflict: 'id' });
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save card';
+
+    if (error) {
+      saveMsg.textContent = 'Error: ' + error.message;
+      saveMsg.style.color = '#c0392b';
+      saveMsg.style.display = '';
+    } else {
+      saveMsg.textContent = 'Saved ✓';
+      saveMsg.style.color = '#2e7d32';
+      saveMsg.style.display = '';
+      setTimeout(() => {
+        cmsModal.classList.remove('open');
+        if (activeTab === 'cms') loadCms();
+      }, 800);
+    }
+  });
+
+  /* ── Delete card ── */
+  async function deleteCmsCard(cardId) {
+    const card = cmsCards.find(c => c.id === cardId);
+    const title = card ? card.title : cardId;
+    if (!confirm(`Delete "${title}"? This cannot be undone and will remove the card from the customer page.`)) return;
+    const { error } = await _supabase.from('cards').delete().eq('id', cardId);
+    if (error) { alert('Delete failed: ' + error.message); return; }
+    if (activeTab === 'cms') loadCms();
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════════════════════════ */
+  function initAdmin() {
+    loadDashboard();
+  }
+</script>
+</body>
+</html>

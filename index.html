@@ -878,6 +878,64 @@
       letter-spacing: 0.13em;
       opacity: 0.5;
       margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    /* ── Budget info button + tooltip ── */
+    .budget-info-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      font-size: 9px;
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1;
+      cursor: default;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .budget-info-btn:hover { border-color: rgba(255,255,255,0.8); color: rgba(255,255,255,0.9); }
+    .budget-info-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 230px;
+      background: var(--warm-black);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 9px 11px;
+      font-size: 11px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+      opacity: 0;
+      pointer-events: none;
+      white-space: normal;
+      z-index: 60;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    }
+    .budget-info-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(255,255,255,0.12);
+    }
+    .budget-info-btn:hover .budget-info-tooltip {
+      opacity: 1;
     }
     .budget-count-row {
       display: flex;
@@ -1688,17 +1746,20 @@
       transform: translateY(calc(100% - 108px));
     }
 
-    /* Scrim behind collapsed vote section */
-    .card--has-votes::after {
+    /* Scrim: always present but invisible; fades in when votes are added */
+    .card::after {
       content: '';
       position: absolute;
       inset: 0;
       background: rgba(44,41,39,0.3);
       border-radius: inherit;
       pointer-events: none;
-      opacity: 1;
+      opacity: 0;
       transition: opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1;
+    }
+    .card--has-votes::after {
+      opacity: 1;
     }
     .card--has-votes:has(.card-vote-section--collapsed)::after {
       opacity: 0;
@@ -2318,7 +2379,12 @@
     <div class="budget-widget" id="budget-widget" style="display:none;">
       <div class="budget-widget-top">
         <div>
-          <div class="budget-widget-label" id="budget-allocated-label">— votes allocated</div>
+          <div class="budget-widget-label">
+            <span id="budget-allocated-label">— votes allocated</span>
+            <button class="budget-info-btn" type="button" aria-label="How to vote" tabindex="-1">i
+              <span class="budget-info-tooltip">Head to the In Development, Coming Next, Longer Term or Community Suggestions tabs to cast your votes.</span>
+            </button>
+          </div>
           <div class="budget-count-row">
             <div class="budget-count" id="budget-count">—</div>
             <span class="budget-remaining-label">Remaining</span>
@@ -2374,625 +2440,6 @@
     </div>
 
     <div class="cards-container" id="cards-container">
-
-      <!-- RECENTLY LAUNCHED -->
-      <div class="card" data-phase="launched" data-audience="snappers" data-id="22" data-launched-label="January 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-snappers">For Snappers</span></div>
-          <div class="card-section"><div class="card-title">Snapper Feed</div></div>
-          <div class="card-desc">To educate Snappers about their community and what types of incidents they can report, we have launched a visual feed of recently resolved issues in the Snap Send Solve app.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="23" data-launched-label="February 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">Solver Map</div></div>
-          <div class="card-desc">See all your reports on a map with filtering, boundaries &amp; heatmaps. Identify patterns, prioritise work, and action issues faster with a full geographic view of your area.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="24" data-launched-label="April 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">Videos in Snaps</div></div>
-          <div class="card-desc">You can now request short videos from Snappers as part of their reporting flow. Turn on the video feature and specify the incident types you'd like to capture video for.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="25" data-launched-label="May 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">Content Flagging</div></div>
-          <div class="card-desc">To identify reports of a sensitive or abusive nature and flag those to you prior to opening. Powered by AI to protect your team from potentially distressing content.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="snappers" data-id="26" data-launched-label="June 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-snappers">For Snappers</span></div>
-          <div class="card-section"><div class="card-title">De-duplication</div></div>
-          <div class="card-desc">Deflect duplicate reports by prompting Snappers when there are existing matching records in the same area. Powered by AI to identify similar reports and reduce noise for your team.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="snappers" data-id="27" data-launched-label="August 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-snappers">For Snappers</span></div>
-          <div class="card-section"><div class="card-title">Ratings Drive</div></div>
-          <div class="card-desc">Collect even more CSAT data more efficiently via the Snap Send Solve channel. Drive higher response rates and give Snappers an easy way to rate their experience.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="28" data-launched-label="September 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">New Insights</div></div>
-          <div class="card-desc">See new trend and benchmarking insights on reports, suburbs, SLA performance and more. Make better data-driven decisions with deeper visibility into how your team is performing.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="snappers" data-id="29" data-launched-label="October 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-snappers">For Snappers</span></div>
-          <div class="card-section"><div class="card-title">Suggested Incident Types</div></div>
-          <div class="card-desc">Incident types are now suggested to Snappers &amp; you can also see these in the portal. AI-powered suggestions help Snappers report more accurately, reducing rework for your team.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="30" data-launched-label="November 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">API v3</div></div>
-          <div class="card-desc">All Snapper actions are now coming direct to integrated customers through the API. Full parity between the app and the API means your integrations stay in sync without extra configuration.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="31" data-launched-label="December 2025">
-        <div class="card-illustration" data-custom-illus="triage-illustration.png" data-no-modal-illus></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">New Triaging Experience</div></div>
-          <div class="card-desc">A completely reimagined triaging experience designed to help you work more efficiently. Built around how your team actually works — faster triage, smarter queues, and better context at a glance.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="32" data-launched-label="December 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">Report Prioritisation</div></div>
-          <div class="card-desc">Optimise how you respond to reports by staying focused on the most important issues. AI-powered prioritisation surfaces the reports that need your attention most, helping your team work smarter.</div>
-        </div>
-      </div>
-
-      <div class="card" data-phase="launched" data-audience="solvers" data-id="33" data-launched-label="December 2025">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row"><span class="tag tag-solvers">For Solvers</span></div>
-          <div class="card-section"><div class="card-title">Field Worker App</div></div>
-          <div class="card-desc">Raise work orders, schedule &amp; allocate work with a dedicated companion app for field teams. The Field Worker app brings the full workflow to the field — no need to switch between systems.</div>
-        </div>
-      </div>
-
-      <!-- NOW / SOLVERS -->
-      <div class="card" data-phase="now" data-audience="solvers" data-id="0" data-added-label="15/01/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-            <div class="card-title">Custom Surveys</div>
-          </div>
-          <div class="card-desc">For council officers and operations teams, Custom Surveys lets you design targeted questions, distribute them via the app, and gather consistent structured data to improve issue categorisation and resolution quality.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <!-- NOW / SNAPPERS -->
-      <div class="card" data-phase="now" data-audience="snappers" data-id="1" data-added-label="15/01/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-            <div class="card-title">Custom Surveys</div>
-          </div>
-          <div class="card-desc">If you've submitted a report and have more to say, Custom Surveys lets you share contextual follow-up feedback — helping councils make better decisions and ensuring your voice is heard beyond the initial submission.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <!-- NEXT / SOLVERS -->
-      <div class="card" data-phase="next" data-audience="solvers" data-id="2" data-added-label="22/02/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Request more info from Snappers</div>
-          </div>
-          <div class="card-desc">For council case managers and field teams, this lets you reach out to Snappers directly in the app — eliminating phone tag and email chains so you get the information needed to resolve issues faster.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="next" data-audience="solvers" data-id="3" data-added-label="22/02/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">All comms in app</div>
-          </div>
-          <div class="card-desc">For council staff managing communications across multiple channels, every message — including emails — surfaces in the report timeline, giving you a single source of truth and a clear audit trail for every interaction.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <!-- NEXT / SNAPPERS -->
-      <div class="card" data-phase="next" data-audience="snappers" data-id="4" data-added-label="08/03/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Provide more report detail</div>
-          </div>
-          <div class="card-desc">If a council officer has asked for more details on your report, you can respond directly in the app with guided, tailored prompts — no emails, no phone calls. Give councils exactly what they need to get your issue resolved faster.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <!-- AFTER / SOLVERS -->
-      <div class="card" data-phase="after" data-audience="solvers" data-id="5" data-added-label="12/04/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Create a report in the portal</div>
-          </div>
-          <div class="card-desc">For council staff who spot issues on inspection or take reports by phone, you can now lodge them directly from the Solver portal — keeping everything in one system and ensuring nothing falls through the cracks.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="6" data-added-label="12/04/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Experience for Basic Customers</div>
-          </div>
-          <div class="card-desc">Designed for smaller councils on entry-level plans, this delivers a streamlined, right-sized interface with faster onboarding, cleaner navigation, and only the tools you actually use — making adoption easier for smaller teams.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="7" data-added-label="28/04/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Bulk Actions &amp; Smarter Search</div>
-          </div>
-          <div class="card-desc">For council operations and admin teams handling high volumes of reports, you can select and update multiple reports in a single action, find anything instantly with advanced filters, and dramatically cut time spent on repetitive tasks.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="8" data-added-label="03/05/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Broadcast to Snappers</div>
-          </div>
-          <div class="card-desc">For council communications teams, Broadcast lets you push targeted messages to Snappers in specific areas — reducing inbound enquiries and keeping your community informed about planned works or disruptions before they need to ask.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="9" data-added-label="03/05/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Manage Works Uplift</div>
-          </div>
-          <div class="card-desc">For council works and maintenance teams, this connects community reports directly to field operations — letting you link reports to work orders automatically and track progress from lodgement through to resolution. New product offering.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="10" data-added-label="17/05/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Performance Dashboards</div>
-          </div>
-          <div class="card-desc">For council managers and executives, Performance Dashboards deliver real-time KPI summaries, trend charts, and filterable views — helping you identify bottlenecks and provide evidence-based reporting for councillors and stakeholders.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="11" data-added-label="17/05/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Allocate Internally</div>
-          </div>
-          <div class="card-desc">For team leaders and supervisors, Allocate Internally lets you assign reports with a single action — balancing workloads and ensuring every issue has a clear, accountable owner from day one.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="12" data-added-label="06/06/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Incident Mapping (SSS-CRM)</div>
-          </div>
-          <div class="card-desc">For council GIS, operations, and CRM teams, Incident Mapping lets you visualise report clusters and hotspots on an interactive map, connect Snap Send Solve data with your CRM, and identify infrastructure problem areas before they escalate.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="13" data-added-label="06/06/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">API Version 4</div>
-          </div>
-          <div class="card-desc">For council IT teams and developers building integrations, API Version 4 delivers faster, more reliable connections with expanded endpoints, richer data access, improved documentation, and better tooling to reduce integration time and maintenance.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="14" data-added-label="20/06/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Webform Accessibility (WCAG AA)</div>
-          </div>
-          <div class="card-desc">For councils with a public-facing webform, this delivers fully WCAG AA-compliant forms with improved keyboard navigation, screen reader support, and contrast ratios — meeting government accessibility obligations and ensuring no resident is excluded from reporting.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="solvers" data-id="15" data-added-label="20/06/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-solvers">For Solvers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Private Reporting POC</div>
-          </div>
-          <div class="card-desc">For councils with sensitive or confidential reporting needs — internal inspections, community safety matters — this lets you enable reports that aren't publicly visible and pilot a new reporting model tailored to your council. Want to be involved?</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <!-- AFTER / SNAPPERS -->
-      <div class="card" data-phase="after" data-audience="snappers" data-id="16" data-added-label="14/07/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Snappers can update reports</div>
-          </div>
-          <div class="card-desc">If you've submitted a report and have new photos, notes, or observations to add, you can update it directly in the app at any time — keeping councils informed with the most accurate information to act on.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="snappers" data-id="17" data-added-label="14/07/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Leaderboards</div>
-          </div>
-          <div class="card-desc">For active community members who report regularly, Leaderboards let you see your ranking among local reporters, celebrate top contributors in your area, and stay motivated through friendly, visible recognition.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="snappers" data-id="18" data-added-label="28/07/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Community can update reports</div>
-          </div>
-          <div class="card-desc">Anyone who spots a public report can add their own observations and updates — crowdsourcing a current picture of the issue, helping councils act on real-time information, and building a shared community view that goes beyond the original report.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="snappers" data-id="19" data-added-label="11/08/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Location Triggered Reporting</div>
-          </div>
-          <div class="card-desc">For community members on the go, Location Triggered Reporting sends you a contextual prompt when you enter an area with a known or recurring issue — making reporting effortless and timely, and helping councils capture problems they'd otherwise miss.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="snappers" data-id="20" data-added-label="11/08/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Report Quality Indicators</div>
-          </div>
-          <div class="card-desc">For anyone submitting a report, Quality Indicators give you instant feedback on completeness, guided tips to improve your photos and descriptions, and greater confidence that your issue will be picked up and resolved quickly.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
-
-      <div class="card" data-phase="after" data-audience="snappers" data-id="21" data-added-label="25/08/2026">
-        <div class="card-illustration"></div>
-        <div class="card-body">
-          <div class="tag-row">
-
-            <span class="tag tag-snappers">For Snappers</span>
-          </div>
-          <div class="card-section">
-
-            <div class="card-title">Report Lifecycle Experience</div>
-          </div>
-          <div class="card-desc">For all Snappers tracking an active or resolved report, this gives you a clear, visual journey through every stage — from submission to fix — with meaningful status updates that keep you informed and make the outcome feel worth celebrating.</div>
-        </div>
-        <div class="vote-row">
-          <div class="vote-alloc">
-            <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
-            <span class="vote-count-display">0</span>
-            <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
-          </div>
-          <span class="vote-label">votes</span>
-        </div>
-      </div>
 
       <div class="empty-state" id="empty-state" style="display:none;">
         <img src="pictogram.png" alt="" aria-hidden="true" />
@@ -3200,80 +2647,7 @@
     'depot-field':      'For Depot & Field Teams',
     'it-teams':         'For IT Teams',
   };
-  document.querySelectorAll('.card[data-audience="solvers"]').forEach(card => {
-    const newAud = SOLVER_AUDIENCE_MAP[card.dataset.id];
-    if (!newAud) return;
-    card.dataset.audience = newAud;
-    const tag = card.querySelector('.tag-solvers');
-    if (tag) {
-      tag.className = tag.className.replace('tag-solvers', `tag-${newAud}`);
-      tag.textContent = AUDIENCE_LABELS[newAud];
-    }
-  });
-
-  document.querySelectorAll('.card[data-id]').forEach(card => {
-    const id       = parseInt(card.dataset.id, 10);
-    const audience = card.dataset.audience;
-    const illus    = card.querySelector('.card-illustration');
-
-    // Inject Matisse-inspired SVG background (skip cards with a custom illustration)
-    const customIllus = illus.getAttribute('data-custom-illus');
-    if (customIllus) {
-      illus.style.backgroundImage    = `url('${customIllus}')`;
-      illus.style.backgroundSize     = 'cover';
-      illus.style.backgroundPosition = 'center 30%';
-      illus.style.backgroundRepeat   = 'no-repeat';
-    } else {
-      illus.innerHTML = makeBgSVG(id, audience === 'snappers' ? 'snappers' : 'solvers');
-    }
-
-    // Inject date badge into illustration
-    if (card.dataset.phase === 'launched' && card.dataset.launchedLabel) {
-      const badge = document.createElement('div');
-      badge.className = 'launched-badge';
-      badge.textContent = 'Launched ' + card.dataset.launchedLabel;
-      illus.appendChild(badge);
-    } else if (card.dataset.addedLabel) {
-      const badge = document.createElement('div');
-      badge.className = 'launched-badge';
-      badge.textContent = 'Added on ' + card.dataset.addedLabel;
-      illus.appendChild(badge);
-    }
-
-    // Inject vote count badge (top-right of illustration) for non-launched cards
-    if (card.dataset.phase !== 'launched') {
-      const voteBadge = document.createElement('div');
-      voteBadge.className = 'card-vote-badge visible';
-      voteBadge.innerHTML = `<span class="card-vote-badge-count">0</span><span class="card-vote-badge-label">votes</span>`;
-      illus.appendChild(voteBadge);
-    }
-
-    // Inject small audience icon into the tag pill
-    const audienceTag = card.querySelector('.tag-solvers, .tag-snappers, .tag-customer-service, .tag-depot-field, .tag-it-teams');
-    if (audienceTag) {
-      const iconEl = document.createElement('span');
-      iconEl.className = 'audience-icon-sm';
-      iconEl.innerHTML = audience === 'snappers' ? SNAPPER_ICON : SOLVER_ICON;
-      audienceTag.prepend(iconEl);
-    }
-  });
-
-
-  // Inject Learn more (+ Book a Demo for launched) buttons into each card body
-  document.querySelectorAll('.card').forEach(card => {
-    const body = card.querySelector('.card-body');
-    if (!body || body.querySelector('.learn-more-btn')) return;
-    const learnBtn = document.createElement('button');
-    learnBtn.className = 'learn-more-btn';
-    learnBtn.textContent = 'Learn more';
-    body.appendChild(learnBtn);
-    if (card.dataset.phase === 'launched') {
-      const demoBtn = document.createElement('button');
-      demoBtn.className = 'book-demo-btn';
-      demoBtn.textContent = 'Book a Demo';
-      body.appendChild(demoBtn);
-    }
-  });
+  // Audience remapping, illustrations, badges, and buttons are now handled by buildRoadmapCard()
 
   /* ─────────────────────────────────────────────────────────────────
      GOOGLE SHEETS CONFIG
@@ -3312,9 +2686,183 @@
     '16':'customer-facing','17':'innovation','18':'customer-facing',
     '19':'innovation','20':'innovation','21':'customer-facing',
   };
-  document.querySelectorAll('.card[data-id]').forEach(card => {
-    card.dataset.category = CARD_CATEGORIES[card.dataset.id] || 'customer-facing';
-  });
+
+  /* ── Audience tag CSS class map ── */
+  const AUDIENCE_TAG_CLASSES = {
+    'snappers':         'tag-snappers',
+    'solvers':          'tag-solvers',
+    'customer-service': 'tag-customer-service',
+    'depot-field':      'tag-depot-field',
+    'it-teams':         'tag-it-teams',
+  };
+
+  /* ── Build a roadmap card DOM node from a Supabase cards row ── */
+  function buildRoadmapCard(c) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id       = c.id;
+    card.dataset.phase    = c.phase;
+    card.dataset.audience = c.audience;
+    card.dataset.category = c.category || 'customer-facing';
+    if (c.added_label)    card.dataset.addedLabel    = c.added_label;
+    if (c.launched_label) card.dataset.launchedLabel = c.launched_label;
+
+    // Illustration
+    const illusDiv = document.createElement('div');
+    illusDiv.className = 'card-illustration';
+    if (c.header_image_url) {
+      illusDiv.style.backgroundImage    = `url('${c.header_image_url}')`;
+      illusDiv.style.backgroundSize     = 'cover';
+      illusDiv.style.backgroundPosition = 'center 30%';
+      illusDiv.style.backgroundRepeat   = 'no-repeat';
+    } else {
+      illusDiv.innerHTML = makeBgSVG(parseInt(c.id, 10) || 0, c.audience === 'snappers' ? 'snappers' : 'solvers');
+    }
+
+    // Date badge
+    if (c.phase === 'launched' && c.launched_label) {
+      const badge = document.createElement('div');
+      badge.className = 'launched-badge';
+      badge.textContent = 'Launched ' + c.launched_label;
+      illusDiv.appendChild(badge);
+    } else if (c.added_label) {
+      const badge = document.createElement('div');
+      badge.className = 'launched-badge';
+      badge.textContent = 'Added on ' + c.added_label;
+      illusDiv.appendChild(badge);
+    }
+
+    // Vote count badge (top-right, non-launched)
+    if (c.phase !== 'launched') {
+      const voteBadge = document.createElement('div');
+      voteBadge.className = 'card-vote-badge visible';
+      voteBadge.innerHTML = `<span class="card-vote-badge-count">0</span><span class="card-vote-badge-label">votes</span>`;
+      illusDiv.appendChild(voteBadge);
+    }
+    card.appendChild(illusDiv);
+
+    // Card body
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    // Tag row
+    const tagRow = document.createElement('div');
+    tagRow.className = 'tag-row';
+    const tagSpan = document.createElement('span');
+    tagSpan.className = 'tag ' + (AUDIENCE_TAG_CLASSES[c.audience] || 'tag-solvers');
+    // Audience icon
+    const iconEl = document.createElement('span');
+    iconEl.className = 'audience-icon-sm';
+    iconEl.innerHTML = c.audience === 'snappers' ? SNAPPER_ICON : SOLVER_ICON;
+    tagSpan.appendChild(iconEl);
+    const audLabel = AUDIENCE_LABELS[c.audience] || (c.audience === 'snappers' ? 'For Snappers' : 'For Solvers');
+    tagSpan.appendChild(document.createTextNode(audLabel));
+    tagRow.appendChild(tagSpan);
+    // Extra tag pills from tags array
+    if (Array.isArray(c.tags)) {
+      c.tags.forEach(tag => {
+        const t = document.createElement('span');
+        t.className = 'tag';
+        t.textContent = tag;
+        tagRow.appendChild(t);
+      });
+    }
+    body.appendChild(tagRow);
+
+    // Title
+    const cardSection = document.createElement('div');
+    cardSection.className = 'card-section';
+    const titleEl = document.createElement('div');
+    titleEl.className = 'card-title';
+    titleEl.textContent = c.title;
+    cardSection.appendChild(titleEl);
+    body.appendChild(cardSection);
+
+    // Description
+    const descEl = document.createElement('div');
+    descEl.className = 'card-desc';
+    descEl.textContent = c.description;
+    body.appendChild(descEl);
+
+    // Learn more button
+    const learnBtn = document.createElement('button');
+    learnBtn.className = 'learn-more-btn';
+    learnBtn.textContent = 'Learn more';
+    body.appendChild(learnBtn);
+
+    // Book a Demo button (launched only)
+    if (c.phase === 'launched') {
+      const demoBtn = document.createElement('button');
+      demoBtn.className = 'book-demo-btn';
+      demoBtn.textContent = 'Book a Demo';
+      body.appendChild(demoBtn);
+    }
+    card.appendChild(body);
+
+    // Vote row (non-launched only)
+    if (c.phase !== 'launched') {
+      const voteRow = document.createElement('div');
+      voteRow.className = 'vote-row';
+      voteRow.innerHTML = `
+        <div class="vote-alloc">
+          <button class="vote-adj vote-minus" aria-label="Remove vote" disabled>−</button>
+          <span class="vote-count-display">0</span>
+          <button class="vote-adj vote-plus" aria-label="Add vote" disabled>+</button>
+        </div>
+        <span class="vote-label">votes</span>
+      `;
+      card.appendChild(voteRow);
+    }
+    return card;
+  }
+
+  /* ── Fetch cards from Supabase and append to phase grids ── */
+  let cardsLoadedResolve;
+  const cardsLoadedPromise = new Promise(res => { cardsLoadedResolve = res; });
+
+  async function loadRoadmapCards() {
+    const { data: cardRows, error } = await _supabase.from('cards').select('*').order('sort_order');
+    if (error) { console.warn('loadRoadmapCards:', error); cardsLoadedResolve(); return; }
+    const phaseGridMap = {
+      'now':      document.querySelector('#section-now .card-grid'),
+      'next':     document.querySelector('#section-next .card-grid'),
+      'after':    document.querySelector('#section-after .card-grid'),
+      'launched': document.querySelector('#section-launched .card-grid'),
+    };
+    (cardRows || []).forEach(c => {
+      const grid = phaseGridMap[c.phase];
+      if (grid) {
+        const card = buildRoadmapCard(c);
+        grid.appendChild(card);
+        cards.push(card);
+      }
+    });
+    cardsLoadedResolve();
+  }
+
+  /* ── Sync current user's votes to Supabase (fire-and-forget) ── */
+  async function syncVotesToSupabase() {
+    if (!currentUser) return;
+    const rows = Object.entries(voteData)
+      .filter(([, v]) => v.votes > 0)
+      .map(([cardId, v]) => ({
+        user_email:  currentUser.email,
+        user_name:   currentUser.name,
+        user_org:    currentUser.org,
+        user_role:   currentUser.role,
+        user_budget: currentUser.budget,
+        card_id:     cardId,
+        votes:       v.votes,
+        notify:      v.notify   || false,
+        research:    v.research || false,
+        reason:      v.reason   || null,
+        updated_at:  new Date().toISOString(),
+      }));
+    if (rows.length === 0) return;
+    await _supabase.from('votes').upsert(rows, { onConflict: 'user_email,card_id' });
+  }
+
+  // card.dataset.category is now set in buildRoadmapCard() from the cards table
 
   /* ── User session ── */
   const USER_KEY      = 'sss_rmv2_user';
@@ -3342,6 +2890,7 @@
       localStorage.setItem(USER_KEY,  JSON.stringify(currentUser));
       localStorage.setItem(VOTES_KEY, JSON.stringify(voteData));
     } catch(e) {}
+    syncVotesToSupabase(); // fire-and-forget: write to Supabase for admin insights
   }
 
   function getBudgetForRole(role) {
@@ -3404,8 +2953,9 @@
     showRegStep('reg-step-form');
   });
 
-  _supabase.auth.onAuthStateChange((event, session) => {
+  _supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
+      await cardsLoadedPromise; // wait for cards to be in DOM before initialising voting UI
       loadSession();
       if (currentUser) {
         regModal.classList.add('hidden');
@@ -3627,15 +3177,19 @@
     }
     saveSession();
     renderCardVote(card);
-    // Auto-expand this card's vote section; collapse all others
-    const voteSection = card.querySelector('.card-vote-section');
-    document.querySelectorAll('.card-vote-section').forEach(vs => {
-      if (vs === voteSection) {
-        vs.classList.remove('card-vote-section--collapsed');
-      } else {
-        vs.classList.add('card-vote-section--collapsed');
-      }
-    });
+    // Only expand/collapse sections when the card still has votes after the adjustment.
+    // If votes just hit 0 the section will be hidden by CSS (no card--has-votes class)
+    // so there's nothing to expand, and we shouldn't force it open mid-animation.
+    if (next > 0) {
+      const voteSection = card.querySelector('.card-vote-section');
+      document.querySelectorAll('.card-vote-section').forEach(vs => {
+        if (vs === voteSection) {
+          vs.classList.remove('card-vote-section--collapsed');
+        } else {
+          vs.classList.add('card-vote-section--collapsed');
+        }
+      });
+    }
     // Re-check all + buttons since budget changed
     document.querySelectorAll('.card[data-id] .vote-plus').forEach(p => {
       p.disabled = remainingBudget() === 0;
@@ -3790,7 +3344,7 @@
   });
 
   /* ── Filters ── */
-  const cards         = Array.from(document.querySelectorAll('.card[data-phase]'));
+  let cards = []; // populated by loadRoadmapCards() and loadCommunityIdeas()
   let communityFilter = 'all'; // 'all' | 'mine'
   let communitySort   = 'popular-desc'; // 'popular-desc' | 'popular-asc' | 'date-desc' | 'date-asc'
   let phaseSort       = {}; // per-phase sort: 'date-desc' | 'date-asc'
@@ -4050,7 +3604,7 @@
     // Group cards into phase section divs (no headers — tabs do that job)
     phases.forEach(({ key, label }) => {
       const phaseCards = allCards.filter(c => c.dataset.phase === key);
-      if (!phaseCards.length && key !== 'suggestions') return;
+      // Always create the section so loadRoadmapCards() can populate it dynamically
       const section = document.createElement('div');
       section.className = 'phase-section';
       section.id = `section-${key}`;
@@ -4915,9 +4469,15 @@
   })();
 
   /* ── Init ── */
-  loadCommunityIdeas();
-  applyFilters(); // refresh badges + visibility after community ideas loaded
   (async () => {
+    // 1. Load roadmap cards from Supabase into phase grids
+    await loadRoadmapCards();
+    // 2. Load community ideas (from localStorage) into suggestions grid
+    loadCommunityIdeas();
+    // 3. Apply filters / update tab badges now that cards are in the DOM
+    applyFilters();
+
+    // 4. Auth check — sign user in if session exists
     const { data: { session } } = await _supabase.auth.getSession();
     if (session) {
       loadSession();
