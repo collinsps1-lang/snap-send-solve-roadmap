@@ -217,15 +217,16 @@
     .empty-msg { color: var(--text-muted); font-size: 14px; font-style: italic; padding: 20px 0; font-family: 'Work Sans', sans-serif; }
 
     /* ── Dashboard top two-column layout ── */
-    .dash-top-row { display: grid; grid-template-columns: 5fr 7fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
-    .dash-left-panel { display: flex; flex-direction: column; gap: 12px; }
-    .dash-left-panel .stats-row { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 0; }
-    .dash-left-panel .stat-card { padding: 12px 14px; }
-    .dash-left-panel .stat-value { font-size: 24px; }
+    .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
     .dash-left-panel details.sugg-panel { margin-bottom: 0; }
     .dash-left-panel .sugg-items { grid-template-columns: repeat(2, 1fr); }
-    .dash-features-chart { display: flex; flex-direction: column; margin-bottom: 0; }
+    .dash-features-chart { display: flex; flex-direction: column; margin-bottom: 0; background: var(--warm-black); border-color: var(--warm-black); }
     .dash-features-chart .chart-wrap-bar-lg { flex: 1; height: auto; min-height: 300px; }
+    .dash-features-chart .chart-title { color: #fff; }
+    .dash-features-chart .chart-info { color: rgba(255,255,255,0.4); }
+    .dash-features-chart .chart-header-divider,
+    .dash-features-chart .chart-footer-divider { border-color: rgba(255,255,255,0.12); }
+    .dash-features-chart .chart-legend-label { color: rgba(255,255,255,0.7); }
 
     /* ── Dashboard stats ── */
     .stats-row {
@@ -1334,16 +1335,17 @@
     if (filterDock) filterDock.innerHTML = filterBarHtml;
 
     el.innerHTML = `
+      <div class="stats-row">
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
+      </div>
+
       <div class="dash-top-row">
         <div class="dash-left-panel">
           ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
-          <div class="stats-row">
-            <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
-            <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
-            <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
-            <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
-            <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
-          </div>
         </div>
         <div class="chart-card chart-card-full dash-features-chart">
           <div class="chart-header">
@@ -1521,8 +1523,18 @@
     }
 
     const top12 = ranked.slice(0, 12);
-    _chartFeatures = new Chart(document.getElementById('chart-features'),
-      mkBar(top12.map(r => r.card.title), top12.map(r => r.total), top12.map((_,i) => i === 0 ? '#E0FF89' : '#2C2927')));
+    _chartFeatures = new Chart(document.getElementById('chart-features'), {
+      type: 'bar',
+      data: { labels: top12.map(r => r.card.title), datasets: [{ data: top12.map(r => r.total), backgroundColor: top12.map((_,i) => i === 0 ? '#E0FF89' : 'rgba(255,255,255,0.2)'), borderColor: 'transparent', borderWidth: 0, borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 }, borderSkipped: false }] },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x} vote${ctx.parsed.x !== 1 ? 's' : ''}` } } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.1)' }, border: { display: false }, ticks: { font: { family: ff, size: 12 }, color: 'rgba(255,255,255,0.4)' } },
+          y: { grid: { display: false }, border: { display: false }, ticks: { font: { family: ff, size: 12 }, color: 'rgba(255,255,255,0.85)' } },
+        },
+      },
+    });
 
     const phDisp = { now:'In Development', next:'Coming Next', after:'Longer Term', launched:'Launched' };
     const phEnt  = Object.entries(phaseTotals).filter(([,v]) => v > 0);
