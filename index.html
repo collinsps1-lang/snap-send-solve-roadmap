@@ -4362,7 +4362,7 @@
     if (!logo || !tabBar || !filter) return;
     function align() {
       logo.style.marginBottom = '';
-      const diff = tabBar.getBoundingClientRect().bottom - filter.getBoundingClientRect().top;
+      const diff = tabBar.getBoundingClientRect().bottom - filter.getBoundingClientRect().top - 1;
       const current = parseFloat(getComputedStyle(logo).marginBottom) || 0;
       logo.style.marginBottom = Math.max(0, current + diff) + 'px';
     }
