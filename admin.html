@@ -1579,7 +1579,7 @@
       },
     });
 
-    buildLegend('legend-features', [{ color: '#E0FF89', label: 'Top ranked' }, { color: '#2C2927', label: 'All others' }]);
+    buildLegend('legend-features', [{ color: '#E0FF89', label: 'Top ranked' }, { color: 'rgba(255,255,255,0.2)', label: 'All others' }]);
     buildLegend('legend-phase',    phEnt.map(function([k], i) { return { color: PAL[i] || '#ccc', label: phDisp[k] || k }; }));
     buildLegend('legend-rolegroup',rgEnt.map(function([k], i) { return { color: PAL[i] || '#ccc', label: k }; }));
     buildLegend('legend-lgatype',  lgaEnt.map(function([k], i) { return { color: PAL[i] || '#ccc', label: k }; }));
