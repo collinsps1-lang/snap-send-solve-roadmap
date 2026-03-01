@@ -1013,9 +1013,20 @@
       },
     });
 
+    // Ordered palette — Snapper Blue & Solver Orange only used at position 5+
+    const CHART_PALETTE = [
+      '#E0FF89',  // 1. High-Vis
+      '#BDECFB',  // 2. Light Blue
+      '#FFCDA8',  // 3. Light Orange
+      '#2C2927',  // 4. Warm Black
+      '#5BCFF4',  // 5. Snapper Blue  (only appears with 5+ segments)
+      '#FF964A',  // 6. Solver Orange (only appears with 6+ segments)
+      '#0B98EB',  // 7. Dark Blue
+      '#EF6213',  // 8. Dark Orange
+    ];
+
     // ── Chart 2: Donut — votes by phase ──
     const phaseLabels  = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
-    const phaseColors  = { now: '#E0FF89', next: '#5BCFF4', after: '#FF964A', launched: '#BDECFB' };
     const phaseEntries = Object.entries(phaseTotals).filter(([, v]) => v > 0);
     _chartPhase = new Chart(document.getElementById('chart-phase'), {
       type: 'doughnut',
@@ -1023,7 +1034,7 @@
         labels: phaseEntries.map(([k]) => phaseLabels[k] || k),
         datasets: [{
           data: phaseEntries.map(([, v]) => v),
-          backgroundColor: phaseEntries.map(([k]) => phaseColors[k] || '#ccc'),
+          backgroundColor: phaseEntries.map((_, i) => CHART_PALETTE[i] || '#ccc'),
           borderWidth: 2,
           borderColor: '#fff',
           hoverBorderWidth: 3,
@@ -1050,10 +1061,6 @@
       snappers: 'Snappers', solvers: 'Solvers',
       'customer-service': 'Customer Service', 'depot-field': 'Depot & Field', 'it-teams': 'IT Teams',
     };
-    const audColors = {
-      snappers: '#5BCFF4', solvers: '#FF964A',
-      'customer-service': '#E0FF89', 'depot-field': '#FFCDA8', 'it-teams': '#0B98EB',
-    };
     const audEntries = Object.entries(audTotals).sort((a, b) => b[1] - a[1]);
     _chartAudience = new Chart(document.getElementById('chart-audience'), {
       type: 'doughnut',
@@ -1061,7 +1068,7 @@
         labels: audEntries.map(([k]) => audLabels[k] || k),
         datasets: [{
           data: audEntries.map(([, v]) => v),
-          backgroundColor: audEntries.map(([k]) => audColors[k] || '#ccc'),
+          backgroundColor: audEntries.map((_, i) => CHART_PALETTE[i] || '#ccc'),
           borderWidth: 2,
           borderColor: '#fff',
           hoverBorderWidth: 3,
