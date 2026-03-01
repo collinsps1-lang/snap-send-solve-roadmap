@@ -2477,8 +2477,9 @@
 
       <div class="empty-state" id="empty-state" style="display:none;">
         <img src="pictogram.png" alt="" aria-hidden="true" />
-        <h2>No features match your filters</h2>
-        <p>Try removing some filters to see more of the roadmap.</p>
+        <h2 id="empty-state-heading">No features match your filters</h2>
+        <p id="empty-state-sub">Try removing some filters to see more of the roadmap.</p>
+        <button id="empty-retry-btn" style="display:none;margin-top:16px;padding:10px 20px;background:var(--high-vis);border:none;border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;">Retry loading</button>
       </div>
 
     </div>
@@ -2865,7 +2866,21 @@
       if (error) console.error(`loadRoadmapCards attempt ${attempt + 1} error:`, error);
       else console.warn(`[SSS] loadRoadmapCards attempt ${attempt + 1}: 0 rows returned (RLS missing "Public read" policy? or cold start)`);
     }
-    if (error) { console.error('loadRoadmapCards failed:', error); cardsLoadedResolve(); return; }
+    if (error || !cardRows || cardRows.length === 0) {
+      console.error('loadRoadmapCards failed after retries. error:', error, 'rows:', cardRows?.length);
+      // Show a specific "failed to load" state with a retry button
+      const heading = document.getElementById('empty-state-heading');
+      const sub     = document.getElementById('empty-state-sub');
+      const retry   = document.getElementById('empty-retry-btn');
+      if (heading) heading.textContent = 'Could not load the roadmap';
+      if (sub)     sub.textContent     = error
+        ? 'There was a problem connecting to the server. Try again.'
+        : 'The server returned no cards. This is usually a temporary issue.';
+      if (retry)   retry.style.display = '';
+      document.getElementById('empty-state').style.display = 'flex';
+      cardsLoadedResolve();
+      return;
+    }
 
     const phaseGridMap = {
       'now':      document.querySelector('#section-now .card-grid'),
@@ -4534,6 +4549,19 @@
 
     timer = setTimeout(startWiggle, IDLE_MS);
   })();
+
+  /* ── Retry button ── */
+  document.getElementById('empty-retry-btn').addEventListener('click', async () => {
+    const heading = document.getElementById('empty-state-heading');
+    const sub     = document.getElementById('empty-state-sub');
+    const retry   = document.getElementById('empty-retry-btn');
+    document.getElementById('empty-state').style.display = 'none';
+    if (heading) heading.textContent = 'No features match your filters';
+    if (sub)     sub.textContent     = 'Try removing some filters to see more of the roadmap.';
+    if (retry)   retry.style.display = 'none';
+    await loadRoadmapCards();
+    applyFilters();
+  });
 
   /* ── Init ── */
   (async () => {
