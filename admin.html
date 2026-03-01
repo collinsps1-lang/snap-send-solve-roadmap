@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" rel="stylesheet" />
   <style>
     @font-face {
       font-family: 'Bagoss';
@@ -154,7 +155,7 @@
     .nav-tab:last-child { border-bottom: 1px solid rgba(44,41,39,0.1); }
     .nav-tab:hover { color: var(--warm-black); background: rgba(44,41,39,0.05); }
     .nav-tab.active { color: var(--warm-black); }
-    .nav-tab-icon { flex-shrink: 0; opacity: 0.65; }
+    .nav-tab-icon { flex-shrink: 0; opacity: 0.65; font-size: 18px; line-height: 1; display: flex; align-items: center; }
     .nav-tab.active .nav-tab-icon,
     .nav-tab:hover .nav-tab-icon { opacity: 1; }
 
@@ -200,16 +201,16 @@
     .admin-main { flex: 1; overflow: hidden; min-width: 0; display: flex; flex-direction: column; }
     .tab-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
     .tab-panel.active { display: flex; }
-    .panel-header { padding: 32px 24px 0; flex-shrink: 0; }
-    .panel-body { flex: 1; overflow-y: auto; padding: 0 24px 32px; }
+    .panel-header { padding: 32px 24px 30px; flex-shrink: 0; }
+    .panel-body { flex: 1; overflow-y: auto; padding: 28px 24px 32px; }
 
     /* ── Page heading ── */
     .page-heading {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
       font-size: 40px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.03em; line-height: 1.05;
     }
-    .page-sub { color: var(--text-dark); font-size: 14px; margin-bottom: 30px; font-family: 'Space Grotesk', sans-serif; line-height: 1.65; }
-    .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 0 -24px 28px; }
+    .page-sub { color: var(--text-dark); font-size: 14px; margin-bottom: 0; font-family: 'Space Grotesk', sans-serif; line-height: 1.65; }
+    .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 0; flex-shrink: 0; }
 
     /* ── Loading / empty states ── */
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
@@ -217,7 +218,7 @@
 
     /* ── Dashboard stats ── */
     .stats-row {
-      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 20px;
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 20px;
     }
     .stat-card {
       background: var(--warm-black);
@@ -240,6 +241,45 @@
     .stat-value-sm { font-size: 16px; letter-spacing: -0.01em; line-height: 1.3; }
     .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif; font-weight: 500; }
 
+    /* ── Roadmap Suggestions panel ── */
+    .sugg-panel {
+      background: var(--warm-black); border-radius: 14px; padding: 24px 28px 28px; margin-bottom: 20px;
+    }
+    .sugg-panel-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px; }
+    .sugg-finger { width: 40px; height: 40px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+    .sugg-panel-title {
+      font-family: 'Bagoss', 'Space Grotesk', sans-serif;
+      font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 4px;
+    }
+    .sugg-ai-text {
+      font-size: 12.5px; color: rgba(255,255,255,0.55); font-family: 'Space Grotesk', sans-serif;
+      line-height: 1.6;
+    }
+    .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px 0; }
+    .sugg-items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .sugg-item {
+      background: rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .sugg-item-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px;
+    }
+    .sugg-item-icon { font-size: 22px; margin-bottom: 8px; }
+    .sugg-item-title {
+      font-family: 'Bagoss', 'Space Grotesk', sans-serif;
+      font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.01em;
+      margin-bottom: 5px; line-height: 1.3;
+    }
+    .sugg-item-meta { font-size: 12px; color: rgba(255,255,255,0.45); font-family: 'Space Grotesk', sans-serif; }
+    .sugg-item-badge {
+      display: inline-block; margin-top: 10px; padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 600; font-family: 'Space Grotesk', sans-serif;
+    }
+    .sugg-item-badge.orange { background: rgba(255,150,74,0.2); color: #FF964A; }
+    .sugg-item-badge.green  { background: rgba(224,255,137,0.15); color: #b2dd2f; }
+    .sugg-item-badge.muted  { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+
     /* ── Dashboard charts ── */
     .charts-row {
       display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 20px;
@@ -252,9 +292,8 @@
     .chart-header { display: flex; align-items: flex-start; gap: 8px; padding-bottom: 14px; }
     .chart-info {
       position: relative; display: inline-flex; align-items: center; justify-content: center;
-      width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
-      font-size: 11px; font-weight: 700; font-style: italic; font-family: 'Space Grotesk', sans-serif;
-      background: rgba(44,41,39,0.1); color: rgba(44,41,39,0.4); cursor: default;
+      width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px;
+      color: rgba(44,41,39,0.35); cursor: default;
     }
     .chart-info-tip {
       display: none; position: absolute; top: calc(100% + 6px); right: 0;
@@ -562,41 +601,26 @@
     <div class="sidebar-expanded-body">
       <nav class="sidebar-nav">
         <button class="nav-tab active" data-tab="dashboard">
-          <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
-            <rect x="1" y="9" width="4" height="8" rx="1" fill="currentColor"/>
-            <rect x="7" y="5" width="4" height="12" rx="1" fill="currentColor"/>
-            <rect x="13" y="1" width="4" height="16" rx="1" fill="currentColor"/>
-          </svg>
+          <span class="material-symbols-outlined nav-tab-icon">bar_chart</span>
           Roadmap Insights
         </button>
         <button class="nav-tab" data-tab="voters">
-          <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
-            <circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M1 16c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M13 4c1.657 0 3 1.343 3 3s-1.343 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M15 14c0-1.5-.7-2.9-1.8-3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
+          <span class="material-symbols-outlined nav-tab-icon">group</span>
           Audience
         </button>
         <button class="nav-tab" data-tab="community">
-          <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
-            <path d="M9 1C4.58 1 1 4.13 1 8c0 1.74.68 3.33 1.8 4.55L2 17l4.45-1.48A8.3 8.3 0 009 16c4.42 0 8-3.13 8-7s-3.58-7-8-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-          </svg>
+          <span class="material-symbols-outlined nav-tab-icon">forum</span>
           Community Contributions
         </button>
         <button class="nav-tab" data-tab="cms">
-          <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
-            <path d="M11 2l5 5-8 8H3v-5l8-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-          </svg>
+          <span class="material-symbols-outlined nav-tab-icon">edit_note</span>
           Features
         </button>
       </nav>
 
       <div class="sidebar-bottom">
         <button class="signout-btn" id="signout-btn">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;opacity:0.7;">
-            <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="material-symbols-outlined" style="font-size:18px;opacity:0.7;flex-shrink:0;">logout</span>
           Sign out
         </button>
       </div>
@@ -605,35 +629,20 @@
     <!-- Collapsed icon strip -->
     <div class="sidebar-collapsed-body">
       <button class="sidebar-icon-btn active" data-tab="dashboard" aria-label="Roadmap Insights">
-        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-          <rect x="1" y="9" width="4" height="8" rx="1" fill="currentColor"/>
-          <rect x="7" y="5" width="4" height="12" rx="1" fill="currentColor"/>
-          <rect x="13" y="1" width="4" height="16" rx="1" fill="currentColor"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size:22px;">bar_chart</span>
       </button>
       <button class="sidebar-icon-btn" data-tab="voters" aria-label="Audience">
-        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-          <circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M1 16c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M13 4c1.657 0 3 1.343 3 3s-1.343 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M15 14c0-1.5-.7-2.9-1.8-3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size:22px;">group</span>
       </button>
       <button class="sidebar-icon-btn" data-tab="community" aria-label="Community Contributions">
-        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-          <path d="M9 1C4.58 1 1 4.13 1 8c0 1.74.68 3.33 1.8 4.55L2 17l4.45-1.48A8.3 8.3 0 009 16c4.42 0 8-3.13 8-7s-3.58-7-8-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size:22px;">forum</span>
       </button>
       <button class="sidebar-icon-btn" data-tab="cms" aria-label="Features">
-        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-          <path d="M11 2l5 5-8 8H3v-5l8-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size:22px;">edit_note</span>
       </button>
       <div class="sidebar-icon-spacer"></div>
       <button class="sidebar-icon-btn" id="signout-icon-btn" aria-label="Sign out">
-        <svg width="20" height="20" viewBox="0 0 16 16" fill="none">
-          <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size:22px;">logout</span>
       </button>
     </div>
 
@@ -647,8 +656,8 @@
       <div class="panel-header">
         <div class="page-heading">Roadmap Insights</div>
         <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
-        <hr class="tab-divider">
       </div>
+      <hr class="tab-divider">
       <div class="panel-body">
         <div id="dashboard-content"><div class="loading">Loading…</div></div>
       </div>
@@ -659,8 +668,8 @@
       <div class="panel-header">
         <div class="page-heading">Audience</div>
         <p class="page-sub">All registered voters and how they've allocated their votes.</p>
-        <hr class="tab-divider">
       </div>
+      <hr class="tab-divider">
       <div class="panel-body">
         <div id="voters-content"><div class="loading">Loading…</div></div>
       </div>
@@ -671,8 +680,8 @@
       <div class="panel-header">
         <div class="page-heading">Community Contributions</div>
         <p class="page-sub">Ideas and suggestions submitted by the community through the customer-facing page.</p>
-        <hr class="tab-divider">
       </div>
+      <hr class="tab-divider">
       <div class="panel-body">
         <div id="community-content"><div class="loading">Loading…</div></div>
       </div>
@@ -683,8 +692,8 @@
       <div class="panel-header">
         <div class="page-heading">Features</div>
         <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
-        <hr class="tab-divider">
       </div>
+      <hr class="tab-divider">
       <div class="panel-body">
       <button class="btn-add" id="cms-add-btn">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -908,13 +917,14 @@
   });
 
   /* Check for existing session on load */
-  // ── TEMP: magic link disabled (Supabase rate limit) — skip auth ──
   (async () => {
-    authScreen.style.display = 'none';
-    adminApp.style.display   = 'flex';
-    initAdmin();
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (session && ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
+      authScreen.style.display = 'none';
+      adminApp.style.display   = 'flex';
+      initAdmin();
+    }
   })();
-  // ── END TEMP ──
 
   /* ══════════════════════════════════════════════════════════════
      SIDEBAR TOGGLE
@@ -1158,6 +1168,65 @@
     }
   }
 
+  function _buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals) {
+    if (ranked.length === 0) return '';
+
+    // Most voted overall
+    const top = ranked[0];
+    const topPct = totalVotes > 0 ? Math.round(top.total / totalVotes * 100) : 0;
+
+    // Feature to accelerate: highest voted in 'next' phase
+    const nextRanked = ranked.filter(r => r.card?.phase === 'next');
+    const accel = nextRanked[0] || null;
+
+    // Feature to deprioritise: lowest voted in 'next' phase (only if >1 next feature)
+    const depr = nextRanked.length > 1 ? nextRanked[nextRanked.length - 1] : null;
+
+    // AI narrative
+    const topRgEntry = Object.entries(rgTotals).sort((a, b) => b[1] - a[1])[0];
+    const notifyPct = voterEmails.size > 0 ? Math.round(notifyEmails.size / voterEmails.size * 100) : 0;
+    const researchPct = voterEmails.size > 0 ? Math.round(researchEmails.size / voterEmails.size * 100) : 0;
+
+    let narrative = `${voterEmails.size} voter${voterEmails.size === 1 ? '' : 's'} have allocated ${totalVotes} vote${totalVotes === 1 ? '' : 's'} across ${ranked.length} feature${ranked.length === 1 ? '' : 's'}. `;
+    narrative += `<strong style="color:rgba(255,255,255,0.85)">${escHtml(top.card.title)}</strong> leads demand, capturing ${topPct}% of all votes. `;
+    if (topRgEntry) narrative += `${escHtml(topRgEntry[0])}s are your most engaged segment. `;
+    if (notifyPct > 0) narrative += `${notifyPct}% of voters want to be notified of progress updates`;
+    if (researchPct > 0) narrative += `, and ${researchPct}% are willing to participate in research`;
+    if (notifyPct > 0 || researchPct > 0) narrative += '.';
+
+    const infoSvg = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.5"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg>`;
+
+    const phaseDisp = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
+
+    function _suggItem(label, emoji, item, badge, badgeCls, meta) {
+      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${label}</div><div class="sugg-item-meta" style="margin-top:8px;">Not enough data</div></div>`;
+      return `<div class="sugg-item">
+        <div class="sugg-item-label">${label}</div>
+        <div class="sugg-item-icon">${emoji}</div>
+        <div class="sugg-item-title">${escHtml(item.card.title)}</div>
+        <div class="sugg-item-meta">${meta}</div>
+        <div class="sugg-item-badge ${badgeCls}">${badge}</div>
+      </div>`;
+    }
+
+    return `
+      <div class="sugg-panel">
+        <div class="sugg-panel-header">
+          <img src="solver-icon.png" class="sugg-finger" alt="" aria-hidden="true" />
+          <div>
+            <div class="sugg-panel-title">Roadmap Suggestions</div>
+            <div class="sugg-ai-text">${narrative}</div>
+          </div>
+        </div>
+        <hr class="sugg-divider">
+        <div class="sugg-items">
+          ${_suggItem('Most demand', '🏆', top, `${top.total} vote${top.total === 1 ? '' : 's'}`, 'orange', escHtml(phaseDisp[top.card.phase] || top.card.phase))}
+          ${_suggItem('Consider accelerating', '⚡', accel, accel ? `${accel.total} vote${accel.total === 1 ? '' : 's'} in Coming Next` : '', 'green', accel ? 'High demand — candidate to pull into In Development' : '')}
+          ${_suggItem('Review priority', '↓', depr, depr ? `${depr.total} vote${depr.total === 1 ? '' : 's'} in Coming Next` : '', 'muted', depr ? 'Lowest demand in Coming Next — consider pushing out' : '')}
+        </div>
+      </div>`;
+  }
+
   function _renderInsights(el) {
     const filtered = _filterVotes(_enrichedVotes);
     const cardMap  = {};
@@ -1249,13 +1318,14 @@
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
-        <div class="stat-card"><div class="stat-value stat-value-sm">${escHtml(ranked[0]?.card?.title || '—')}</div><div class="stat-label">Most voted</div></div>
       </div>
+
+      ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
 
       <div class="chart-card chart-card-full">
         <div class="chart-header">
           <span class="chart-title">Top features by votes</span>
-          <div class="chart-info">i<span class="chart-info-tip">Features ranked by total votes across all voters</span></div>
+          <div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Features ranked by total votes across all voters</span></div>
         </div>
         <hr class="chart-header-divider">
         <div class="chart-wrap-bar-lg"><canvas id="chart-features"></canvas></div>
@@ -1265,21 +1335,21 @@
 
       <div class="charts-row charts-row-3">
         <div class="chart-card">
-          <div class="chart-header"><span class="chart-title">Votes by phase</span><div class="chart-info">i<span class="chart-info-tip">How votes spread across roadmap stages</span></div></div>
+          <div class="chart-header"><span class="chart-title">Votes by phase</span><div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">How votes spread across roadmap stages</span></div></div>
           <hr class="chart-header-divider">
           <div class="chart-wrap-donut"><canvas id="chart-phase"></canvas></div>
           <hr class="chart-footer-divider">
           <div class="chart-legend" id="legend-phase"></div>
         </div>
         <div class="chart-card">
-          <div class="chart-header"><span class="chart-title">Votes by role group</span><div class="chart-info">i<span class="chart-info-tip">Which seniority levels are most engaged</span></div></div>
+          <div class="chart-header"><span class="chart-title">Votes by role group</span><div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Which seniority levels are most engaged</span></div></div>
           <hr class="chart-header-divider">
           <div class="chart-wrap-donut"><canvas id="chart-rolegroup"></canvas></div>
           <hr class="chart-footer-divider">
           <div class="chart-legend" id="legend-rolegroup"></div>
         </div>
         <div class="chart-card">
-          <div class="chart-header"><span class="chart-title">Votes by LGA type</span><div class="chart-info">i<span class="chart-info-tip">Engagement by council classification</span></div></div>
+          <div class="chart-header"><span class="chart-title">Votes by LGA type</span><div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Engagement by council classification</span></div></div>
           <hr class="chart-header-divider">
           <div class="chart-wrap-donut"><canvas id="chart-lgatype"></canvas></div>
           <hr class="chart-footer-divider">
@@ -1289,14 +1359,14 @@
 
       <div class="charts-row charts-row-2">
         <div class="chart-card">
-          <div class="chart-header"><span class="chart-title">Votes by state / region</span><div class="chart-info">i<span class="chart-info-tip">Geographic spread of voter interest</span></div></div>
+          <div class="chart-header"><span class="chart-title">Votes by state / region</span><div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Geographic spread of voter interest</span></div></div>
           <hr class="chart-header-divider">
           <div class="chart-wrap-bar-md"><canvas id="chart-region"></canvas></div>
           <hr class="chart-footer-divider">
           <div class="chart-legend" id="legend-region"></div>
         </div>
         <div class="chart-card">
-          <div class="chart-header"><span class="chart-title">Notify &amp; research interest</span><div class="chart-info">i<span class="chart-info-tip">Per-feature demand signals beyond the vote count</span></div></div>
+          <div class="chart-header"><span class="chart-title">Notify &amp; research interest</span><div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Per-feature demand signals beyond the vote count</span></div></div>
           <hr class="chart-header-divider">
           <div class="chart-wrap-bar-md"><canvas id="chart-notify"></canvas></div>
           <hr class="chart-footer-divider">

@@ -713,6 +713,7 @@
     .tag-customer-service { background: var(--solver-light); color: var(--warm-black); border-color: var(--warm-black); }
     .tag-depot-field      { background: #FFB380;              color: var(--warm-black); border-color: var(--warm-black); }
     .tag-it-teams         { background: var(--warm-black);    color: var(--white);      border-color: var(--warm-black); }
+    .tag-voc-teams        { background: #C5B8FF;              color: var(--warm-black); border-color: var(--warm-black); }
 
     .card-title {
       font-family: 'Bagoss', 'Syne', sans-serif;
@@ -2647,11 +2648,23 @@
         <textarea id="idea-desc" placeholder="Tell us more about the problem it solves or the outcome you're after..." rows="6"></textarea>
       </div>
       <div class="modal-field">
-        <label for="idea-audience">Who is this for?</label>
-        <select id="idea-audience">
-          <option value="solvers">For Solvers (councils)</option>
-          <option value="snappers">For Snappers (community members)</option>
-        </select>
+        <label>Who is this for?</label>
+        <div class="org-dd" id="audience-dd">
+          <button type="button" class="org-trigger" id="audience-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="org-trigger-text placeholder" id="audience-trigger-text">Select who this is for…</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="org-panel" id="audience-panel" role="listbox">
+            <div class="org-list" id="audience-list">
+              <div class="org-option" data-value="customer-service" role="option">For Customer Service Teams</div>
+              <div class="org-option" data-value="depot-field" role="option">For Depot &amp; Field Teams</div>
+              <div class="org-option" data-value="it-teams" role="option">For IT Teams</div>
+              <div class="org-option" data-value="voc-teams" role="option">For Voice of Customer Teams</div>
+              <div class="org-option" data-value="snappers" role="option">For Snappers</div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="idea-audience" value="">
       </div>
       <div class="modal-field">
         <div class="idea-toggle-row">
@@ -2781,6 +2794,7 @@
     'customer-service': 'tag-customer-service',
     'depot-field':      'tag-depot-field',
     'it-teams':         'tag-it-teams',
+    'voc-teams':        'tag-voc-teams',
   };
 
   /* ── Build a roadmap card DOM node from a Supabase cards row ── */
@@ -4659,8 +4673,16 @@
     card.dataset.ownerKey  = idea.ownerKey;
     card.dataset.createdAt = idea.createdAt || '';
 
-    const audienceClass = idea.audience === 'snappers' ? 'tag-snappers' : 'tag-solvers';
-    const audienceLabel = idea.audience === 'snappers' ? 'For Snappers' : 'For Solvers';
+    const AUDIENCE_LABELS = {
+      'snappers':         'For Snappers',
+      'customer-service': 'For Customer Service Teams',
+      'depot-field':      'For Depot & Field Teams',
+      'it-teams':         'For IT Teams',
+      'voc-teams':        'For Voice of Customer Teams',
+      'solvers':          'For Solvers',
+    };
+    const audienceClass = AUDIENCE_TAG_CLASSES[idea.audience] || 'tag-solvers';
+    const audienceLabel = AUDIENCE_LABELS[idea.audience] || 'For Solvers';
 
     // Illustration
     const illusIdx = parseInt(idea.id.replace('comm-', ''), 10);
@@ -4772,6 +4794,41 @@
     updateBudgetWidget();
   }
 
+  /* ── Audience dropdown (idea modal) ── */
+  (function initAudienceDropdown() {
+    const dd         = document.getElementById('audience-dd');
+    const trigger    = document.getElementById('audience-trigger');
+    const triggerTxt = document.getElementById('audience-trigger-text');
+    const hidden     = document.getElementById('idea-audience');
+    if (!dd) return;
+
+    dd.querySelectorAll('.org-option').forEach(item => {
+      item.addEventListener('mousedown', e => {
+        e.preventDefault();
+        hidden.value = item.dataset.value;
+        triggerTxt.textContent = item.textContent;
+        triggerTxt.classList.remove('placeholder');
+        dd.querySelectorAll('.org-option.selected').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+        dd.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    trigger.addEventListener('click', () => {
+      const opening = !dd.classList.contains('open');
+      dd.classList.toggle('open', opening);
+      trigger.setAttribute('aria-expanded', String(opening));
+    });
+
+    document.addEventListener('click', e => {
+      if (!dd.contains(e.target)) {
+        dd.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+
   function openIdeaModal() {
     const modal = document.getElementById('idea-modal');
     if (!modal) return;
@@ -4780,6 +4837,13 @@
     const visToggle = document.getElementById('idea-visibility');
     visToggle.checked = true;
     document.getElementById('idea-visibility-label').textContent = 'Make this idea visible to other Solvers';
+    // Reset audience dropdown
+    const triggerTxt = document.getElementById('audience-trigger-text');
+    const hidden = document.getElementById('idea-audience');
+    if (triggerTxt) { triggerTxt.textContent = 'Select who this is for…'; triggerTxt.classList.add('placeholder'); }
+    if (hidden) hidden.value = '';
+    document.querySelectorAll('#audience-list .org-option.selected').forEach(el => el.classList.remove('selected'));
+    document.getElementById('audience-dd')?.classList.remove('open');
     modal.classList.remove('hidden');
   }
 
