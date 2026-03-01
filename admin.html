@@ -1013,16 +1013,18 @@
       },
     });
 
-    // Ordered palette — Snapper Blue & Solver Orange only used at position 5+
+    // Ordered palette — positions 1-4 are blue/orange-free so small charts stay neutral
     const CHART_PALETTE = [
-      '#E0FF89',  // 1. High-Vis
-      '#BDECFB',  // 2. Light Blue
-      '#FFCDA8',  // 3. Light Orange
+      '#E0FF89',  // 1. High-Vis (yellow-green)
+      '#D4F0D4',  // 2. Light Green
+      '#FFF3CD',  // 3. Light Yellow
       '#2C2927',  // 4. Warm Black
-      '#5BCFF4',  // 5. Snapper Blue  (only appears with 5+ segments)
-      '#FF964A',  // 6. Solver Orange (only appears with 6+ segments)
-      '#0B98EB',  // 7. Dark Blue
-      '#EF6213',  // 8. Dark Orange
+      '#BDECFB',  // 5. Light Blue   — first blue hue (5+ segments only)
+      '#FFCDA8',  // 6. Light Orange — first orange hue (6+ segments only)
+      '#5BCFF4',  // 7. Snapper Blue
+      '#FF964A',  // 8. Solver Orange
+      '#0B98EB',  // 9. Dark Blue
+      '#EF6213',  // 10. Dark Orange
     ];
 
     // ── Chart 2: Donut — votes by phase ──

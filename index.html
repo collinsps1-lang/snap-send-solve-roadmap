@@ -1227,6 +1227,51 @@
     .modal-field select:focus { border-color: var(--warm-black); }
     .modal-field select option[value=""] { color: var(--text-muted); }
     .modal-field optgroup { font-weight: 700; font-size: 11px; }
+    /* ── Org custom dropdown ── */
+    .org-dd { position: relative; }
+    .org-trigger {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 10px 36px 10px 12px; font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px; color: var(--warm-black); background: var(--white);
+      cursor: pointer; text-align: left; outline: none; display: flex;
+      align-items: center; justify-content: space-between; transition: border-color 0.15s;
+    }
+    .org-trigger:focus, .org-dd.open .org-trigger { border-color: var(--warm-black); }
+    .org-trigger-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .org-trigger-text.placeholder { color: var(--text-muted); }
+    .org-trigger svg { flex-shrink: 0; transition: transform 0.2s; }
+    .org-dd.open .org-trigger svg { transform: rotate(180deg); }
+    .org-panel {
+      display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+      background: #2C2927; border-radius: 12px; padding: 8px 6px 6px; z-index: 300;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    }
+    .org-dd.open .org-panel { display: flex; flex-direction: column; }
+    .org-search {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 7px; padding: 7px 11px; font-family: 'Space Grotesk', sans-serif;
+      font-size: 13px; color: #fff; outline: none; margin-bottom: 4px;
+      width: 100%; box-sizing: border-box; transition: border-color 0.15s;
+    }
+    .org-search::placeholder { color: rgba(255,255,255,0.4); }
+    .org-search:focus { border-color: rgba(255,255,255,0.38); }
+    .org-list { overflow-y: auto; max-height: 220px; overscroll-behavior: contain; }
+    .org-list::-webkit-scrollbar { width: 4px; }
+    .org-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    .org-group-label {
+      font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35);
+      padding: 8px 10px 3px;
+    }
+    .org-option {
+      color: rgba(255,255,255,0.75); padding: 8px 10px; border-radius: 7px;
+      cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px;
+      font-weight: 500; transition: background 0.1s, color 0.1s; user-select: none;
+    }
+    .org-option:hover { background: rgba(255,255,255,0.09); color: #fff; }
+    .org-option.selected { color: var(--high-vis); }
+    .org-option.hidden { display: none; }
+    .org-group-label.hidden { display: none; }
     .modal-hint {
       font-size: 12px;
       font-weight: 500;
@@ -2500,8 +2545,18 @@
         <input type="text" id="reg-name" placeholder="e.g. Sarah Chen" required autocomplete="name" />
       </div>
       <div class="modal-field">
-        <label for="reg-org">Organisation</label>
-        <input type="text" id="reg-org" placeholder="e.g. City of Melbourne" required autocomplete="organization" />
+        <label>Organisation</label>
+        <div class="org-dd" id="org-dd">
+          <button type="button" class="org-trigger" id="org-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="org-trigger-text placeholder" id="org-trigger-text">Select your council…</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="org-panel" id="org-panel" role="listbox">
+            <input type="text" class="org-search" id="org-search" placeholder="Search councils…" autocomplete="off" aria-label="Search councils">
+            <div class="org-list" id="org-list"></div>
+          </div>
+        </div>
+        <input type="hidden" id="reg-org">
       </div>
       <div class="modal-field">
         <label for="reg-role">Role title</label>
@@ -3138,6 +3193,305 @@
     if (minusBtn) minusBtn.addEventListener('click', () => adjustVote(card, -1));
     if (plusBtn)  plusBtn.addEventListener('click',  () => adjustVote(card,  1));
   }
+
+  /* ── Organisation dropdown ── */
+  const ORG_LIST = {
+    'New South Wales': [
+      'Albury City Council','Armidale Regional Council','Ballina Shire Council',
+      'Balranald Shire Council','Bathurst Regional Council','Bayside Council',
+      'Bega Valley Shire Council','Bellingen Shire Council','Berrigan Shire Council',
+      'Blacktown City Council','Bland Shire Council','Blayney Shire Council',
+      'Blue Mountains City Council','Bogan Shire Council','Bourke Shire Council',
+      'Brewarrina Shire Council','Broken Hill City Council','Burwood Council',
+      'Byron Shire Council','Cabonne Council','Camden Council',
+      'Campbelltown City Council','Canterbury-Bankstown Council','Central Coast Council',
+      'Central Darling Shire Council','Cessnock City Council','City of Canada Bay Council',
+      'City of Parramatta Council','City of Sydney Council','Clarence Valley Council',
+      'Cobar Shire Council','Coffs Harbour City Council','Coolamon Shire Council',
+      'Coonamble Shire Council','Cootamundra-Gundagai Regional Council','Cowra Shire Council',
+      'Cumberland City Council','Dungog Shire Council','Edward River Council',
+      'Eurobodalla Shire Council','Fairfield City Council','Federation Council',
+      'Forbes Shire Council','Georges River Council','Gilgandra Shire Council',
+      'Glen Innes Severn Council','Goulburn Mulwaree Council','Greater Hume Shire Council',
+      'Griffith City Council','Gunnedah Shire Council','Gwydir Shire Council',
+      'Hawkesbury City Council','Hay Shire Council','Hornsby Shire Council',
+      "Hunter's Hill Council",'Inner West Council','Inverell Shire Council',
+      'Junee Shire Council','Kempsey Shire Council','Kiama Municipal Council',
+      'Ku-ring-gai Council','Kyogle Council','Lachlan Shire Council',
+      'Lake Macquarie City Council','Lane Cove Municipal Council','Leeton Shire Council',
+      'Lismore City Council','Lithgow City Council','Liverpool City Council',
+      'Liverpool Plains Shire Council','Lockhart Shire Council','Maitland City Council',
+      'MidCoast Council','Mid-Western Regional Council','Moree Plains Shire Council',
+      'Mosman Municipal Council','Murray River Council','Murrumbidgee Council',
+      'Muswellbrook Shire Council','Nambucca Valley Council','Narrabri Shire Council',
+      'Narrandera Shire Council','Narromine Shire Council','North Sydney Council',
+      'Northern Beaches Council','Oberon Council','Orange City Council',
+      'Parkes Shire Council','Penrith City Council','Port Macquarie-Hastings Council',
+      'Port Stephens Council','Queanbeyan-Palerang Regional Council','Randwick City Council',
+      'Richmond Valley Council','Ryde City Council','Shellharbour City Council',
+      'Shoalhaven City Council','Singleton Council','Snowy Monaro Regional Council',
+      'Snowy Valleys Council','Strathfield Municipal Council','Sutherland Shire Council',
+      'Tamworth Regional Council','Temora Shire Council','Tenterfield Shire Council',
+      'The Hills Shire Council','Tweed Shire Council','Upper Hunter Shire Council',
+      'Upper Lachlan Shire Council','Uralla Shire Council','Wagga Wagga City Council',
+      'Walcha Council','Walgett Shire Council','Warren Shire Council',
+      'Warrumbungle Shire Council','Waverley Council','Weddin Shire Council',
+      'Wentworth Shire Council','Willoughby City Council','Wingecarribee Shire Council',
+      'Wollondilly Shire Council','Wollongong City Council','Woollahra Municipal Council',
+      'Yass Valley Council',
+    ],
+    'Victoria': [
+      'Alpine Shire Council','Ararat Rural City Council','Ballarat City Council',
+      'Banyule City Council','Bass Coast Shire Council','Baw Baw Shire Council',
+      'Bayside City Council','Benalla Rural City Council','Boroondara City Council',
+      'Brimbank City Council','Buloke Shire Council','Campaspe Shire Council',
+      'Cardinia Shire Council','Casey City Council','Central Goldfields Shire Council',
+      'Colac Otway Shire Council','Corangamite Shire Council','Darebin City Council',
+      'East Gippsland Shire Council','Frankston City Council','Gannawarra Shire Council',
+      'Glen Eira City Council','Glenelg Shire Council','Golden Plains Shire Council',
+      'Greater Bendigo City Council','Greater Dandenong City Council','Greater Geelong City Council',
+      'Greater Shepparton City Council','Hepburn Shire Council','Hindmarsh Shire Council',
+      'Hobsons Bay City Council','Horsham Rural City Council','Hume City Council',
+      'Indigo Shire Council','Kingston City Council','Knox City Council',
+      'Latrobe City Council','Loddon Shire Council','Macedon Ranges Shire Council',
+      'Manningham City Council','Mansfield Shire Council','Maribyrnong City Council',
+      'Maroondah City Council','City of Melbourne','Melton City Council',
+      'Merri-bek City Council','Mildura Rural City Council','Mitchell Shire Council',
+      'Moira Shire Council','Monash City Council','Moonee Valley City Council',
+      'Moorabool Shire Council','Mornington Peninsula Shire Council','Mount Alexander Shire Council',
+      'Moyne Shire Council','Murrindindi Shire Council','Nillumbik Shire Council',
+      'Northern Grampians Shire Council','Port Phillip City Council','Pyrenees Shire Council',
+      'Queenscliffe Borough Council','South Gippsland Shire Council','Southern Grampians Shire Council',
+      'Stonnington City Council','Strathbogie Shire Council','Surf Coast Shire Council',
+      'Swan Hill Rural City Council','Towong Shire Council','Wangaratta Rural City Council',
+      'Warrnambool City Council','Wellington Shire Council','West Wimmera Shire Council',
+      'Whitehorse City Council','Whittlesea City Council','Wodonga City Council',
+      'Wyndham City Council','Yarra City Council','Yarra Ranges Shire Council',
+      'Yarriambiack Shire Council',
+    ],
+    'Queensland': [
+      'Aurukun Shire Council','Balonne Shire Council','Banana Shire Council',
+      'Barcaldine Regional Council','Barcoo Shire Council','Blackall-Tambo Regional Council',
+      'Boulia Shire Council','Brisbane City Council','Bulloo Shire Council',
+      'Bundaberg Regional Council','Burdekin Shire Council','Burke Shire Council',
+      'Cairns Regional Council','Carpentaria Shire Council','Cassowary Coast Regional Council',
+      'Central Highlands Regional Council','Charters Towers Regional Council',
+      'Cloncurry Shire Council','Cook Shire Council','Croydon Shire Council',
+      'Diamantina Shire Council','Doomadgee Aboriginal Shire Council','Douglas Shire Council',
+      'Etheridge Shire Council','Flinders Shire Council','Fraser Coast Regional Council',
+      'Gladstone Regional Council','Gold Coast City Council','Goondiwindi Regional Council',
+      'Gympie Regional Council','Hinchinbrook Shire Council','Hope Vale Aboriginal Shire Council',
+      'Ipswich City Council','Isaac Regional Council','Kowanyama Aboriginal Shire Council',
+      'Livingstone Shire Council','Lockhart River Aboriginal Shire Council',
+      'Lockyer Valley Regional Council','Logan City Council','Longreach Regional Council',
+      'Mackay Regional Council','Mapoon Aboriginal Shire Council','Maranoa Regional Council',
+      'McKinlay Shire Council','Moreton Bay Regional Council','Mornington Shire Council',
+      'Mount Isa City Council','Murweh Shire Council','Napranum Aboriginal Shire Council',
+      'Noosa Shire Council','North Burnett Regional Council',
+      'Northern Peninsula Area Regional Council','Palm Island Aboriginal Shire Council',
+      'Paroo Shire Council','Pormpuraaw Aboriginal Shire Council','Quilpie Shire Council',
+      'Redland City Council','Richmond Shire Council','Rockhampton Regional Council',
+      'Scenic Rim Regional Council','Somerset Regional Council','South Burnett Regional Council',
+      'Southern Downs Regional Council','Sunshine Coast Regional Council',
+      'Tablelands Regional Council','Toowoomba Regional Council','Torres Shire Council',
+      'Torres Strait Island Regional Council','Townsville City Council',
+      'Weipa Town Authority','Western Downs Regional Council','Whitsunday Regional Council',
+      'Winton Shire Council','Woorabinda Aboriginal Shire Council',
+      'Wujal Wujal Aboriginal Shire Council','Yarrabah Aboriginal Shire Council',
+    ],
+    'South Australia': [
+      'Adelaide City Council','Adelaide Hills Council','Alexandrina Council',
+      'Barunga West District Council','Berri Barmera Council',
+      'City of Burnside','City of Campbelltown','City of Charles Sturt',
+      'City of Holdfast Bay','City of Marion','City of Mitcham',
+      'City of Norwood Payneham and St Peters','City of Onkaparinga','City of Playford',
+      'City of Port Adelaide Enfield','City of Prospect','City of Salisbury',
+      'City of Tea Tree Gully','City of Unley','City of West Torrens',
+      'Clare and Gilbert Valleys Council','Cleve District Council',
+      'Coober Pedy District Council','Coorong District Council','Copper Coast District Council',
+      'District Council of Ceduna','District Council of Elliston',
+      'District Council of Franklin Harbour','District Council of Grant',
+      'District Council of Karoonda East Murray','District Council of Kimba',
+      'District Council of Lower Eyre Peninsula','District Council of Loxton Waikerie',
+      'District Council of Mallala','District Council of Mount Barker',
+      'District Council of Mount Remarkable','District Council of Orroroo Carrieton',
+      'District Council of Peterborough','District Council of Robe',
+      'District Council of Streaky Bay','District Council of Tumby Bay',
+      'Flinders Ranges Council','Kangaroo Island Council','Light Regional Council',
+      'Mid Murray Council','Mount Gambier City Council','Murray Bridge Rural City Council',
+      'Naracoorte Lucindale Council','Northern Areas Council',
+      'Port Augusta City Council','Port Lincoln City Council','Port Pirie Regional Council',
+      'Renmark Paringa Council','Roxby Downs Municipality','Southern Mallee District Council',
+      'Tatiara District Council','Town of Gawler','Town of Walkerville',
+      'Wakefield Regional Council','Wattle Range Council','Whyalla City Council',
+      'Yankalilla District Council','Yorke Peninsula Council',
+    ],
+    'Western Australia': [
+      'City of Albany','Shire of Armadale','Shire of Ashburton',
+      'Shire of Augusta-Margaret River','Town of Bassendean','City of Bayswater',
+      'City of Belmont','Shire of Beverley','Shire of Boyup Brook',
+      'Shire of Bridgetown-Greenbushes','Shire of Brookton','Shire of Broome',
+      'Shire of Broomehill-Tambellup','Shire of Bruce Rock','City of Bunbury',
+      'Shire of Busselton','Town of Cambridge','City of Canning',
+      'Shire of Capel','Shire of Carnamah','Shire of Carnarvon',
+      'Shire of Chapman Valley','Shire of Chittering','Town of Claremont',
+      'Shire of Collie','Shire of Coolgardie','Shire of Coorow',
+      'Shire of Corrigin','Shire of Cranbrook','Shire of Cuballing',
+      'Shire of Cue','Shire of Dalwallinu','Shire of Dandaragan',
+      'Shire of Dardanup','Shire of Denmark','Shire of Derby-West Kimberley',
+      'Shire of Donnybrook-Balingup','Shire of Dowerin','Shire of Dumbleyung',
+      'Shire of Dundas','Town of East Fremantle','Shire of Esperance',
+      'Shire of Exmouth','City of Fremantle','Shire of Gingin',
+      'Shire of Gnowangerup','Shire of Goomalling','City of Gosnells',
+      'City of Greater Geraldton','Shire of Halls Creek','City of Joondalup',
+      'Shire of Jerramungup','Shire of Kalamunda','City of Kalgoorlie-Boulder',
+      'Shire of Katanning','Shire of Kellerberrin','Shire of Kent',
+      'Shire of Kojonup','Shire of Kondinin','Shire of Koorda',
+      'Shire of Kulin','City of Kwinana','Shire of Lake Grace',
+      'Shire of Laverton','Shire of Leonora','City of Mandurah',
+      'Shire of Manjimup','Shire of Meekatharra','City of Melville',
+      'Shire of Merredin','Shire of Mingenew','Shire of Moora',
+      'Shire of Morawa','Shire of Mount Magnet','Shire of Mount Marshall',
+      'Shire of Mukinbudin','Shire of Mundaring','Shire of Murchison',
+      'Shire of Murray','Shire of Nannup','Shire of Narembeen',
+      'City of Narrogin','City of Nedlands','Shire of Ngaanyatjarraku',
+      'Shire of North Midlands','City of Northam','Shire of Northampton',
+      'Shire of Nungarin','Town of Peppermint Grove','City of Perth',
+      'Shire of Perenjori','City of Rockingham','Shire of Roebourne',
+      'Shire of Sandstone','City of South Perth','Shire of Shark Bay',
+      'Shire of Serpentine-Jarrahdale','City of Stirling','City of Swan',
+      'Shire of Tammin','Shire of Three Springs','Shire of Toodyay',
+      'Shire of Trayning','Town of Victoria Park','Shire of Victoria Plains',
+      'Town of Vincent','Shire of Wagin','City of Wanneroo',
+      'Shire of Waroona','Shire of West Arthur','Shire of Westonia',
+      'Shire of Wickepin','Shire of Williams','Shire of Wiluna',
+      'Shire of Wongan-Ballidu','Shire of Woodanilling','Shire of Wyalkatchem',
+      'Shire of Yalgoo','Shire of Yilgarn','Shire of York',
+    ],
+    'Tasmania': [
+      "Break O'Day Council",'Brighton Council','Burnie City Council',
+      'Central Coast Council','Central Highlands Council','Circular Head Council',
+      'City of Devonport','City of Hobart','City of Launceston',
+      'Clarence City Council','Derwent Valley Council','Dorset Council',
+      'Flinders Council','George Town Council','Glamorgan-Spring Bay Council',
+      'Glenorchy City Council','Huon Valley Council','Kentish Council',
+      'King Island Council','Kingborough Council','Latrobe Council',
+      'Meander Valley Council','Northern Midlands Council','Sorell Council',
+      'Southern Midlands Council','Tasman Council','Waratah-Wynyard Council',
+      'West Coast Council','West Tamar Council',
+    ],
+    'Northern Territory': [
+      'Alice Springs Town Council','Barkly Regional Council',
+      'Belyuen Community Government Council','Central Desert Regional Council',
+      'City of Darwin','City of Palmerston','Coomalie Community Government Council',
+      'East Arnhem Regional Council','Katherine Town Council','Litchfield Council',
+      'MacDonnell Regional Council','Roper Gulf Regional Council',
+      'Tennant Creek Town Council','Tiwi Islands Regional Council',
+      'Victoria Daly Regional Council','Wagait Shire Council','West Arnhem Regional Council',
+    ],
+    'New Zealand': [
+      'Auckland Council','Buller District Council','Carterton District Council',
+      'Central Hawke\'s Bay District Council','Central Otago District Council',
+      'Chatham Islands Council','Christchurch City Council','Clutha District Council',
+      'Dunedin City Council','Far North District Council','Gisborne District Council',
+      'Gore District Council','Grey District Council','Hamilton City Council',
+      'Hastings District Council','Hauraki District Council','Horowhenua District Council',
+      'Hurunui District Council','Hutt City Council','Invercargill City Council',
+      'Kaikōura District Council','Kaipara District Council','Kāpiti Coast District Council',
+      'Kawerau District Council','Mackenzie District Council','Manawatū District Council',
+      'Marlborough District Council','Masterton District Council',
+      'Matamata-Piako District Council','Napier City Council','Nelson City Council',
+      'New Plymouth District Council','Ōpōtiki District Council','Ōtorohanga District Council',
+      'Palmerston North City Council','Porirua City Council','Queenstown-Lakes District Council',
+      'Rangitīkei District Council','Rotorua District Council','Ruapehu District Council',
+      'Selwyn District Council','South Taranaki District Council',
+      'South Waikato District Council','South Wairarapa District Council',
+      'Southland District Council','Stratford District Council','Tararua District Council',
+      'Tasman District Council','Taupō District Council','Tauranga City Council',
+      'Thames-Coromandel District Council','Timaru District Council',
+      'Upper Hutt City Council','Waimakariri District Council','Wairoa District Council',
+      'Waitaki District Council','Waitomo District Council','Wellington City Council',
+      'Western Bay of Plenty District Council','Westland District Council',
+      'Whakatāne District Council','Whangārei District Council','Whanganui District Council',
+    ],
+  };
+
+  (function initOrgDropdown() {
+    const dd         = document.getElementById('org-dd');
+    const trigger    = document.getElementById('org-trigger');
+    const triggerTxt = document.getElementById('org-trigger-text');
+    const search     = document.getElementById('org-search');
+    const listEl     = document.getElementById('org-list');
+    const hidden     = document.getElementById('reg-org');
+    if (!dd) return;
+
+    // Build DOM list once
+    const frag = document.createDocumentFragment();
+    Object.entries(ORG_LIST).forEach(([group, orgs]) => {
+      const g = document.createElement('div');
+      g.className = 'org-group-label';
+      g.dataset.group = group;
+      g.textContent = group;
+      frag.appendChild(g);
+      orgs.forEach(org => {
+        const item = document.createElement('div');
+        item.className = 'org-option';
+        item.textContent = org;
+        item.dataset.value = org;
+        item.addEventListener('mousedown', e => {
+          e.preventDefault();
+          hidden.value = org;
+          triggerTxt.textContent = org;
+          triggerTxt.classList.remove('placeholder');
+          listEl.querySelectorAll('.org-option.selected').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          dd.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+          search.value = '';
+          filterList('');
+        });
+        frag.appendChild(item);
+      });
+    });
+    listEl.appendChild(frag);
+
+    function filterList(q) {
+      const query = q.toLowerCase().trim();
+      const groups = {};
+      listEl.querySelectorAll('.org-option').forEach(item => {
+        const visible = !query || item.textContent.toLowerCase().includes(query);
+        item.classList.toggle('hidden', !visible);
+        const prev = item.previousElementSibling;
+        if (prev && prev.classList.contains('org-group-label')) {
+          groups[prev.dataset.group] = groups[prev.dataset.group] || visible;
+        } else {
+          // walk back to find group label
+          let el = item.previousElementSibling;
+          while (el && !el.classList.contains('org-group-label')) el = el.previousElementSibling;
+          if (el) groups[el.dataset.group] = groups[el.dataset.group] || visible;
+        }
+      });
+      listEl.querySelectorAll('.org-group-label').forEach(g => {
+        g.classList.toggle('hidden', !!query && !groups[g.dataset.group]);
+      });
+    }
+
+    trigger.addEventListener('click', () => {
+      const opening = !dd.classList.contains('open');
+      dd.classList.toggle('open', opening);
+      trigger.setAttribute('aria-expanded', String(opening));
+      if (opening) setTimeout(() => search.focus(), 40);
+    });
+
+    search.addEventListener('input', () => filterList(search.value));
+
+    document.addEventListener('click', e => {
+      if (!dd.contains(e.target)) {
+        dd.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
 
   /* ── Voting UI ── */
   function initVotingUI() {
