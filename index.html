@@ -1108,15 +1108,42 @@
     .submitted-banner {
       background: var(--high-vis);
       border: 1.5px solid var(--warm-black);
-      border-radius: 10px;
-      padding: 14px;
-      margin-top: 20px;
+      border-radius: 12px;
+      padding: 14px 16px 12px;
+      margin-top: auto;
+      flex-shrink: 0;
       font-size: 12px;
       color: var(--warm-black);
       line-height: 1.5;
       display: none;
     }
     .submitted-banner strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    /* ── Invite section (inside submitted banner) ── */
+    .invite-label {
+      font-size: 11px; font-weight: 700; color: var(--warm-black);
+      letter-spacing: 0.03em; margin-bottom: 8px; opacity: 0.75;
+    }
+    .invite-row { display: flex; gap: 6px; }
+    .invite-input {
+      flex: 1; min-width: 0;
+      padding: 7px 10px; border: 1.5px solid rgba(44,41,39,0.35);
+      border-radius: 7px; font-size: 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      background: rgba(44,41,39,0.07); color: var(--warm-black);
+      outline: none; transition: border-color 0.15s;
+    }
+    .invite-input::placeholder { color: rgba(44,41,39,0.45); }
+    .invite-input:focus { border-color: var(--warm-black); background: rgba(44,41,39,0.1); }
+    .invite-btn {
+      padding: 7px 11px; border: none; border-radius: 7px;
+      background: var(--warm-black); color: var(--high-vis);
+      font-size: 12px; font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+    .invite-btn:hover { opacity: 0.85; }
+    .invite-msg { font-size: 11px; margin-top: 6px; color: var(--warm-black); opacity: 0.65; }
 
     .reset-btn {
       margin-top: 8px;
@@ -2488,6 +2515,13 @@
     <div class="submitted-banner" id="submitted-banner">
       <strong>Votes submitted!</strong>
       Your votes have been recorded. Thanks for shaping the roadmap.
+      <hr class="divider" style="margin: 12px -16px;" />
+      <div class="invite-label">Invite someone to earn 3 more votes</div>
+      <div class="invite-row">
+        <input type="email" class="invite-input" id="invite-email" placeholder="Email address" autocomplete="off" />
+        <button class="invite-btn" id="invite-btn" type="button">Send invite</button>
+      </div>
+      <div class="invite-msg" id="invite-msg" style="display:none;"></div>
     </div>
     <div class="sidebar-voting-scrim" aria-hidden="true"></div>
     </div><!-- /.sidebar-expanded-body -->
@@ -3802,6 +3836,26 @@
     document.getElementById('confirm-overlay').classList.add('hidden');
   });
 
+  /* ── Invite to earn more votes ── */
+  document.getElementById('invite-btn').addEventListener('click', () => {
+    const emailEl = document.getElementById('invite-email');
+    const msgEl   = document.getElementById('invite-msg');
+    const email   = emailEl.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      msgEl.textContent = 'Please enter a valid email address.';
+      msgEl.style.display = 'block';
+      return;
+    }
+    const link    = location.origin + location.pathname;
+    const subject = encodeURIComponent('You should check out the Snap Send Solve roadmap');
+    const body    = encodeURIComponent(`Hey,\n\nI've been voting on what features Snap Send Solve should build next — thought you'd want to weigh in too.\n\nCheck it out here: ${link}\n\nCheers`);
+    window.open(`mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`);
+    emailEl.value = '';
+    msgEl.textContent = 'Invite sent!';
+    msgEl.style.display = 'block';
+    setTimeout(() => { msgEl.style.display = 'none'; }, 3000);
+  });
+
   /* ── Filters ── */
   let cards = []; // populated by loadRoadmapCards() and loadCommunityIdeas()
   let communityFilter = 'all'; // 'all' | 'mine'
@@ -4300,7 +4354,7 @@
 
   applyFilters();
 
-  /* ── Align filter bottom with tab bar bottom ── */
+  /* ── Align top of Filters divider with tab bar divider ── */
   (function alignFilterToTabs() {
     const logo     = document.querySelector('.logo');
     const tabBar   = document.querySelector('.tab-bar');
@@ -4308,7 +4362,7 @@
     if (!logo || !tabBar || !filter) return;
     function align() {
       logo.style.marginBottom = '';
-      const diff = tabBar.getBoundingClientRect().bottom - filter.getBoundingClientRect().bottom;
+      const diff = tabBar.getBoundingClientRect().bottom - filter.getBoundingClientRect().top;
       const current = parseFloat(getComputedStyle(logo).marginBottom) || 0;
       logo.style.marginBottom = Math.max(0, current + diff) + 'px';
     }
