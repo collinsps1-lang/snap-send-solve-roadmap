@@ -1390,7 +1390,11 @@
         </div>
       </details>
 
-      <h2 class="dash-section-heading" style="margin-bottom:14px;">Voting Breakdown</h2>
+      <details class="dash-collapsible-section" open>
+        <summary class="dash-collapsible-summary">
+          <span class="dash-section-heading">Voting Breakdown</span>
+          <span class="dash-section-toggle"><span class="toggle-minus">−</span><span class="toggle-plus">+</span></span>
+        </summary>
 
       <div class="charts-row charts-row-3">
         <div class="chart-card">
@@ -1463,7 +1467,8 @@
             }).join('')}
           </tbody>
         </table>
-      </div>`;
+      </div>
+      </details>`;
 
     // Attach filter event listeners to the filter dock
     const filterEl = filterDock || el;
