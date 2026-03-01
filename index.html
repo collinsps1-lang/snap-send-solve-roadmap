@@ -1231,7 +1231,7 @@
     .org-dd { position: relative; }
     .org-trigger {
       width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
-      padding: 10px 36px 10px 12px; font-family: 'Space Grotesk', sans-serif;
+      padding: 10px 12px; font-family: 'Space Grotesk', sans-serif;
       font-size: 14px; color: var(--warm-black); background: var(--white);
       cursor: pointer; text-align: left; outline: none; display: flex;
       align-items: center; justify-content: space-between; transition: border-color 0.15s;
@@ -2559,52 +2559,17 @@
         <input type="hidden" id="reg-org">
       </div>
       <div class="modal-field">
-        <label for="reg-role">Role title</label>
-        <select id="reg-role" required>
-          <option value="" disabled selected>Select your role…</option>
-          <optgroup label="Executive">
-            <option data-budget="10">Chief Executive Officer</option>
-            <option data-budget="10">Chief Operating Officer</option>
-            <option data-budget="10">Chief Financial Officer</option>
-            <option data-budget="10">Chief Information Officer</option>
-            <option data-budget="10">Chief Digital Officer</option>
-            <option data-budget="10">Chief Revenue Officer</option>
-            <option data-budget="10">General Manager</option>
-            <option data-budget="10">Executive Director</option>
-          </optgroup>
-          <optgroup label="Senior Management">
-            <option data-budget="7">Director, Customer Experience</option>
-            <option data-budget="7">Director, Operations</option>
-            <option data-budget="7">Director, Infrastructure &amp; Works</option>
-            <option data-budget="7">Director, Community Services</option>
-            <option data-budget="7">Director, Planning &amp; Environment</option>
-            <option data-budget="7">Director, Corporate Services</option>
-            <option data-budget="7">Director, Digital &amp; Technology</option>
-            <option data-budget="7">Head of Customer Experience</option>
-            <option data-budget="7">Head of Digital Transformation</option>
-            <option data-budget="7">Head of Communications</option>
-            <option data-budget="7">Head of Strategy &amp; Innovation</option>
-            <option data-budget="7">Head of Operations</option>
-            <option data-budget="7">Head of Infrastructure</option>
-          </optgroup>
-          <optgroup label="Mid-Management">
-            <option data-budget="5">Manager, Customer Services</option>
-            <option data-budget="5">Manager, Community Engagement</option>
-            <option data-budget="5">Manager, Communications</option>
-            <option data-budget="5">Manager, Planning</option>
-            <option data-budget="5">Manager, IT &amp; Digital Services</option>
-            <option data-budget="5">Manager, Infrastructure</option>
-            <option data-budget="5">Manager, Finance</option>
-            <option data-budget="5">Team Leader, Customer Experience</option>
-            <option data-budget="5">Team Leader, Digital Services</option>
-            <option data-budget="5">Team Leader, Operations</option>
-            <option data-budget="5">Senior Business Analyst</option>
-            <option data-budget="5">Senior Project Manager</option>
-            <option data-budget="5">Product Manager</option>
-            <option data-budget="5">Change &amp; Transformation Manager</option>
-            <option data-budget="5">Coordinator, Customer Experience</option>
-          </optgroup>
-        </select>
+        <label>Role title</label>
+        <div class="org-dd" id="role-dd">
+          <button type="button" class="org-trigger" id="role-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="org-trigger-text placeholder" id="role-trigger-text">Select your role…</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="org-panel" id="role-panel" role="listbox">
+            <div class="org-list" id="role-list"></div>
+          </div>
+        </div>
+        <input type="hidden" id="reg-role">
       </div>
       <div class="modal-field">
         <label for="reg-email">Email address</label>
@@ -3017,9 +2982,10 @@
   }
 
   function getBudgetForRole(role) {
-    const sel = document.getElementById('reg-role');
-    const opt = sel ? Array.from(sel.options).find(o => o.value === role || o.text === role) : null;
-    return opt ? parseInt(opt.dataset.budget || '5', 10) : 5;
+    for (const { budget, roles } of ROLE_LIST) {
+      if (roles.includes(role)) return budget;
+    }
+    return 5;
   }
 
   function totalAllocated() {
@@ -3037,8 +3003,6 @@
 
   /* ── Registration modal ── */
   const regModal  = document.getElementById('reg-modal');
-  const roleInput = document.getElementById('reg-role');
-
   function showRegStep(id) {
     document.querySelectorAll('.reg-step').forEach(el => el.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
@@ -3055,7 +3019,7 @@
     errEl.style.display = 'none';
     if (!name || !org || !email || !role) return;
 
-    const budget = parseInt(document.getElementById('reg-role').selectedOptions[0].dataset.budget, 10);
+    const budget = getBudgetForRole(role);
 
     // ── TEMP: magic link disabled (Supabase rate limit) — save session directly ──
     currentUser = { name, org, email, role, budget, submitted: false };
@@ -3193,6 +3157,78 @@
     if (minusBtn) minusBtn.addEventListener('click', () => adjustVote(card, -1));
     if (plusBtn)  plusBtn.addEventListener('click',  () => adjustVote(card,  1));
   }
+
+  /* ── Role dropdown ── */
+  const ROLE_LIST = [
+    { group: 'Executive', budget: 10, roles: [
+      'Chief Executive Officer','Chief Operating Officer','Chief Financial Officer',
+      'Chief Information Officer','Chief Digital Officer','Chief Revenue Officer',
+      'General Manager','Executive Director',
+    ]},
+    { group: 'Senior Management', budget: 7, roles: [
+      'Director, Customer Experience','Director, Operations','Director, Infrastructure & Works',
+      'Director, Community Services','Director, Planning & Environment','Director, Corporate Services',
+      'Director, Digital & Technology','Head of Customer Experience','Head of Digital Transformation',
+      'Head of Communications','Head of Strategy & Innovation','Head of Operations',
+      'Head of Infrastructure',
+    ]},
+    { group: 'Mid-Management', budget: 5, roles: [
+      'Manager, Customer Services','Manager, Community Engagement','Manager, Communications',
+      'Manager, Planning','Manager, IT & Digital Services','Manager, Infrastructure',
+      'Manager, Finance','Team Leader, Customer Experience','Team Leader, Digital Services',
+      'Team Leader, Operations','Senior Business Analyst','Senior Project Manager',
+      'Product Manager','Change & Transformation Manager','Coordinator, Customer Experience',
+    ]},
+  ];
+
+  (function initRoleDropdown() {
+    const dd         = document.getElementById('role-dd');
+    const trigger    = document.getElementById('role-trigger');
+    const triggerTxt = document.getElementById('role-trigger-text');
+    const listEl     = document.getElementById('role-list');
+    const hidden     = document.getElementById('reg-role');
+    if (!dd) return;
+
+    const frag = document.createDocumentFragment();
+    ROLE_LIST.forEach(({ group, budget, roles }) => {
+      const g = document.createElement('div');
+      g.className = 'org-group-label';
+      g.textContent = group;
+      frag.appendChild(g);
+      roles.forEach(role => {
+        const item = document.createElement('div');
+        item.className = 'org-option';
+        item.textContent = role;
+        item.dataset.value = role;
+        item.dataset.budget = String(budget);
+        item.addEventListener('mousedown', e => {
+          e.preventDefault();
+          hidden.value = role;
+          triggerTxt.textContent = role;
+          triggerTxt.classList.remove('placeholder');
+          listEl.querySelectorAll('.org-option.selected').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          dd.classList.remove('open');
+          trigger.setAttribute('aria-expanded', 'false');
+        });
+        frag.appendChild(item);
+      });
+    });
+    listEl.appendChild(frag);
+
+    trigger.addEventListener('click', () => {
+      const opening = !dd.classList.contains('open');
+      dd.classList.toggle('open', opening);
+      trigger.setAttribute('aria-expanded', String(opening));
+    });
+
+    document.addEventListener('click', e => {
+      if (!dd.contains(e.target)) {
+        dd.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
 
   /* ── Organisation dropdown ── */
   const ORG_LIST = {
