@@ -206,7 +206,7 @@
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
       font-size: 40px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.03em; line-height: 1.05;
     }
-    .page-sub { color: var(--text-dark); font-size: 14px; margin-bottom: 31px; font-family: 'Space Grotesk', sans-serif; line-height: 1.65; }
+    .page-sub { color: var(--text-dark); font-size: 14px; margin-bottom: 30px; font-family: 'Space Grotesk', sans-serif; line-height: 1.65; }
     .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 0 -24px 28px; }
 
     /* ── Loading / empty states ── */
@@ -215,7 +215,7 @@
 
     /* ── Dashboard stats ── */
     .stats-row {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 20px;
     }
     .stat-card {
       background: var(--card-bg);
@@ -243,9 +243,18 @@
     }
     .chart-wrap-bar { height: 260px; position: relative; }
     .chart-wrap-donut { height: 200px; position: relative; }
+    @media (max-width: 1300px) {
+      .charts-row-3 { grid-template-columns: 1fr 1fr; }
+    }
     @media (max-width: 1000px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
       .charts-row { grid-template-columns: 1fr; }
+      .charts-row-3, .charts-row-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .filter-group { flex-direction: column; gap: 6px; }
+      .filter-group-label { min-width: unset; padding-top: 0; }
     }
 
     /* ── Cards / tables ── */
@@ -401,6 +410,55 @@
     .form-section-head { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 12px; }
     .detail-images-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
+    /* ── Dashboard filter bar ── */
+    .dash-filter-bar {
+      background: var(--card-bg); border-radius: 14px; padding: 18px 20px;
+      margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .filter-group { display: flex; align-items: flex-start; gap: 10px; }
+    .filter-group-label {
+      font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted);
+      padding-top: 5px; white-space: nowrap; min-width: 88px;
+    }
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; align-items: center; }
+    .filter-chip {
+      padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      font-family: 'Space Grotesk', sans-serif;
+      border: 1.5px solid var(--border); background: var(--white); color: var(--text-dark);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .filter-chip:hover { border-color: var(--warm-black); }
+    .filter-chip.active { background: var(--warm-black); color: var(--white); border-color: var(--warm-black); }
+    .custom-date-inputs { display: flex; align-items: center; gap: 6px; }
+    .custom-date-inputs.hidden { display: none; }
+    .custom-date-inputs input[type="date"] {
+      padding: 4px 8px; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 12px; font-family: 'Space Grotesk', sans-serif; color: var(--text-dark);
+      background: var(--white); outline: none;
+    }
+    .custom-date-inputs input[type="date"]:focus { border-color: var(--warm-black); }
+    .custom-date-inputs span { color: var(--text-muted); font-size: 12px; }
+    .clear-filters-btn {
+      padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      font-family: 'Space Grotesk', sans-serif;
+      border: 1.5px solid rgba(44,41,39,0.35); background: transparent; color: var(--text-muted);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .clear-filters-btn:hover { border-color: var(--warm-black); color: var(--text-dark); }
+
+    /* ── Richer chart layout ── */
+    .chart-card-full { background: var(--card-bg); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+    .chart-wrap-bar-lg { height: 380px; position: relative; }
+    .chart-wrap-bar-md { height: 280px; position: relative; }
+    .charts-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+    .charts-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+    /* ── Notify / research pills ── */
+    .notify-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #E0FF89; color: #2C2927; }
+    .research-pill { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #2C2927; color: #E0FF89; }
+    .zero-count { color: var(--text-muted); }
+
     /* ── Voter expand row ── */
     .voter-expand { display: none; }
     .voter-expand.open { display: table-row; }
@@ -477,7 +535,7 @@
             <path d="M13 4c1.657 0 3 1.343 3 3s-1.343 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
             <path d="M15 14c0-1.5-.7-2.9-1.8-3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
-          Voters
+          Audience
         </button>
         <button class="nav-tab" data-tab="community">
           <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
@@ -489,7 +547,7 @@
           <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
             <path d="M11 2l5 5-8 8H3v-5l8-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
           </svg>
-          CMS
+          Features
         </button>
       </nav>
 
@@ -512,7 +570,7 @@
           <rect x="13" y="1" width="4" height="16" rx="1" fill="currentColor"/>
         </svg>
       </button>
-      <button class="sidebar-icon-btn" data-tab="voters" aria-label="Voters">
+      <button class="sidebar-icon-btn" data-tab="voters" aria-label="Audience">
         <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
           <circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="1.8"/>
           <path d="M1 16c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -525,7 +583,7 @@
           <path d="M9 1C4.58 1 1 4.13 1 8c0 1.74.68 3.33 1.8 4.55L2 17l4.45-1.48A8.3 8.3 0 009 16c4.42 0 8-3.13 8-7s-3.58-7-8-7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
         </svg>
       </button>
-      <button class="sidebar-icon-btn" data-tab="cms" aria-label="CMS">
+      <button class="sidebar-icon-btn" data-tab="cms" aria-label="Features">
         <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
           <path d="M11 2l5 5-8 8H3v-5l8-8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
         </svg>
@@ -553,7 +611,7 @@
 
     <!-- ── Tab 2: Voters ── -->
     <div class="tab-panel" id="tab-voters">
-      <div class="page-heading">Voters</div>
+      <div class="page-heading">Audience</div>
       <p class="page-sub">All registered voters and how they've allocated their votes.</p>
       <hr class="tab-divider">
       <div id="voters-content"><div class="loading">Loading…</div></div>
@@ -569,7 +627,7 @@
 
     <!-- ── Tab 4: CMS ── -->
     <div class="tab-panel" id="tab-cms">
-      <div class="page-heading">Card CMS</div>
+      <div class="page-heading">Features</div>
       <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
       <hr class="tab-divider">
       <button class="btn-add" id="cms-add-btn">
@@ -871,92 +929,252 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     TAB 1 — DASHBOARD (Vote Leaderboard)
+     ORG & ROLE ENRICHMENT LOOKUPS
+  ══════════════════════════════════════════════════════════════ */
+  const ORG_META = {
+    'City of Sydney':                { region: 'NSW',  lgaType: 'Metropolitan'   },
+    'Brisbane City Council':         { region: 'QLD',  lgaType: 'Metropolitan'   },
+    'City of Melbourne':             { region: 'VIC',  lgaType: 'Metropolitan'   },
+    'City of Perth':                 { region: 'WA',   lgaType: 'Metropolitan'   },
+    'Gold Coast City Council':       { region: 'QLD',  lgaType: 'Inner Regional' },
+    'Auckland Council':              { region: 'NZ',   lgaType: 'New Zealand'    },
+    'City of Adelaide':              { region: 'SA',   lgaType: 'Metropolitan'   },
+    'Sunshine Coast Council':        { region: 'QLD',  lgaType: 'Inner Regional' },
+    'Wellington City Council':       { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Wollongong City Council':       { region: 'NSW',  lgaType: 'Inner Regional' },
+    'Christchurch City Council':     { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Logan City Council':            { region: 'QLD',  lgaType: 'Inner Regional' },
+    'City of Parramatta':            { region: 'NSW',  lgaType: 'Metropolitan'   },
+    'Hobart City Council':           { region: 'TAS',  lgaType: 'Inner Regional' },
+    'Hamilton City Council':         { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Newcastle City Council':        { region: 'NSW',  lgaType: 'Inner Regional' },
+    'City of Greater Geelong':       { region: 'VIC',  lgaType: 'Inner Regional' },
+    'Tauranga City Council':         { region: 'NZ',   lgaType: 'New Zealand'    },
+    'ACT Government':                { region: 'ACT',  lgaType: 'Metropolitan'   },
+    'Palmerston North City Council': { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Townsville City Council':       { region: 'QLD',  lgaType: 'Outer Regional' },
+    'Rotorua Lakes Council':         { region: 'NZ',   lgaType: 'New Zealand'    },
+    'City of Ballarat':              { region: 'VIC',  lgaType: 'Outer Regional' },
+    'Dunedin City Council':          { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Ipswich City Council':          { region: 'QLD',  lgaType: 'Inner Regional' },
+    'Launceston City Council':       { region: 'TAS',  lgaType: 'Outer Regional' },
+    'Whangārei District Council':    { region: 'NZ',   lgaType: 'New Zealand'    },
+    'City of Greater Bendigo':       { region: 'VIC',  lgaType: 'Outer Regional' },
+    'Invercargill City Council':     { region: 'NZ',   lgaType: 'New Zealand'    },
+    'City of Fremantle':             { region: 'WA',   lgaType: 'Metropolitan'   },
+    'Gisborne District Council':     { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Rockhampton Regional Council':  { region: 'QLD',  lgaType: 'Outer Regional' },
+    'Nelson City Council':           { region: 'NZ',   lgaType: 'New Zealand'    },
+    'Cairns Regional Council':       { region: 'QLD',  lgaType: 'Outer Regional' },
+    'City of Darwin':                { region: 'NT',   lgaType: 'Remote'         },
+  };
+
+  const ROLE_GROUPS = {
+    'CEO': 'Executive', 'COO': 'Executive', 'CIO': 'Executive',
+    'CDO': 'Executive', 'CRO': 'Executive',
+    'General Manager': 'Executive', 'Executive Director': 'Executive',
+    'Director of Operations': 'Senior Management',
+    'Director of Customer Engagement': 'Senior Management',
+    'Director of Digital Services': 'Senior Management',
+    'Director of Engineering': 'Senior Management',
+    'Director of Infrastructure': 'Senior Management',
+    'Director of IT': 'Senior Management',
+    'Head of CX': 'Senior Management',
+    'Head of Digital Transformation': 'Senior Management',
+    'Head of Field Operations': 'Senior Management',
+    'Head of Service Delivery': 'Senior Management',
+    'Head of Smart City': 'Senior Management',
+    'Senior Manager of Operations': 'Mid-Management',
+    'Manager of City Services': 'Mid-Management',
+    'Manager of Community Services': 'Mid-Management',
+    'Manager of Customer Experience': 'Mid-Management',
+    'Manager of Development Services': 'Mid-Management',
+    'Manager of Field Operations': 'Mid-Management',
+    'Manager of Waste & Sustainability': 'Mid-Management',
+    'Team Leader — Field Ops': 'Mid-Management',
+    'Senior Business Analyst': 'Mid-Management',
+  };
+
+  function enrichVote(v) {
+    const meta = ORG_META[v.user_org] || { region: 'Unknown', lgaType: 'Unknown' };
+    return { ...v, region: meta.region, lgaType: meta.lgaType, roleGroup: ROLE_GROUPS[v.user_role] || 'Other' };
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     TAB 1 — ROADMAP INSIGHTS
   ══════════════════════════════════════════════════════════════ */
 
-  // Track Chart.js instances so we can destroy before re-render
-  let _chartFeatures = null, _chartPhase = null, _chartAudience = null;
+  let _chartFeatures = null, _chartPhase = null, _chartRoleGroup = null,
+      _chartLgaType  = null, _chartRegion  = null, _chartNotify   = null;
+  let _rawVotes = null, _rawCards = null, _enrichedVotes = null;
+
+  const dashFilters = {
+    datePreset: 'all', dateFrom: null, dateTo: null,
+    councils: new Set(), regions: new Set(),
+    lgaTypes: new Set(), roleGroups: new Set(), phases: new Set(),
+  };
+
+  function _clearDashCharts() {
+    [_chartFeatures, _chartPhase, _chartRoleGroup, _chartLgaType, _chartRegion, _chartNotify]
+      .forEach(inst => { if (inst) inst.destroy(); });
+    _chartFeatures = _chartPhase = _chartRoleGroup = _chartLgaType = _chartRegion = _chartNotify = null;
+  }
+
+  function _filterVotes(votes) {
+    return votes.filter(v => {
+      const d = new Date(v.created_at);
+      if (dashFilters.datePreset === '30d') {
+        const c = new Date(); c.setDate(c.getDate() - 30); if (d < c) return false;
+      } else if (dashFilters.datePreset === '90d') {
+        const c = new Date(); c.setDate(c.getDate() - 90); if (d < c) return false;
+      } else if (dashFilters.datePreset === 'custom') {
+        if (dashFilters.dateFrom && d < dashFilters.dateFrom) return false;
+        if (dashFilters.dateTo   && d > dashFilters.dateTo)   return false;
+      }
+      if (dashFilters.councils.size   && !dashFilters.councils.has(v.user_org))    return false;
+      if (dashFilters.regions.size    && !dashFilters.regions.has(v.region))       return false;
+      if (dashFilters.lgaTypes.size   && !dashFilters.lgaTypes.has(v.lgaType))     return false;
+      if (dashFilters.roleGroups.size && !dashFilters.roleGroups.has(v.roleGroup)) return false;
+      if (dashFilters.phases.size) {
+        const card = (_rawCards || []).find(c => c.id === v.card_id);
+        if (!card || !dashFilters.phases.has(card.phase)) return false;
+      }
+      return true;
+    });
+  }
+
+  function _hasActiveFilters() {
+    return dashFilters.datePreset !== 'all' || dashFilters.dateFrom || dashFilters.dateTo
+      || dashFilters.councils.size || dashFilters.regions.size
+      || dashFilters.lgaTypes.size || dashFilters.roleGroups.size || dashFilters.phases.size;
+  }
 
   async function loadDashboard() {
     const el = document.getElementById('dashboard-content');
-    el.innerHTML = '<div class="loading">Loading…</div>';
-
-    const [{ data: votes, error: vErr }, { data: cardRows, error: cErr }] = await Promise.all([
-      _supabase.from('votes').select('card_id, votes, user_email'),
-      _supabase.from('cards').select('id, title, phase, audience'),
-    ]);
-
-    if (vErr || cErr) {
-      el.innerHTML = `<div class="loading">Error loading data.</div>`;
+    if (!_rawVotes) {
+      el.innerHTML = '<div class="loading">Loading…</div>';
+      const [{ data: votes, error: vErr }, { data: cardRows, error: cErr }] = await Promise.all([
+        _supabase.from('votes').select('card_id,votes,user_email,user_name,user_org,user_role,notify,research,created_at'),
+        _supabase.from('cards').select('id,title,phase,audience'),
+      ]);
+      if (vErr || cErr) { el.innerHTML = '<div class="loading">Error loading data.</div>'; return; }
+      _rawVotes      = votes || [];
+      _rawCards      = cardRows || [];
+      _enrichedVotes = _rawVotes.map(enrichVote);
+    }
+    if (_rawVotes.length === 0) {
+      el.innerHTML = '<div class="empty-msg">No votes recorded yet. Charts will appear once customers start allocating.</div>';
       return;
     }
+    _renderInsights(el);
+  }
 
-    // Aggregate
-    const totals = {};
-    const uniqueVoters = new Set();
-    (votes || []).forEach(v => {
-      totals[v.card_id] = (totals[v.card_id] || 0) + (v.votes || 0);
-      if (v.user_email) uniqueVoters.add(v.user_email);
+  function _renderInsights(el) {
+    const filtered = _filterVotes(_enrichedVotes);
+    const cardMap  = {};
+    (_rawCards || []).forEach(c => { cardMap[c.id] = c; });
+
+    const totalVotes     = filtered.reduce((s, v) => s + (v.votes || 0), 0);
+    const voterEmails    = new Set(filtered.map(v => v.user_email));
+    const notifyEmails   = new Set(filtered.filter(v => v.notify).map(v => v.user_email));
+    const researchEmails = new Set(filtered.filter(v => v.research).map(v => v.user_email));
+
+    const featureTotals = {}, notifyByFeat = {}, researchByFeat = {};
+    filtered.forEach(v => {
+      featureTotals[v.card_id] = (featureTotals[v.card_id] || 0) + (v.votes || 0);
+      if (v.notify)   notifyByFeat[v.card_id]   = (notifyByFeat[v.card_id]   || 0) + 1;
+      if (v.research) researchByFeat[v.card_id] = (researchByFeat[v.card_id] || 0) + 1;
     });
 
-    const cardMap = {};
-    (cardRows || []).forEach(c => { cardMap[c.id] = c; });
-
-    const ranked = Object.entries(totals)
+    const ranked = Object.entries(featureTotals)
       .map(([id, total]) => ({ id, total, card: cardMap[id] }))
       .filter(r => r.card)
       .sort((a, b) => b.total - a.total);
 
-    if (ranked.length === 0) {
-      el.innerHTML = '<div class="empty-msg">No votes recorded yet. Charts will appear here once customers start allocating.</div>';
-      return;
-    }
-
-    const totalVotes   = (votes || []).reduce((s, v) => s + (v.votes || 0), 0);
-    const topFeature   = ranked[0]?.card?.title || '—';
-
-    // Phase totals
     const phaseTotals = { now: 0, next: 0, after: 0, launched: 0 };
     ranked.forEach(r => { const p = r.card?.phase; if (p in phaseTotals) phaseTotals[p] += r.total; });
 
-    // Audience totals
-    const audTotals = {};
-    ranked.forEach(r => { const a = r.card?.audience; if (a) audTotals[a] = (audTotals[a] || 0) + r.total; });
+    const rgTotals = {}, lgaTotals = {}, regionTotals = {};
+    filtered.forEach(v => {
+      rgTotals[v.roleGroup]  = (rgTotals[v.roleGroup]  || 0) + (v.votes || 0);
+      lgaTotals[v.lgaType]   = (lgaTotals[v.lgaType]   || 0) + (v.votes || 0);
+      regionTotals[v.region] = (regionTotals[v.region] || 0) + (v.votes || 0);
+    });
 
-    // Render layout
+    const allCouncils   = [...new Set(_enrichedVotes.map(v => v.user_org).filter(Boolean))].sort();
+    const allRegions    = [...new Set(_enrichedVotes.map(v => v.region).filter(x => x && x !== 'Unknown'))].sort();
+    const allLgaTypes   = ['Metropolitan','Inner Regional','Outer Regional','Remote','New Zealand'];
+    const allRoleGroups = ['Executive','Senior Management','Mid-Management','Other'];
+    const allPhases     = ['now','next','after','launched'];
+    const phaseDisp     = { now:'In Development', next:'Coming Next', after:'Longer Term', launched:'Launched' };
+
+    function chip(label, fKey, val, set) {
+      const a = set.has(val) ? ' active' : '';
+      return `<button class="filter-chip${a}" data-filter="${escHtml(fKey)}" data-value="${escHtml(val)}">${escHtml(label)}</button>`;
+    }
+    const presetLabels = { all:'All time', '30d':'Last 30 days', '90d':'Last 90 days', custom:'Custom' };
+
     el.innerHTML = `
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-value">${totalVotes}</div>
-          <div class="stat-label">Total votes cast</div>
+      <div class="dash-filter-bar">
+        <div class="filter-group">
+          <span class="filter-group-label">Date</span>
+          <div class="filter-chips">
+            ${['all','30d','90d','custom'].map(p =>
+              `<button class="filter-chip date-preset-btn${dashFilters.datePreset===p?' active':''}" data-preset="${p}">${presetLabels[p]}</button>`
+            ).join('')}
+            <div class="custom-date-inputs${dashFilters.datePreset==='custom'?'':' hidden'}">
+              <input type="date" id="dash-date-from" value="${dashFilters.dateFrom ? dashFilters.dateFrom.toISOString().split('T')[0] : ''}">
+              <span>&ndash;</span>
+              <input type="date" id="dash-date-to" value="${dashFilters.dateTo ? dashFilters.dateTo.toISOString().split('T')[0] : ''}">
+            </div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value">${uniqueVoters.size}</div>
-          <div class="stat-label">Unique voters</div>
+        <div class="filter-group">
+          <span class="filter-group-label">Phase</span>
+          <div class="filter-chips">${allPhases.map(p => chip(phaseDisp[p],'phases',p,dashFilters.phases)).join('')}</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value">${ranked.length}</div>
-          <div class="stat-label">Features with votes</div>
+        <div class="filter-group">
+          <span class="filter-group-label">Role</span>
+          <div class="filter-chips">${allRoleGroups.map(r => chip(r,'roleGroups',r,dashFilters.roleGroups)).join('')}</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-value stat-value-sm">${escHtml(topFeature)}</div>
-          <div class="stat-label">Most voted feature</div>
+        <div class="filter-group">
+          <span class="filter-group-label">LGA Type</span>
+          <div class="filter-chips">${allLgaTypes.map(t => chip(t,'lgaTypes',t,dashFilters.lgaTypes)).join('')}</div>
         </div>
+        <div class="filter-group">
+          <span class="filter-group-label">State / Region</span>
+          <div class="filter-chips">${allRegions.map(r => chip(r,'regions',r,dashFilters.regions)).join('')}</div>
+        </div>
+        <div class="filter-group">
+          <span class="filter-group-label">Council</span>
+          <div class="filter-chips">${allCouncils.map(c => chip(c,'councils',c,dashFilters.councils)).join('')}</div>
+        </div>
+        ${_hasActiveFilters() ? `<div class="filter-group"><span class="filter-group-label"></span><div class="filter-chips"><button class="clear-filters-btn" id="clear-filters-btn">Clear all filters</button></div></div>` : ''}
       </div>
 
-      <div class="charts-row">
-        <div class="chart-card">
-          <div class="chart-title">Top features by votes</div>
-          <div class="chart-wrap-bar"><canvas id="chart-features"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Votes by phase</div>
-          <div class="chart-wrap-donut"><canvas id="chart-phase"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-title">Votes by audience</div>
-          <div class="chart-wrap-donut"><canvas id="chart-audience"></canvas></div>
-        </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
+        <div class="stat-card"><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
+        <div class="stat-card"><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
+        <div class="stat-card"><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
+        <div class="stat-card"><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
+        <div class="stat-card"><div class="stat-value stat-value-sm">${escHtml(ranked[0]?.card?.title || '—')}</div><div class="stat-label">Most voted</div></div>
+      </div>
+
+      <div class="chart-card chart-card-full">
+        <div class="chart-title">Top features by votes</div>
+        <div class="chart-wrap-bar-lg"><canvas id="chart-features"></canvas></div>
+      </div>
+
+      <div class="charts-row charts-row-3">
+        <div class="chart-card"><div class="chart-title">Votes by phase</div><div class="chart-wrap-donut"><canvas id="chart-phase"></canvas></div></div>
+        <div class="chart-card"><div class="chart-title">Votes by role group</div><div class="chart-wrap-donut"><canvas id="chart-rolegroup"></canvas></div></div>
+        <div class="chart-card"><div class="chart-title">Votes by LGA type</div><div class="chart-wrap-donut"><canvas id="chart-lgatype"></canvas></div></div>
+      </div>
+
+      <div class="charts-row charts-row-2">
+        <div class="chart-card"><div class="chart-title">Votes by state / region</div><div class="chart-wrap-bar-md"><canvas id="chart-region"></canvas></div></div>
+        <div class="chart-card"><div class="chart-title">Notify &amp; research interest by feature</div><div class="chart-wrap-bar-md"><canvas id="chart-notify"></canvas></div></div>
       </div>
 
       <div class="data-card">
@@ -968,148 +1186,131 @@
               <th>Phase</th>
               <th>Audience</th>
               <th>Votes</th>
+              <th>Notify</th>
+              <th>Research</th>
             </tr>
           </thead>
           <tbody>
-            ${ranked.map((r, i) => `
-              <tr>
-                <td><span class="rank ${i < 3 ? `rank-${i+1}` : ''}">${i+1}</span></td>
-                <td style="font-weight:500;">${escHtml(r.card.title)}</td>
-                <td>${phaseBadge(r.card.phase)}</td>
-                <td>${audBadge(r.card.audience)}</td>
-                <td>
-                  <div class="vote-bar-wrap">
-                    <div class="vote-bar-bg">
-                      <div class="vote-bar-fill" style="width:${Math.round((r.total / ranked[0].total) * 100)}%"></div>
-                    </div>
-                    <span class="vote-bar-count">${r.total}</span>
-                  </div>
-                </td>
-              </tr>`).join('')}
+            ${ranked.map((r, i) => {
+              const n  = notifyByFeat[r.id]   || 0;
+              const rs = researchByFeat[r.id] || 0;
+              return `
+                <tr>
+                  <td><span class="rank ${i < 3 ? `rank-${i+1}` : ''}">${i+1}</span></td>
+                  <td style="font-weight:500;">${escHtml(r.card.title)}</td>
+                  <td>${phaseBadge(r.card.phase)}</td>
+                  <td>${audBadge(r.card.audience)}</td>
+                  <td><div class="vote-bar-wrap"><div class="vote-bar-bg"><div class="vote-bar-fill" style="width:${Math.round((r.total/ranked[0].total)*100)}%"></div></div><span class="vote-bar-count">${r.total}</span></div></td>
+                  <td>${n  > 0 ? `<span class="notify-pill">${n}</span>`  : '<span class="zero-count">—</span>'}</td>
+                  <td>${rs > 0 ? `<span class="research-pill">${rs}</span>` : '<span class="zero-count">—</span>'}</td>
+                </tr>`;
+            }).join('')}
           </tbody>
         </table>
       </div>`;
 
-    // Destroy any previous chart instances before creating new ones
-    if (_chartFeatures) { _chartFeatures.destroy(); _chartFeatures = null; }
-    if (_chartPhase)    { _chartPhase.destroy();    _chartPhase    = null; }
-    if (_chartAudience) { _chartAudience.destroy(); _chartAudience = null; }
+    el.querySelectorAll('.date-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => { dashFilters.datePreset = btn.dataset.preset; _renderInsights(el); });
+    });
+    const dfrom = el.querySelector('#dash-date-from');
+    const dto   = el.querySelector('#dash-date-to');
+    if (dfrom) dfrom.addEventListener('change', e => {
+      dashFilters.dateFrom = e.target.value ? new Date(e.target.value) : null; _renderInsights(el);
+    });
+    if (dto) dto.addEventListener('change', e => {
+      dashFilters.dateTo = e.target.value ? new Date(e.target.value + 'T23:59:59') : null; _renderInsights(el);
+    });
+    el.querySelectorAll('.filter-chip[data-filter]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const key = chip.dataset.filter, val = chip.dataset.value;
+        if (dashFilters[key].has(val)) dashFilters[key].delete(val); else dashFilters[key].add(val);
+        _renderInsights(el);
+      });
+    });
+    const clearBtn = el.querySelector('#clear-filters-btn');
+    if (clearBtn) clearBtn.addEventListener('click', () => {
+      dashFilters.datePreset = 'all'; dashFilters.dateFrom = null; dashFilters.dateTo = null;
+      dashFilters.councils.clear(); dashFilters.regions.clear();
+      dashFilters.lgaTypes.clear(); dashFilters.roleGroups.clear(); dashFilters.phases.clear();
+      _renderInsights(el);
+    });
 
-    const fontFamily = "'Space Grotesk', sans-serif";
+    _clearDashCharts();
 
-    // ── Chart 1: Horizontal bar — top 10 features ──
-    const top10 = ranked.slice(0, 10);
-    _chartFeatures = new Chart(document.getElementById('chart-features'), {
+    const ff  = "'Space Grotesk', sans-serif";
+    const PAL = ['#E0FF89','#2C2927','#9A948E','#E3DED7','#C4DC50','#6B6560','#B0A99F','#4D4744','#D4F55A','#3D3A38'];
+
+    function mkDonut(labels, data) {
+      return {
+        type: 'doughnut',
+        data: { labels, datasets: [{ data, backgroundColor: data.map((_,i) => PAL[i] || '#ccc'), borderWidth: 0, hoverBorderWidth: 0 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: {
+            legend: { position: 'bottom', labels: { font: { family: ff, size: 11 }, boxWidth: 10, padding: 10 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} vote${ctx.parsed !== 1 ? 's' : ''}` } },
+          },
+        },
+      };
+    }
+
+    function mkBar(labels, data, colors) {
+      return {
+        type: 'bar',
+        data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: 'transparent', borderWidth: 0, borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 }, borderSkipped: false }] },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x} vote${ctx.parsed.x !== 1 ? 's' : ''}` } } },
+          scales: {
+            x: { grid: { color: '#E3DED7' }, border: { display: false }, ticks: { font: { family: ff, size: 12 }, color: '#9A948E' } },
+            y: { grid: { display: false }, border: { display: false }, ticks: { font: { family: ff, size: 12 }, color: '#2C2927' } },
+          },
+        },
+      };
+    }
+
+    const top12 = ranked.slice(0, 12);
+    _chartFeatures = new Chart(document.getElementById('chart-features'),
+      mkBar(top12.map(r => r.card.title), top12.map(r => r.total), top12.map((_,i) => i === 0 ? '#E0FF89' : '#2C2927')));
+
+    const phDisp = { now:'In Development', next:'Coming Next', after:'Longer Term', launched:'Launched' };
+    const phEnt  = Object.entries(phaseTotals).filter(([,v]) => v > 0);
+    _chartPhase = new Chart(document.getElementById('chart-phase'),
+      mkDonut(phEnt.map(([k]) => phDisp[k] || k), phEnt.map(([,v]) => v)));
+
+    const rgOrder = ['Executive','Senior Management','Mid-Management','Other'];
+    const rgEnt   = rgOrder.map(k => [k, rgTotals[k] || 0]).filter(([,v]) => v > 0);
+    _chartRoleGroup = new Chart(document.getElementById('chart-rolegroup'),
+      mkDonut(rgEnt.map(([k]) => k), rgEnt.map(([,v]) => v)));
+
+    const lgaOrder = ['Metropolitan','Inner Regional','Outer Regional','Remote','New Zealand','Unknown'];
+    const lgaEnt   = lgaOrder.map(k => [k, lgaTotals[k] || 0]).filter(([,v]) => v > 0);
+    _chartLgaType = new Chart(document.getElementById('chart-lgatype'),
+      mkDonut(lgaEnt.map(([k]) => k), lgaEnt.map(([,v]) => v)));
+
+    const regEnt = Object.entries(regionTotals).sort((a,b) => b[1]-a[1]);
+    _chartRegion = new Chart(document.getElementById('chart-region'),
+      mkBar(regEnt.map(([k]) => k), regEnt.map(([,v]) => v), regEnt.map((_,i) => i === 0 ? '#E0FF89' : '#2C2927')));
+
+    const top8 = ranked.slice(0, 8);
+    _chartNotify = new Chart(document.getElementById('chart-notify'), {
       type: 'bar',
       data: {
-        labels: top10.map(r => r.card.title),
-        datasets: [{
-          data: top10.map(r => r.total),
-          backgroundColor: top10.map((_, i) => i === 0 ? '#E0FF89' : '#2C2927'),
-          borderColor: 'transparent',
-          borderWidth: 0,
-          borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 },
-          borderSkipped: false,
-        }],
+        labels: top8.map(r => r.card.title),
+        datasets: [
+          { label: 'Notify',   data: top8.map(r => notifyByFeat[r.id]   || 0), backgroundColor: '#E0FF89', borderColor: 'transparent', borderWidth: 0, borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 }, borderSkipped: false },
+          { label: 'Research', data: top8.map(r => researchByFeat[r.id] || 0), backgroundColor: '#2C2927', borderColor: 'transparent', borderWidth: 0, borderRadius: { topLeft: 0, bottomLeft: 0, topRight: 4, bottomRight: 4 }, borderSkipped: false },
+        ],
       },
       options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: { label: ctx => ` ${ctx.parsed.x} vote${ctx.parsed.x !== 1 ? 's' : ''}` },
-          },
+          legend: { display: true, position: 'top', labels: { font: { family: ff, size: 11 }, boxWidth: 10, padding: 10 } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x} voter${ctx.parsed.x !== 1 ? 's' : ''}` } },
         },
         scales: {
-          x: {
-            grid: { color: '#E3DED7' },
-            border: { display: false },
-            ticks: { font: { family: fontFamily, size: 12 }, color: '#9A948E' },
-          },
-          y: {
-            grid: { display: false },
-            border: { display: false },
-            ticks: { font: { family: fontFamily, size: 12 }, color: '#2C2927' },
-          },
-        },
-      },
-    });
-
-    // Yellow / Black / Grey / White palette only
-    const CHART_PALETTE = [
-      '#E0FF89',  // 1. High-Vis yellow
-      '#2C2927',  // 2. Warm Black
-      '#9A948E',  // 3. Mid Grey
-      '#E3DED7',  // 4. Light warm grey
-      '#F4F2EF',  // 5. Warm Grey bg
-      '#C4DC50',  // 6. Deeper yellow-green
-      '#6B6560',  // 7. Dark grey
-      '#B0A99F',  // 8. Silver warm grey
-      '#FFFCE0',  // 9. Very pale yellow
-      '#4D4744',  // 10. Very dark grey
-    ];
-
-    // ── Chart 2: Donut — votes by phase ──
-    const phaseLabels  = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
-    const phaseEntries = Object.entries(phaseTotals).filter(([, v]) => v > 0);
-    _chartPhase = new Chart(document.getElementById('chart-phase'), {
-      type: 'doughnut',
-      data: {
-        labels: phaseEntries.map(([k]) => phaseLabels[k] || k),
-        datasets: [{
-          data: phaseEntries.map(([, v]) => v),
-          backgroundColor: phaseEntries.map((_, i) => CHART_PALETTE[i] || '#ccc'),
-          borderWidth: 0,
-          hoverBorderWidth: 0,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '68%',
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { font: { family: fontFamily, size: 11 }, boxWidth: 10, padding: 10 },
-          },
-          tooltip: {
-            callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} vote${ctx.parsed !== 1 ? 's' : ''}` },
-          },
-        },
-      },
-    });
-
-    // ── Chart 3: Donut — votes by audience ──
-    const audLabels = {
-      snappers: 'Snappers', solvers: 'Solvers',
-      'customer-service': 'Customer Service', 'depot-field': 'Depot & Field', 'it-teams': 'IT Teams',
-    };
-    const audEntries = Object.entries(audTotals).sort((a, b) => b[1] - a[1]);
-    _chartAudience = new Chart(document.getElementById('chart-audience'), {
-      type: 'doughnut',
-      data: {
-        labels: audEntries.map(([k]) => audLabels[k] || k),
-        datasets: [{
-          data: audEntries.map(([, v]) => v),
-          backgroundColor: audEntries.map((_, i) => CHART_PALETTE[i] || '#ccc'),
-          borderWidth: 0,
-          hoverBorderWidth: 0,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '68%',
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { font: { family: fontFamily, size: 11 }, boxWidth: 10, padding: 10 },
-          },
-          tooltip: {
-            callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} vote${ctx.parsed !== 1 ? 's' : ''}` },
-          },
+          x: { grid: { color: '#E3DED7' }, border: { display: false }, ticks: { font: { family: ff, size: 12 }, color: '#9A948E' } },
+          y: { grid: { display: false }, border: { display: false }, ticks: { font: { family: ff, size: 12 }, color: '#2C2927' } },
         },
       },
     });
