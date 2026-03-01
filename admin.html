@@ -1049,24 +1049,46 @@
       || dashFilters.lgaTypes.size || dashFilters.roleGroups.size || dashFilters.phases.size;
   }
 
-  async function loadDashboard() {
-    const el = document.getElementById('dashboard-content');
-    if (!_rawVotes) {
-      el.innerHTML = '<div class="loading">Loading…</div>';
+  // Fetch data in background; re-renders dashboard when complete
+  async function _initDashData() {
+    try {
       const [{ data: votes, error: vErr }, { data: cardRows, error: cErr }] = await Promise.all([
         _supabase.from('votes').select('card_id,votes,user_email,user_name,user_org,user_role,notify,research,created_at'),
         _supabase.from('cards').select('id,title,phase,audience'),
       ]);
-      if (vErr || cErr) { el.innerHTML = '<div class="loading">Error loading data.</div>'; return; }
+      if (vErr || cErr) {
+        const el = document.getElementById('dashboard-content');
+        if (el) el.innerHTML = `<div class="loading">Error: ${escHtml((vErr || cErr).message || 'Unknown')}</div>`;
+        return;
+      }
       _rawVotes      = votes || [];
       _rawCards      = cardRows || [];
       _enrichedVotes = _rawVotes.map(enrichVote);
+    } catch (e) {
+      const el = document.getElementById('dashboard-content');
+      if (el) el.innerHTML = `<div class="loading">Network error. <button onclick="_initDashData()" class="btn-sm" style="margin-left:8px;">Retry</button></div>`;
+      return;
+    }
+    if (activeTab === 'dashboard') loadDashboard();
+  }
+
+  function loadDashboard() {
+    const el = document.getElementById('dashboard-content');
+    if (_rawVotes === null) {
+      el.innerHTML = '<div class="loading">Loading…</div>';
+      return; // _initDashData will call back once ready
     }
     if (_rawVotes.length === 0) {
       el.innerHTML = '<div class="empty-msg">No votes recorded yet. Charts will appear once customers start allocating.</div>';
       return;
     }
-    _renderInsights(el);
+    try {
+      _renderInsights(el);
+    } catch (err) {
+      console.error('Dashboard render error:', err);
+      _rawVotes = null;
+      el.innerHTML = `<div class="loading">Render error — <button onclick="_initDashData()" class="btn-sm" style="margin-left:8px;">Retry</button></div>`;
+    }
   }
 
   function _renderInsights(el) {
@@ -1780,7 +1802,8 @@
      INIT
   ══════════════════════════════════════════════════════════════ */
   function initAdmin() {
-    loadDashboard();
+    loadDashboard();   // shows Loading… immediately (synchronous)
+    _initDashData();   // fetches in background, then re-renders
   }
 </script>
 </body>
