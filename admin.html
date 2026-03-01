@@ -216,30 +216,8 @@
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
     .empty-msg { color: var(--text-muted); font-size: 14px; font-style: italic; padding: 20px 0; font-family: 'Work Sans', sans-serif; }
 
-    /* ── Dashboard section headings ── */
-    .dash-section-heading {
-      font-family: 'Bagoss', 'Space Grotesk', sans-serif;
-      font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
-      color: var(--warm-black);
-    }
-    .dash-collapsible-section { margin-top: 28px; margin-bottom: 20px; }
-    .dash-collapsible-summary {
-      display: flex; align-items: center; justify-content: space-between;
-      list-style: none; cursor: pointer;
-      background: rgba(44,41,39,0.06); border-radius: 10px;
-      padding: 10px 14px; margin-bottom: 14px;
-    }
-    details.dash-collapsible-section:not([open]) .dash-collapsible-summary { margin-bottom: 0; }
-    .dash-collapsible-summary::-webkit-details-marker { display: none; }
-    .dash-section-toggle {
-      width: 26px; height: 26px; border-radius: 7px; border: 1.5px solid var(--warm-black);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--warm-black); flex-shrink: 0; font-size: 18px; line-height: 1;
-    }
-    .dash-section-toggle .toggle-minus { display: block; }
-    .dash-section-toggle .toggle-plus { display: none; }
-    details.dash-collapsible-section:not([open]) .dash-section-toggle .toggle-minus { display: none; }
-    details.dash-collapsible-section:not([open]) .dash-section-toggle .toggle-plus { display: block; }
+    /* ── Dashboard section dividers ── */
+    .dash-divider { border: none; border-top: 1px solid rgba(44,41,39,0.15); margin: 24px 0; }
 
     /* ── Dashboard top two-column layout ── */
     .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
@@ -1370,34 +1348,25 @@
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
       </div>
 
-      <details class="dash-collapsible-section" open>
-        <summary class="dash-collapsible-summary">
-          <span class="dash-section-heading">Summary</span>
-          <span class="dash-section-toggle"><span class="toggle-minus">−</span><span class="toggle-plus">+</span></span>
-        </summary>
+      <hr class="dash-divider">
 
-        <div class="dash-top-row">
-          <div class="dash-left-panel">
-            ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
-          </div>
-          <div class="chart-card chart-card-full dash-features-chart">
-            <div class="chart-header">
-              <span class="chart-title">Top features by votes</span>
-              <div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Features ranked by total votes across all voters</span></div>
-            </div>
-            <hr class="chart-header-divider">
-            <div class="chart-wrap-bar-lg"><canvas id="chart-features"></canvas></div>
-            <hr class="chart-footer-divider">
-            <div class="chart-legend" id="legend-features"></div>
-          </div>
+      <div class="dash-top-row">
+        <div class="dash-left-panel">
+          ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
         </div>
-      </details>
+        <div class="chart-card chart-card-full dash-features-chart">
+          <div class="chart-header">
+            <span class="chart-title">Top features by votes</span>
+            <div class="chart-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="chart-info-tip">Features ranked by total votes across all voters</span></div>
+          </div>
+          <hr class="chart-header-divider">
+          <div class="chart-wrap-bar-lg"><canvas id="chart-features"></canvas></div>
+          <hr class="chart-footer-divider">
+          <div class="chart-legend" id="legend-features"></div>
+        </div>
+      </div>
 
-      <details class="dash-collapsible-section" open>
-        <summary class="dash-collapsible-summary">
-          <span class="dash-section-heading">Voting Breakdown</span>
-          <span class="dash-section-toggle"><span class="toggle-minus">−</span><span class="toggle-plus">+</span></span>
-        </summary>
+      <hr class="dash-divider">
 
       <div class="charts-row charts-row-3">
         <div class="chart-card">
@@ -1470,8 +1439,7 @@
             }).join('')}
           </tbody>
         </table>
-      </div>
-      </details>`;
+      </div>`;
 
     // Attach filter event listeners to the filter dock
     const filterEl = filterDock || el;
