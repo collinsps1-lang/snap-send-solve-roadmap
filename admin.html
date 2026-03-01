@@ -105,7 +105,7 @@
     }
     .admin-sidebar.collapsed .sidebar-logo-wrap { margin-top: 40px; margin-bottom: 12px; }
     .sidebar-logo {
-      width: 72px; height: auto;
+      width: 72px; height: 69px; object-fit: contain;
       transition: width 0.38s cubic-bezier(0.4,0,0.2,1);
     }
     .admin-sidebar.collapsed .sidebar-logo { width: 36px; }
@@ -242,42 +242,39 @@
     .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif; font-weight: 500; }
 
     /* ── Roadmap Suggestions panel ── */
-    .sugg-panel {
+    details.sugg-panel {
       background: var(--warm-black); border-radius: 14px; padding: 24px 28px 28px; margin-bottom: 20px;
     }
-    .sugg-panel-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 18px; }
-    .sugg-finger { width: 40px; height: 40px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+    .sugg-panel-summary {
+      display: flex; align-items: center; justify-content: space-between;
+      list-style: none; cursor: pointer;
+    }
+    .sugg-panel-summary::-webkit-details-marker { display: none; }
     .sugg-panel-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
-      font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 4px;
+      font-size: 18px; font-weight: 700; color: #fff; letter-spacing: -0.02em;
     }
-    .sugg-ai-text {
-      font-size: 12.5px; color: rgba(255,255,255,0.55); font-family: 'Space Grotesk', sans-serif;
-      line-height: 1.6;
-    }
+    .sugg-panel-chevron { flex-shrink: 0; color: rgba(255,255,255,0.4); transition: transform 0.22s ease; }
+    details.sugg-panel[open] .sugg-panel-chevron { transform: rotate(180deg); }
     .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px -28px; }
-    .sugg-items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .sugg-item {
-      background: #000; border-radius: 10px; padding: 16px 18px;
-    }
+    .sugg-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; }
+    .sugg-label-icon { width: 13px; height: 13px; object-fit: contain; margin-right: 5px; vertical-align: middle; opacity: 0.55; }
     .sugg-item-label {
+      display: flex; align-items: center;
       font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
       color: rgba(255,255,255,0.35); font-family: 'Space Grotesk', sans-serif; margin-bottom: 12px;
     }
-    .sugg-item-icon { display: flex; margin-bottom: 14px; }
     .sugg-item-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
       font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.01em;
       margin-bottom: 5px; line-height: 1.3;
     }
     .sugg-item-meta { font-size: 12px; color: rgba(255,255,255,0.45); font-family: 'Space Grotesk', sans-serif; }
-    .sugg-item-badge {
-      display: inline-block; margin-top: 10px; padding: 3px 9px; border-radius: 20px;
-      font-size: 11px; font-weight: 600; font-family: 'Space Grotesk', sans-serif;
-    }
-    .sugg-item-badge.orange { background: rgba(255,150,74,0.2); color: #FF964A; }
-    .sugg-item-badge.green  { background: rgba(224,255,137,0.15); color: #b2dd2f; }
-    .sugg-item-badge.muted  { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+    .sugg-vote-badge { display: flex; flex-direction: column; align-items: flex-start; margin-top: 12px; gap: 2px; }
+    .sugg-vote-count { font-family: 'Bagoss', 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1; }
+    .sugg-vote-label { font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.4); line-height: 1; }
+    .sugg-item-ai { font-size: 12.5px; color: rgba(255,255,255,0.55); font-family: 'Space Grotesk', sans-serif; line-height: 1.6; }
 
     /* ── Dashboard charts ── */
     .charts-row {
@@ -526,6 +523,14 @@
     }
     .dash-clear-btn:hover { border-color: var(--warm-black); color: var(--text-dark); }
 
+    /* ── Docked filter bar ── */
+    .filter-dock { background: var(--warm-black); padding: 12px 24px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 20; }
+    .filter-dock .dash-filter-bar { margin-bottom: 0; }
+    .filter-dock .dash-filter-trigger { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); }
+    .filter-dock .dash-filter-dd[open] > .dash-filter-trigger { background: #fff; color: var(--warm-black); border-color: #fff; }
+    .filter-dock .dash-clear-btn { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.5); background: transparent; }
+    .filter-dock .dash-clear-btn:hover { border-color: rgba(255,255,255,0.7); color: rgba(255,255,255,0.9); }
+
     /* ── Richer chart layout ── */
     .chart-card-full { background: var(--card-bg); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
     .chart-wrap-bar-lg { height: 380px; position: relative; }
@@ -657,6 +662,7 @@
         <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
       </div>
       <hr class="tab-divider">
+      <div id="filter-dock" class="filter-dock"></div>
       <div class="panel-body">
         <div id="dashboard-content"><div class="loading">Loading…</div></div>
       </div>
@@ -1169,80 +1175,59 @@
   function _buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals) {
     if (ranked.length === 0) return '';
 
-    // Most voted overall
     const top = ranked[0];
     const topPct = totalVotes > 0 ? Math.round(top.total / totalVotes * 100) : 0;
 
-    // Feature to accelerate: highest voted in 'next' phase
     const nextRanked = ranked.filter(r => r.card?.phase === 'next');
     const accel = nextRanked[0] || null;
+    const depr  = nextRanked.length > 1 ? nextRanked[nextRanked.length - 1] : null;
 
-    // Feature to deprioritise: lowest voted in 'next' phase (only if >1 next feature)
-    const depr = nextRanked.length > 1 ? nextRanked[nextRanked.length - 1] : null;
-
-    // AI narrative
-    const topRgEntry = Object.entries(rgTotals).sort((a, b) => b[1] - a[1])[0];
-    const notifyPct = voterEmails.size > 0 ? Math.round(notifyEmails.size / voterEmails.size * 100) : 0;
+    const topRgEntry  = Object.entries(rgTotals).sort((a, b) => b[1] - a[1])[0];
+    const notifyPct   = voterEmails.size > 0 ? Math.round(notifyEmails.size   / voterEmails.size * 100) : 0;
     const researchPct = voterEmails.size > 0 ? Math.round(researchEmails.size / voterEmails.size * 100) : 0;
 
     let narrative = `${voterEmails.size} voter${voterEmails.size === 1 ? '' : 's'} have allocated ${totalVotes} vote${totalVotes === 1 ? '' : 's'} across ${ranked.length} feature${ranked.length === 1 ? '' : 's'}. `;
     narrative += `<strong style="color:rgba(255,255,255,0.85)">${escHtml(top.card.title)}</strong> leads demand, capturing ${topPct}% of all votes. `;
-    if (topRgEntry) narrative += `${escHtml(topRgEntry[0])}s are your most engaged segment. `;
-    if (notifyPct > 0) narrative += `${notifyPct}% of voters want to be notified of progress updates`;
+    if (topRgEntry)   narrative += `${escHtml(topRgEntry[0])}s are your most engaged segment. `;
+    if (notifyPct   > 0) narrative += `${notifyPct}% of voters want to be notified of progress updates`;
     if (researchPct > 0) narrative += `, and ${researchPct}% are willing to participate in research`;
     if (notifyPct > 0 || researchPct > 0) narrative += '.';
 
-    const infoSvg = `<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.5"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg>`;
-
     const phaseDisp = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
+    const li = `<img src="solver-icon.png" class="sugg-label-icon" aria-hidden="true">`;
 
-    function _suggItem(label, emoji, item, badge, badgeCls, meta) {
-      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${label}</div><div class="sugg-item-meta" style="margin-top:8px;">Not enough data</div></div>`;
+    function _suggItem(label, item, meta) {
+      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${li}${label}</div><div class="sugg-item-meta" style="margin-top:8px;color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
       return `<div class="sugg-item">
-        <div class="sugg-item-label">${label}</div>
-        <div class="sugg-item-icon">${emoji}</div>
+        <div class="sugg-item-label">${li}${label}</div>
         <div class="sugg-item-title">${escHtml(item.card.title)}</div>
         <div class="sugg-item-meta">${meta}</div>
-        <div class="sugg-item-badge ${badgeCls}">${badge}</div>
+        <div class="sugg-vote-badge">
+          <span class="sugg-vote-count">${item.total}</span>
+          <span class="sugg-vote-label">VOTES</span>
+        </div>
       </div>`;
     }
 
+    const chevron = `<svg class="sugg-panel-chevron" width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
     return `
-      <div class="sugg-panel">
-        <div class="sugg-panel-header">
-          <img src="solver-icon.png" class="sugg-finger" alt="" aria-hidden="true" />
-          <div>
-            <div class="sugg-panel-title">Roadmap Suggestions</div>
-            <div class="sugg-ai-text">${narrative}</div>
-          </div>
-        </div>
+      <details class="sugg-panel" open>
+        <summary class="sugg-panel-summary">
+          <div class="sugg-panel-title">Roadmap Suggestions</div>
+          ${chevron}
+        </summary>
         <hr class="sugg-divider">
         <div class="sugg-items">
-          ${_suggItem('Most demand',
-            `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="19" cy="19" r="19" fill="#FF964A" fill-opacity="0.15"/>
-              <!-- pointing index finger up -->
-              <path d="M19 9c1.1 0 2 .9 2 2v7.5c.5-.3 1.1-.5 1.7-.5 1 0 1.8.6 2.1 1.5.4-.2.8-.3 1.2-.3 1 0 1.8.6 2.1 1.5.3-.1.6-.2 1-.2 1.1 0 2 .9 2 2V25c0 2.8-2.2 5-5 5h-5c-1.6 0-3-.8-3.9-2l-4.5-6c-.6-.8-.4-2 .4-2.6.8-.6 2-.4 2.6.4L17 21.5V11c0-1.1.9-2 2-2Z" fill="#FF964A"/>
-            </svg>`,
-            top, `${top.total} vote${top.total === 1 ? '' : 's'}`, 'orange', escHtml(phaseDisp[top.card.phase] || top.card.phase))}
-          ${_suggItem('Consider accelerating',
-            `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="19" cy="19" r="19" fill="#b2dd2f" fill-opacity="0.12"/>
-              <!-- hand pushing forward / snap gesture -->
-              <path d="M10 22c0-1.1.9-2 2-2h2v-6c0-1.1.9-2 2-2s2 .9 2 2v4c.3-.2.7-.3 1-.3.8 0 1.5.4 1.8 1 .3-.2.7-.3 1.2-.3.9 0 1.6.5 1.9 1.2.3-.1.6-.2.9-.2 1.1 0 2 .9 2 2V24c0 2.2-1.8 4-4 4h-4.5C18.4 28 17 27 16.3 25.6L14 22h-2c0 0 0 0 0 0Z" fill="#b2dd2f"/>
-              <path d="M25 10l3.5 3L25 16" stroke="#b2dd2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>`,
-            accel, accel ? `${accel.total} vote${accel.total === 1 ? '' : 's'} in Coming Next` : '', 'green', accel ? 'High demand — candidate to pull into In Development' : '')}
-          ${_suggItem('Review priority',
-            `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="19" cy="19" r="19" fill="rgba(255,255,255,0.06)"/>
-              <!-- hand holding back / palm out -->
-              <path d="M13 16c0-1.1.9-2 2-2s2 .9 2 2v2c0-1.1.9-2 2-2s2 .9 2 2c0-1.1.9-2 2-2s2 .9 2 2v2c0-1.1.9-2 2-2s2 .9 2 2v5c0 2.8-2.2 5-5 5h-3c-1.8 0-3.4-1-4.2-2.5L13 22v-6Z" fill="rgba(255,255,255,0.35)"/>
-              <path d="M13 20h-1.5c-.8 0-1.5-.7-1.5-1.5S10.7 17 11.5 17H13" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>`,
-            depr, depr ? `${depr.total} vote${depr.total === 1 ? '' : 's'} in Coming Next` : '', 'muted', depr ? 'Lowest demand in Coming Next — consider pushing out' : '')}
+          ${_suggItem('Most demand',      top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
+          ${_suggItem('Consider accelerating', accel, accel ? 'High demand — candidate to pull into In Development' : '')}
+          ${_suggItem('Review priority',  depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : '')}
+          <div class="sugg-item">
+            <div class="sugg-item-label">${li}AI Summary</div>
+            <div class="sugg-item-ai">${narrative}</div>
+          </div>
         </div>
-      </div>`;
+      </details>`;
   }
 
   function _renderInsights(el) {
@@ -1285,7 +1270,11 @@
     const phaseDisp     = { now:'In Development', next:'Coming Next', after:'Longer Term', launched:'Launched' };
 
     // Save which dropdowns are open before re-render (so filter changes keep them open)
-    const _openDds = [...el.querySelectorAll('.dash-filter-dd[open]')].map(d => d.id);
+    const filterDock = document.getElementById('filter-dock');
+    const _openDds = [
+      ...(filterDock ? [...filterDock.querySelectorAll('.dash-filter-dd[open]')].map(d => d.id) : []),
+      ...[...el.querySelectorAll('.dash-filter-dd[open]')].map(d => d.id),
+    ];
 
     const _chevron = `<svg class="dash-filter-chevron" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     function _badge(n) { return n > 0 ? `<span class="dash-filter-count">${n}</span>` : ''; }
@@ -1295,7 +1284,7 @@
     const presetLabels = { all:'All time', '30d':'Last 30 days', '90d':'Last 90 days', custom:'Custom' };
     const dateActive = dashFilters.datePreset !== 'all' || dashFilters.dateFrom || dashFilters.dateTo ? 1 : 0;
 
-    el.innerHTML = `
+    const filterBarHtml = `
       <div class="dash-filter-bar">
         <details class="dash-filter-dd" id="dd-date">
           <summary class="dash-filter-trigger">Date ${_badge(dateActive)} ${_chevron}</summary>
@@ -1328,8 +1317,11 @@
           <div class="dash-filter-body dash-filter-body-scroll">${_cbs(allCouncils,'councils',dashFilters.councils)}</div>
         </details>
         ${_hasActiveFilters() ? '<button class="dash-clear-btn" id="clear-filters-btn">Clear all</button>' : ''}
-      </div>
+      </div>`;
 
+    if (filterDock) filterDock.innerHTML = filterBarHtml;
+
+    el.innerHTML = `
       <div class="stats-row">
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
@@ -1424,12 +1416,14 @@
         </table>
       </div>`;
 
+    // Attach filter event listeners to the filter dock
+    const filterEl = filterDock || el;
     // Date preset radios
-    el.querySelectorAll('input[name="date-preset"]').forEach(r => {
+    filterEl.querySelectorAll('input[name="date-preset"]').forEach(r => {
       r.addEventListener('change', () => { dashFilters.datePreset = r.value; _renderInsights(el); });
     });
-    const dfrom = el.querySelector('#dash-date-from');
-    const dto   = el.querySelector('#dash-date-to');
+    const dfrom = filterEl.querySelector('#dash-date-from');
+    const dto   = filterEl.querySelector('#dash-date-to');
     if (dfrom) dfrom.addEventListener('change', e => {
       dashFilters.dateFrom = e.target.value ? new Date(e.target.value) : null; _renderInsights(el);
     });
@@ -1437,7 +1431,7 @@
       dashFilters.dateTo = e.target.value ? new Date(e.target.value + 'T23:59:59') : null; _renderInsights(el);
     });
     // Multi-select checkboxes
-    el.querySelectorAll('input[data-filter]').forEach(cb => {
+    filterEl.querySelectorAll('input[data-filter]').forEach(cb => {
       cb.addEventListener('change', () => {
         const key = cb.dataset.filter, val = cb.value;
         if (cb.checked) dashFilters[key].add(val); else dashFilters[key].delete(val);
@@ -1445,25 +1439,30 @@
       });
     });
     // Clear all
-    const clearBtn = el.querySelector('#clear-filters-btn');
+    const clearBtn = filterEl.querySelector('#clear-filters-btn');
     if (clearBtn) clearBtn.addEventListener('click', () => {
       dashFilters.datePreset = 'all'; dashFilters.dateFrom = null; dashFilters.dateTo = null;
       dashFilters.councils.clear(); dashFilters.regions.clear();
       dashFilters.lgaTypes.clear(); dashFilters.roleGroups.clear(); dashFilters.phases.clear();
       _renderInsights(el);
     });
-    // Close dropdowns on outside click (attach once per dashboard-content element)
+    // Close dropdowns on outside click (attach once)
     if (!el.dataset.outsideClick) {
       el.dataset.outsideClick = '1';
       document.addEventListener('click', e => {
         if (!e.target.closest('.dash-filter-dd')) {
-          document.querySelectorAll('#dashboard-content .dash-filter-dd[open]')
+          document.querySelectorAll('#filter-dock .dash-filter-dd[open], #dashboard-content .dash-filter-dd[open]')
             .forEach(d => d.removeAttribute('open'));
         }
       });
     }
     // Restore open dropdowns after re-render
-    _openDds.forEach(id => { const d = el.querySelector('#' + id); if (d) d.open = true; });
+    _openDds.forEach(id => {
+      [filterDock, el].filter(Boolean).forEach(parent => {
+        const d = parent.querySelector('#' + id);
+        if (d) d.open = true;
+      });
+    });
 
     _clearDashCharts();
 
