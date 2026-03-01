@@ -197,9 +197,11 @@
 
     /* ── Main content ── */
     #admin-app { display: none; flex-direction: row; height: 100vh; }
-    .admin-main { flex: 1; overflow-y: auto; min-width: 0; }
-    .tab-panel { display: none; padding: 32px 24px; }
-    .tab-panel.active { display: block; }
+    .admin-main { flex: 1; overflow: hidden; min-width: 0; display: flex; flex-direction: column; }
+    .tab-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+    .panel-header { padding: 32px 24px 0; flex-shrink: 0; }
+    .panel-body { flex: 1; overflow-y: auto; padding: 0 24px 32px; }
 
     /* ── Page heading ── */
     .page-heading {
@@ -642,39 +644,55 @@
 
     <!-- ── Tab 1: Roadmap Insights ── -->
     <div class="tab-panel active" id="tab-dashboard">
-      <div class="page-heading">Roadmap Insights</div>
-      <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
-      <hr class="tab-divider">
-      <div id="dashboard-content"><div class="loading">Loading…</div></div>
+      <div class="panel-header">
+        <div class="page-heading">Roadmap Insights</div>
+        <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
+        <hr class="tab-divider">
+      </div>
+      <div class="panel-body">
+        <div id="dashboard-content"><div class="loading">Loading…</div></div>
+      </div>
     </div>
 
     <!-- ── Tab 2: Voters ── -->
     <div class="tab-panel" id="tab-voters">
-      <div class="page-heading">Audience</div>
-      <p class="page-sub">All registered voters and how they've allocated their votes.</p>
-      <hr class="tab-divider">
-      <div id="voters-content"><div class="loading">Loading…</div></div>
+      <div class="panel-header">
+        <div class="page-heading">Audience</div>
+        <p class="page-sub">All registered voters and how they've allocated their votes.</p>
+        <hr class="tab-divider">
+      </div>
+      <div class="panel-body">
+        <div id="voters-content"><div class="loading">Loading…</div></div>
+      </div>
     </div>
 
     <!-- ── Tab 3: Community Contributions ── -->
     <div class="tab-panel" id="tab-community">
-      <div class="page-heading">Community Contributions</div>
-      <p class="page-sub">Ideas and suggestions submitted by the community through the customer-facing page.</p>
-      <hr class="tab-divider">
-      <div id="community-content"><div class="loading">Loading…</div></div>
+      <div class="panel-header">
+        <div class="page-heading">Community Contributions</div>
+        <p class="page-sub">Ideas and suggestions submitted by the community through the customer-facing page.</p>
+        <hr class="tab-divider">
+      </div>
+      <div class="panel-body">
+        <div id="community-content"><div class="loading">Loading…</div></div>
+      </div>
     </div>
 
     <!-- ── Tab 4: CMS ── -->
     <div class="tab-panel" id="tab-cms">
-      <div class="page-heading">Features</div>
-      <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
-      <hr class="tab-divider">
+      <div class="panel-header">
+        <div class="page-heading">Features</div>
+        <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
+        <hr class="tab-divider">
+      </div>
+      <div class="panel-body">
       <button class="btn-add" id="cms-add-btn">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         Add new card
       </button>
       <div id="cms-content"><div class="loading">Loading…</div></div>
-    </div>
+      </div><!-- /.panel-body -->
+    </div><!-- /#tab-cms -->
 
   </main>
 </div>

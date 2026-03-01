@@ -3722,7 +3722,7 @@
     listEl.innerHTML = '';
     const canAdd = !currentUser.submitted && remainingBudget() > 0;
     const canSub = !currentUser.submitted;
-    const PHASE_LABELS = { now: 'In Development', next: 'Coming Next', after: 'Considering for Build', suggestions: 'Community Suggestions' };
+    const PHASE_LABELS = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', suggestions: 'Community Suggestions' };
     // Build groups: { phaseLabel -> [ {cardId, entry, name} ] }
     const groups = {};
     Object.entries(voteData)
