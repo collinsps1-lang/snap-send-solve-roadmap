@@ -2959,7 +2959,6 @@
       localStorage.setItem(USER_KEY,  JSON.stringify(currentUser));
       localStorage.setItem(VOTES_KEY, JSON.stringify(voteData));
     } catch(e) {}
-    syncVotesToSupabase(); // fire-and-forget: write to Supabase for admin insights
   }
 
   function getBudgetForRole(role) {
@@ -3396,6 +3395,7 @@
 
     currentUser.submitted = true;
     saveSession();
+    syncVotesToSupabase(); // write to Supabase only on final submission
     lockVoting();
     updateBudgetWidget();
     document.getElementById('budget-widget').style.display = 'none';
