@@ -871,7 +871,7 @@
     btn.textContent = 'Sending…';
     const { error } = await _supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname },
+      options: { emailRedirectTo: 'https://collinsps1-lang.github.io/snap-send-solve-roadmap/admin.html' },
     });
     btn.disabled = false;
     btn.textContent = 'Send magic link →';
