@@ -80,43 +80,80 @@
     .auth-msg { margin-top: 14px; font-size: 13px; color: var(--text-muted); text-align: center; line-height: 1.5; font-family: 'Work Sans', sans-serif; }
     .auth-msg.error { color: #c0392b; }
 
-    /* ── Top nav ── */
-    .topnav {
-      display: flex; align-items: center; gap: 0;
-      background: var(--warm-black); padding: 0 24px; height: 56px;
-      position: sticky; top: 0; z-index: 100;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+    /* ── Admin sidebar ── */
+    .admin-sidebar {
+      width: 264px; min-width: 264px;
+      background: var(--high-vis);
+      display: flex; flex-direction: column;
+      height: 100vh; position: sticky; top: 0;
+      border-right: 1.5px solid rgba(44,41,39,0.14);
+      transition: width 0.22s ease, min-width 0.22s ease;
+      overflow: hidden; flex-shrink: 0;
     }
-    .topnav-brand {
-      display: flex; align-items: center; gap: 10px;
-      margin-right: 32px; white-space: nowrap; flex-shrink: 0; text-decoration: none;
+    .admin-sidebar.collapsed { width: 64px; min-width: 64px; }
+
+    .sidebar-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 14px 12px; flex-shrink: 0;
     }
-    .topnav-brand-logo { height: 26px; width: auto; display: block; }
-    .topnav-brand-pill {
+    .admin-sidebar.collapsed .sidebar-header { justify-content: center; padding: 20px 0 12px; }
+
+    .sidebar-brand { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+    .sidebar-logo { width: 34px; height: auto; flex-shrink: 0; border-radius: 5px; }
+
+    .sidebar-pill {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-      background: var(--high-vis); color: var(--warm-black);
-      padding: 2px 8px; border-radius: 4px;
+      background: var(--warm-black); color: var(--high-vis);
+      padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+      opacity: 1; transition: opacity 0.15s;
     }
-    .topnav-tabs { display: flex; gap: 4px; flex: 1; }
+    .admin-sidebar.collapsed .sidebar-pill { opacity: 0; pointer-events: none; }
+
+    .sidebar-toggle {
+      background: transparent; border: none; width: 28px; height: 28px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 6px; color: var(--warm-black); transition: background 0.15s;
+    }
+    .sidebar-toggle:hover { background: rgba(44,41,39,0.1); }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; flex: 1; }
+
     .nav-tab {
-      padding: 8px 16px; border-radius: 8px; border: none; background: transparent;
-      color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500;
-      font-family: 'Space Grotesk', sans-serif; cursor: pointer; transition: color 0.15s, background 0.15s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 9px; border: none;
+      background: transparent; color: var(--warm-black);
+      font-size: 14px; font-weight: 500;
+      font-family: 'Space Grotesk', sans-serif; cursor: pointer;
+      transition: background 0.15s; text-align: left; white-space: nowrap;
     }
-    .nav-tab:hover { color: var(--white); background: rgba(255,255,255,0.08); }
-    .nav-tab.active { color: var(--warm-black); background: var(--high-vis); font-weight: 700; }
-    .topnav-right { margin-left: auto; }
+    .nav-tab:hover { background: rgba(44,41,39,0.1); }
+    .nav-tab.active { background: var(--warm-black); color: var(--high-vis); font-weight: 700; }
+    .nav-tab-icon { flex-shrink: 0; }
+    .nav-tab-label { overflow: hidden; transition: opacity 0.15s, max-width 0.2s; max-width: 160px; }
+    .admin-sidebar.collapsed .nav-tab { justify-content: center; padding: 10px; }
+    .admin-sidebar.collapsed .nav-tab-label { opacity: 0; max-width: 0; }
+
+    .sidebar-bottom {
+      padding: 12px 10px 20px; flex-shrink: 0;
+      border-top: 1.5px solid rgba(44,41,39,0.12);
+    }
     .signout-btn {
-      background: transparent; border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(255,255,255,0.7); padding: 7px 14px; border-radius: 8px;
-      font-size: 13px; font-family: 'Space Grotesk', sans-serif; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 9px 12px;
+      background: transparent; border: 1.5px solid rgba(44,41,39,0.2);
+      color: var(--warm-black); border-radius: 9px;
+      font-size: 13px; font-family: 'Space Grotesk', sans-serif;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
     }
-    .signout-btn:hover { border-color: rgba(255,255,255,0.6); color: var(--white); }
+    .signout-btn:hover { background: rgba(44,41,39,0.1); border-color: rgba(44,41,39,0.5); }
+    .admin-sidebar.collapsed .signout-btn { justify-content: center; padding: 9px; }
+    .admin-sidebar.collapsed .signout-btn-label { display: none; }
 
     /* ── Main content ── */
-    #admin-app { display: none; flex-direction: column; height: 100vh; }
-    .tab-panel { display: none; flex: 1; overflow-y: auto; padding: 32px 24px; }
+    #admin-app { display: none; flex-direction: row; height: 100vh; }
+    .admin-main { flex: 1; overflow-y: auto; min-width: 0; }
+    .tab-panel { display: none; padding: 32px 24px; }
     .tab-panel.active { display: block; }
 
     /* ── Page heading ── */
@@ -181,7 +218,7 @@
 
     /* ── Drill-down panel ── */
     .drill-panel {
-      position: fixed; top: 56px; right: 0; bottom: 0; width: 480px;
+      position: fixed; top: 0; right: 0; bottom: 0; width: 480px;
       background: var(--card-bg); border-left: 1px solid var(--border);
       overflow-y: auto; padding: 28px;
       transform: translateX(100%); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
@@ -290,9 +327,15 @@
     .voter-sub-table td { padding: 6px 12px; border-top: 1px solid var(--border); }
 
     /* ── Responsive ── */
-    @media (max-width: 640px) {
-      .topnav-tabs { gap: 2px; }
-      .nav-tab { padding: 7px 10px; font-size: 12px; }
+    @media (max-width: 768px) {
+      .admin-sidebar { width: 64px; min-width: 64px; }
+      .admin-sidebar .sidebar-pill { opacity: 0; pointer-events: none; }
+      .admin-sidebar .nav-tab { justify-content: center; padding: 10px; }
+      .admin-sidebar .nav-tab-label { opacity: 0; max-width: 0; }
+      .admin-sidebar .sidebar-header { justify-content: center; padding: 20px 0 12px; }
+      .admin-sidebar .signout-btn { justify-content: center; padding: 9px; }
+      .admin-sidebar .signout-btn-label { display: none; }
+      .sidebar-toggle { display: none; }
       .tab-panel { padding: 20px 16px; }
       .drill-panel { width: 100%; }
       .form-row-2 { grid-template-columns: 1fr; }
@@ -324,53 +367,99 @@
 
 <!-- ── Admin app (hidden until signed in) ── -->
 <div id="admin-app">
-  <nav class="topnav">
-    <div class="topnav-brand">
-      <img src="Logo.svg" alt="Snap Send Solve" class="topnav-brand-logo" />
-      <span class="topnav-brand-pill">Signals</span>
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <img src="logo-dark.svg" alt="Snap Send Solve" class="sidebar-logo" />
+        <span class="sidebar-pill">Signals</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Collapse sidebar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
-    <div class="topnav-tabs">
-      <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
-      <button class="nav-tab" data-tab="voters">Voters</button>
-      <button class="nav-tab" data-tab="features">Features</button>
-      <button class="nav-tab" data-tab="cms">CMS</button>
+
+    <nav class="sidebar-nav">
+      <button class="nav-tab active" data-tab="dashboard">
+        <svg class="nav-tab-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="1" y="9" width="4" height="8" rx="1" fill="currentColor"/>
+          <rect x="7" y="5" width="4" height="12" rx="1" fill="currentColor"/>
+          <rect x="13" y="1" width="4" height="16" rx="1" fill="currentColor"/>
+        </svg>
+        <span class="nav-tab-label">Dashboard</span>
+      </button>
+      <button class="nav-tab" data-tab="voters">
+        <svg class="nav-tab-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M1 16c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M13 4c1.657 0 3 1.343 3 3s-1.343 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M15 14c0-1.5-.7-2.9-1.8-3.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-tab-label">Voters</span>
+      </button>
+      <button class="nav-tab" data-tab="features">
+        <svg class="nav-tab-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M3 4h12M3 9h8M3 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-tab-label">Features</span>
+      </button>
+      <button class="nav-tab" data-tab="cms">
+        <svg class="nav-tab-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M11 2l5 5-8 8H3v-5l8-8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-tab-label">CMS</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="signout-btn" id="signout-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M6 14H3a1 1 0 01-1-1V3a1 1 0 011-1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="signout-btn-label">Sign out</span>
+      </button>
     </div>
-    <div class="topnav-right">
-      <button class="signout-btn" id="signout-btn">Sign out</button>
+  </aside>
+
+  <!-- ── Main content ── -->
+  <main class="admin-main">
+
+    <!-- ── Tab 1: Dashboard ── -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <div class="page-heading">Vote Leaderboard</div>
+      <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
+      <div id="dashboard-content"><div class="loading">Loading…</div></div>
     </div>
-  </nav>
 
-  <!-- ── Tab 1: Dashboard ── -->
-  <div class="tab-panel active" id="tab-dashboard">
-    <div class="page-heading">Vote Leaderboard</div>
-    <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
-    <div id="dashboard-content"><div class="loading">Loading…</div></div>
-  </div>
+    <!-- ── Tab 2: Voters ── -->
+    <div class="tab-panel" id="tab-voters">
+      <div class="page-heading">Voters</div>
+      <p class="page-sub">All registered voters and how they've allocated their votes.</p>
+      <div id="voters-content"><div class="loading">Loading…</div></div>
+    </div>
 
-  <!-- ── Tab 2: Voters ── -->
-  <div class="tab-panel" id="tab-voters">
-    <div class="page-heading">Voters</div>
-    <p class="page-sub">All registered voters and how they've allocated their votes.</p>
-    <div id="voters-content"><div class="loading">Loading…</div></div>
-  </div>
+    <!-- ── Tab 3: Features ── -->
+    <div class="tab-panel" id="tab-features">
+      <div class="page-heading">Features</div>
+      <p class="page-sub">Click any feature to see a full voter breakdown.</p>
+      <div id="features-content"><div class="loading">Loading…</div></div>
+    </div>
 
-  <!-- ── Tab 3: Features ── -->
-  <div class="tab-panel" id="tab-features">
-    <div class="page-heading">Features</div>
-    <p class="page-sub">Click any feature to see a full voter breakdown.</p>
-    <div id="features-content"><div class="loading">Loading…</div></div>
-  </div>
+    <!-- ── Tab 4: CMS ── -->
+    <div class="tab-panel" id="tab-cms">
+      <div class="page-heading">Card CMS</div>
+      <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
+      <button class="btn-add" id="cms-add-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Add new card
+      </button>
+      <div id="cms-content"><div class="loading">Loading…</div></div>
+    </div>
 
-  <!-- ── Tab 4: CMS ── -->
-  <div class="tab-panel" id="tab-cms">
-    <div class="page-heading">Card CMS</div>
-    <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
-    <button class="btn-add" id="cms-add-btn">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      Add new card
-    </button>
-    <div id="cms-content"><div class="loading">Loading…</div></div>
-  </div>
+  </main>
 </div>
 
 <!-- ── Feature drill-down panel ── -->
@@ -591,6 +680,13 @@
     initAdmin();
   })();
   // ── END TEMP ──
+
+  /* ══════════════════════════════════════════════════════════════
+     SIDEBAR TOGGLE
+  ══════════════════════════════════════════════════════════════ */
+  document.getElementById('sidebar-toggle').addEventListener('click', () => {
+    document.getElementById('admin-sidebar').classList.toggle('collapsed');
+  });
 
   /* ══════════════════════════════════════════════════════════════
      NAVIGATION
