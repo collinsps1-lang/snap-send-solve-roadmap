@@ -895,7 +895,7 @@
   });
 
   function refreshTab(tab) {
-    if (tab === 'dashboard') loadDashboard();
+    if (tab === 'dashboard') { _rawVotes = null; loadDashboard(); _initDashData(); }
     if (tab === 'voters')    loadVoters();
     if (tab === 'community') loadCommunity();
     if (tab === 'cms')       loadCms();

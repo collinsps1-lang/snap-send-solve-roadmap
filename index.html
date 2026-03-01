@@ -1123,9 +1123,9 @@
       font-size: 11px; font-weight: 700; color: var(--warm-black);
       letter-spacing: 0.03em; margin-bottom: 8px; opacity: 0.75;
     }
-    .invite-row { display: flex; gap: 6px; }
+    .invite-row { display: flex; flex-direction: column; gap: 6px; }
     .invite-input {
-      flex: 1; min-width: 0;
+      width: 100%; box-sizing: border-box;
       padding: 7px 10px; border: 1.5px solid rgba(44,41,39,0.35);
       border-radius: 7px; font-size: 12px;
       font-family: 'Space Grotesk', sans-serif;
@@ -1135,12 +1135,11 @@
     .invite-input::placeholder { color: rgba(44,41,39,0.45); }
     .invite-input:focus { border-color: var(--warm-black); background: rgba(44,41,39,0.1); }
     .invite-btn {
-      padding: 7px 11px; border: none; border-radius: 7px;
+      width: 100%; padding: 9px 11px; border: none; border-radius: 7px;
       background: var(--warm-black); color: var(--high-vis);
       font-size: 12px; font-weight: 600;
       font-family: 'Space Grotesk', sans-serif;
-      cursor: pointer; white-space: nowrap; flex-shrink: 0;
-      transition: opacity 0.15s;
+      cursor: pointer; transition: opacity 0.15s;
     }
     .invite-btn:hover { opacity: 0.85; }
     .invite-msg { font-size: 11px; margin-top: 6px; color: var(--warm-black); opacity: 0.65; }
@@ -2628,7 +2627,7 @@
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
     <h2 class="confirm-heading">Votes submitted!</h2>
-    <p class="confirm-sub">Thanks, <strong id="confirm-name"></strong>. Your <strong id="confirm-total"></strong> votes have been recorded and sent to the product team.</p>
+    <p class="confirm-sub">Your votes have been recorded. Thanks for shaping the Snap Send Solve roadmap, we really appreciate your feedback.</p>
     <button class="confirm-close-btn" id="confirm-close">Done</button>
   </div>
 </div>
@@ -2966,6 +2965,8 @@
   /* ── Sync current user's votes to Supabase (fire-and-forget) ── */
   async function syncVotesToSupabase() {
     if (!currentUser) return;
+    // Delete all existing rows for this user first so reallocation is reflected accurately
+    await _supabase.from('votes').delete().eq('user_email', currentUser.email);
     const rows = Object.entries(voteData)
       .filter(([, v]) => v.votes > 0)
       .map(([cardId, v]) => ({
@@ -2982,7 +2983,7 @@
         updated_at:  new Date().toISOString(),
       }));
     if (rows.length === 0) return;
-    await _supabase.from('votes').upsert(rows, { onConflict: 'user_email,card_id' });
+    await _supabase.from('votes').insert(rows);
   }
 
   // card.dataset.category is now set in buildRoadmapCard() from the cards table
@@ -3826,9 +3827,6 @@
     document.getElementById('budget-widget').style.display = 'none';
     document.getElementById('submitted-banner').style.display = 'block';
 
-    const allocated = totalAllocated();
-    document.getElementById('confirm-name').textContent  = currentUser.name;
-    document.getElementById('confirm-total').textContent = allocated + ' vote' + (allocated !== 1 ? 's' : '');
     document.getElementById('confirm-overlay').classList.remove('hidden');
   });
 
