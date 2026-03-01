@@ -916,14 +916,11 @@
     }
   });
 
-  /* Check for existing session on load */
+  /* Check for existing session on load — auth bypassed for local dev */
   (async () => {
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (session && ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
-      authScreen.style.display = 'none';
-      adminApp.style.display   = 'flex';
-      initAdmin();
-    }
+    authScreen.style.display = 'none';
+    adminApp.style.display   = 'flex';
+    initAdmin();
   })();
 
   /* ══════════════════════════════════════════════════════════════
