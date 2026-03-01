@@ -1530,7 +1530,7 @@
     _chartRegion = new Chart(document.getElementById('chart-region'),
       mkBar(regEnt.map(([k]) => k), regEnt.map(([,v]) => v), regEnt.map((_,i) => i === 0 ? '#E0FF89' : '#2C2927')));
 
-    const top8 = ranked.slice(0, 8);
+    const top8 = ranked.filter(r => (notifyByFeat[r.id] || 0) + (researchByFeat[r.id] || 0) > 0).slice(0, 8);
     _chartNotify = new Chart(document.getElementById('chart-notify'), {
       type: 'bar',
       data: {
