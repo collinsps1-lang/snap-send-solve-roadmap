@@ -223,7 +223,6 @@
     .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
     .dash-left-panel { display: flex; flex-direction: column; }
     .dash-left-panel .sugg-panel { margin-bottom: 0; flex: 1; }
-    .dash-left-panel .sugg-items { grid-template-columns: 1fr; }
     .dash-features-chart { display: flex; flex-direction: column; margin-bottom: 0; background: var(--warm-black); border-color: var(--warm-black); }
     .dash-features-chart .chart-wrap-bar-lg { flex: 1; height: auto; min-height: 300px; }
     .dash-features-chart .chart-title { color: #fff; }
@@ -261,6 +260,7 @@
     /* ── Roadmap Suggestions panel ── */
     .sugg-panel {
       background: var(--warm-black); border: 2px solid var(--warm-black); border-radius: 14px; padding: 20px 28px 28px; margin-bottom: 20px;
+      display: flex; flex-direction: column;
     }
     .sugg-panel-header {
       display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 14px;
@@ -273,8 +273,8 @@
     .sugg-panel-info-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: #fff; color: var(--warm-black); font-size: 11px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; padding: 5px 10px; border-radius: 6px; white-space: nowrap; z-index: 50; }
     .sugg-panel-info:hover .sugg-panel-info-tip { display: block; }
     .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 0 -28px 16px; }
-    .sugg-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; }
+    .sugg-items { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; flex: 1; }
     .sugg-label-icon { width: 20px; height: 20px; object-fit: contain; margin-right: 5px; vertical-align: middle; }
     .sugg-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
     .sugg-item-label {
