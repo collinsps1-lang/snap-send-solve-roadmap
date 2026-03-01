@@ -915,10 +915,12 @@
     }
   });
 
-  /* Check for existing session on load — auth bypassed for local dev */
+  /* Check for existing session on load — auth bypassed, but await getSession so
+     Supabase finishes hydrating auth headers before the first data fetch fires */
   (async () => {
     authScreen.style.display = 'none';
     adminApp.style.display   = 'flex';
+    await _supabase.auth.getSession(); // lets Supabase restore session before queries run
     initAdmin();
   })();
 
@@ -2022,7 +2024,10 @@
   /* ══════════════════════════════════════════════════════════════
      INIT
   ══════════════════════════════════════════════════════════════ */
+  let _adminInited = false;
   function initAdmin() {
+    if (_adminInited) return; // prevent double-init from bypass + SIGNED_IN event
+    _adminInited = true;
     loadDashboard();   // shows Loading… immediately (synchronous)
     _initDashData();   // fetches in background, then re-renders
   }
