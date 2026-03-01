@@ -222,7 +222,7 @@
     /* ── Dashboard top two-column layout ── */
     .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
     .dash-left-panel details.sugg-panel { margin-bottom: 0; }
-    .dash-left-panel .sugg-items { grid-template-columns: repeat(2, 1fr); }
+    .dash-left-panel .sugg-items { grid-template-columns: 1fr; }
     .dash-features-chart { display: flex; flex-direction: column; margin-bottom: 0; background: var(--warm-black); border-color: var(--warm-black); }
     .dash-features-chart .chart-wrap-bar-lg { flex: 1; height: auto; min-height: 300px; }
     .dash-features-chart .chart-title { color: #fff; }
@@ -1238,10 +1238,6 @@
         </summary>
         <hr class="sugg-divider">
         <div class="sugg-items">
-          <div class="sugg-item">
-            <div class="sugg-item-label">AI Summary</div>
-            <div class="sugg-item-ai">${narrative}</div>
-          </div>
           ${_suggItem('Most demand',      top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
           ${_suggItem('Consider accelerating', accel, accel ? 'High demand — candidate to pull into In Development' : '')}
           ${_suggItem('Review priority',  depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : '')}
