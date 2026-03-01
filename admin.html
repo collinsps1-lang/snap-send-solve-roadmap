@@ -334,6 +334,8 @@
       border-radius: 10px; margin-bottom: 6px;
     }
     .cms-card-title { flex: 1; font-size: 14px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; }
+    .cms-card-drill { cursor: pointer; }
+    .cms-card-drill:hover { text-decoration: underline; color: var(--text-dark); }
     .cms-card-aud { font-size: 12px; color: var(--text-muted); margin-right: 8px; font-family: 'Work Sans', sans-serif; }
     .btn-sm {
       padding: 6px 12px; border-radius: 7px; font-size: 12px; font-weight: 600;
@@ -451,10 +453,9 @@
       </svg>
     </button>
 
-    <!-- Logo + pill -->
+    <!-- Logo -->
     <div class="sidebar-logo-wrap">
       <img src="logo-dark.svg" alt="Snap Send Solve" class="sidebar-logo" />
-      <span class="sidebar-pill">Signals</span>
     </div>
 
     <!-- Expanded nav body -->
@@ -466,7 +467,7 @@
             <rect x="7" y="5" width="4" height="12" rx="1" fill="currentColor"/>
             <rect x="13" y="1" width="4" height="16" rx="1" fill="currentColor"/>
           </svg>
-          Dashboard
+          Roadmap Insights
         </button>
         <button class="nav-tab" data-tab="voters">
           <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
@@ -476,12 +477,6 @@
             <path d="M15 14c0-1.5-.7-2.9-1.8-3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
           Voters
-        </button>
-        <button class="nav-tab" data-tab="features">
-          <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
-            <path d="M3 4h12M3 9h8M3 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-          Features
         </button>
         <button class="nav-tab" data-tab="cms">
           <svg class="nav-tab-icon" width="14" height="14" viewBox="0 0 18 18" fill="none">
@@ -503,7 +498,7 @@
 
     <!-- Collapsed icon strip -->
     <div class="sidebar-collapsed-body">
-      <button class="sidebar-icon-btn active" data-tab="dashboard" aria-label="Dashboard">
+      <button class="sidebar-icon-btn active" data-tab="dashboard" aria-label="Roadmap Insights">
         <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
           <rect x="1" y="9" width="4" height="8" rx="1" fill="currentColor"/>
           <rect x="7" y="5" width="4" height="12" rx="1" fill="currentColor"/>
@@ -516,11 +511,6 @@
           <path d="M1 16c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M13 4c1.657 0 3 1.343 3 3s-1.343 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           <path d="M15 14c0-1.5-.7-2.9-1.8-3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <button class="sidebar-icon-btn" data-tab="features" aria-label="Features">
-        <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
-          <path d="M3 4h12M3 9h8M3 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </button>
       <button class="sidebar-icon-btn" data-tab="cms" aria-label="CMS">
@@ -541,9 +531,9 @@
   <!-- ── Main content ── -->
   <main class="admin-main">
 
-    <!-- ── Tab 1: Dashboard ── -->
+    <!-- ── Tab 1: Roadmap Insights ── -->
     <div class="tab-panel active" id="tab-dashboard">
-      <div class="page-heading">Vote Leaderboard</div>
+      <div class="page-heading">Roadmap Insights</div>
       <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
       <div id="dashboard-content"><div class="loading">Loading…</div></div>
     </div>
@@ -555,14 +545,7 @@
       <div id="voters-content"><div class="loading">Loading…</div></div>
     </div>
 
-    <!-- ── Tab 3: Features ── -->
-    <div class="tab-panel" id="tab-features">
-      <div class="page-heading">Features</div>
-      <p class="page-sub">Click any feature to see a full voter breakdown.</p>
-      <div id="features-content"><div class="loading">Loading…</div></div>
-    </div>
-
-    <!-- ── Tab 4: CMS ── -->
+    <!-- ── Tab 3: CMS ── -->
     <div class="tab-panel" id="tab-cms">
       <div class="page-heading">Card CMS</div>
       <p class="page-sub">Manage roadmap cards. Changes appear on the customer-facing page immediately.</p>
@@ -833,7 +816,6 @@
   function refreshTab(tab) {
     if (tab === 'dashboard') loadDashboard();
     if (tab === 'voters')    loadVoters();
-    if (tab === 'features')  loadFeatures();
     if (tab === 'cms')       loadCms();
   }
 
@@ -1216,71 +1198,6 @@
     });
   }
 
-  /* ══════════════════════════════════════════════════════════════
-     TAB 3 — FEATURES (Per-feature drill-down)
-  ══════════════════════════════════════════════════════════════ */
-  async function loadFeatures() {
-    const el = document.getElementById('features-content');
-    el.innerHTML = '<div class="loading">Loading…</div>';
-
-    const [{ data: cards, error: cErr }, { data: votes, error: vErr }] = await Promise.all([
-      _supabase.from('cards').select('*').order('sort_order'),
-      _supabase.from('votes').select('*'),
-    ]);
-
-    if (cErr || vErr) { el.innerHTML = '<div class="loading">Error loading data.</div>'; return; }
-
-    const totalsByCard = {};
-    (votes || []).forEach(v => {
-      totalsByCard[v.card_id] = (totalsByCard[v.card_id] || 0) + (v.votes || 0);
-    });
-
-    const maxVotes = Math.max(1, ...Object.values(totalsByCard));
-
-    const phases = ['now', 'next', 'after', 'launched'];
-    const phaseCards = {};
-    phases.forEach(p => { phaseCards[p] = (cards||[]).filter(c => c.phase === p); });
-
-    const sections = phases.map(p => {
-      const pCards = phaseCards[p];
-      if (!pCards.length) return '';
-      const rows = pCards.map(c => `
-        <tr class="clickable" data-card-id="${escHtml(c.id)}">
-          <td style="font-weight:500">${escHtml(c.title)}</td>
-          <td>${audBadge(c.audience)}</td>
-          <td>
-            <div class="vote-bar-wrap" style="min-width:120px">
-              <div class="vote-bar-bg">
-                <div class="vote-bar-fill" style="width:${Math.round(((totalsByCard[c.id]||0)/maxVotes)*100)}%"></div>
-              </div>
-              <span class="vote-bar-count">${totalsByCard[c.id] || 0}</span>
-            </div>
-          </td>
-        </tr>`).join('');
-      return `
-        <div class="data-card" style="margin-bottom:20px">
-          <div class="data-card-header">${phaseBadge(p)}</div>
-          <table class="data-table">
-            <thead><tr><th>Feature</th><th>Audience</th><th>Total votes</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>`;
-    }).join('');
-
-    el.innerHTML = sections || '<div class="empty-msg">No cards found.</div>';
-
-    // Bind click → drill-down
-    el.querySelectorAll('.clickable[data-card-id]').forEach(row => {
-      row.addEventListener('click', () => {
-        const cardId = row.dataset.cardId;
-        const card   = (cards || []).find(c => c.id === cardId);
-        const cardVotes = (votes || []).filter(v => v.card_id === cardId && v.votes > 0)
-          .sort((a, b) => b.votes - a.votes);
-        openDrill(card, cardVotes);
-      });
-    });
-  }
-
   /* ── Drill-down panel ── */
   const drillPanel   = document.getElementById('drill-panel');
   const drillOverlay = document.getElementById('drill-overlay');
@@ -1322,7 +1239,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     TAB 4 — CMS
+     TAB 3 — CMS (cards + vote counts + drill-down)
   ══════════════════════════════════════════════════════════════ */
   let cmsCards = [];
 
@@ -1330,9 +1247,22 @@
     const el = document.getElementById('cms-content');
     el.innerHTML = '<div class="loading">Loading…</div>';
 
-    const { data: cards, error } = await _supabase.from('cards').select('*').order('sort_order');
-    if (error) { el.innerHTML = '<div class="loading">Error loading cards.</div>'; return; }
+    const [{ data: cards, error: cErr }, { data: votes }] = await Promise.all([
+      _supabase.from('cards').select('*').order('sort_order'),
+      _supabase.from('votes').select('*'),
+    ]);
+    if (cErr) { el.innerHTML = '<div class="loading">Error loading cards.</div>'; return; }
     cmsCards = cards || [];
+
+    // Aggregate votes per card
+    const totalsByCard = {};
+    const votesByCard  = {};
+    (votes || []).forEach(v => {
+      totalsByCard[v.card_id] = (totalsByCard[v.card_id] || 0) + (v.votes || 0);
+      if (!votesByCard[v.card_id]) votesByCard[v.card_id] = [];
+      votesByCard[v.card_id].push(v);
+    });
+    const maxVotes = Math.max(1, ...Object.values(totalsByCard));
 
     const phases = ['now', 'next', 'after', 'launched'];
     const sections = phases.map(p => {
@@ -1343,8 +1273,14 @@
           <div class="cms-phase-label">${PHASE_LABELS[p]}</div>
           ${pCards.map(c => `
             <div class="cms-card-row" data-card-id="${escHtml(c.id)}">
-              <div class="cms-card-title">${escHtml(c.title)}</div>
+              <div class="cms-card-title cms-card-drill" data-card-id="${escHtml(c.id)}">${escHtml(c.title)}</div>
               <span class="cms-card-aud">${audBadge(c.audience)}</span>
+              <div class="vote-bar-wrap" style="min-width:90px">
+                <div class="vote-bar-bg">
+                  <div class="vote-bar-fill" style="width:${Math.round(((totalsByCard[c.id]||0)/maxVotes)*100)}%"></div>
+                </div>
+                <span class="vote-bar-count">${totalsByCard[c.id] || 0}</span>
+              </div>
               <button class="btn-sm cms-edit-btn" data-card-id="${escHtml(c.id)}">Edit</button>
               <button class="btn-sm danger cms-del-btn" data-card-id="${escHtml(c.id)}">Delete</button>
             </div>`).join('')}
@@ -1352,6 +1288,16 @@
     }).join('');
 
     el.innerHTML = sections || '<div class="empty-msg">No cards yet. Add one above.</div>';
+
+    // Title click → drill-down
+    el.querySelectorAll('.cms-card-drill').forEach(title => {
+      title.addEventListener('click', () => {
+        const cardId    = title.dataset.cardId;
+        const card      = cmsCards.find(c => c.id === cardId);
+        const cardVotes = (votesByCard[cardId] || []).filter(v => v.votes > 0).sort((a, b) => b.votes - a.votes);
+        openDrill(card, cardVotes);
+      });
+    });
 
     el.querySelectorAll('.cms-edit-btn').forEach(btn => {
       btn.addEventListener('click', () => openCmsEdit(btn.dataset.cardId));
