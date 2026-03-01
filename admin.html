@@ -221,7 +221,8 @@
 
     /* ── Dashboard top two-column layout ── */
     .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
-    .dash-left-panel details.sugg-panel { margin-bottom: 0; }
+    .dash-left-panel { display: flex; flex-direction: column; }
+    .dash-left-panel .sugg-panel { margin-bottom: 0; flex: 1; }
     .dash-left-panel .sugg-items { grid-template-columns: 1fr; }
     .dash-features-chart { display: flex; flex-direction: column; margin-bottom: 0; }
     .dash-features-chart .chart-wrap-bar-lg { flex: 1; height: auto; min-height: 300px; }
@@ -253,20 +254,19 @@
     .stat-label { display: inline-block; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; }
 
     /* ── Roadmap Suggestions panel ── */
-    details.sugg-panel {
+    .sugg-panel {
       background: var(--white); border: 2px solid var(--warm-black); border-radius: 14px; padding: 20px 28px 28px; margin-bottom: 20px;
     }
-    .sugg-panel-summary {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      list-style: none; cursor: pointer; padding-bottom: 14px;
+    .sugg-panel-header {
+      display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 14px;
     }
-    .sugg-panel-summary::-webkit-details-marker { display: none; }
     .sugg-panel-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
       font-size: 15px; font-weight: 700; color: var(--warm-black); letter-spacing: -0.01em; flex: 1;
     }
-    .sugg-panel-chevron { flex-shrink: 0; color: rgba(44,41,39,0.4); transition: transform 0.22s ease; margin-top: 1px; }
-    details.sugg-panel[open] .sugg-panel-chevron { transform: rotate(180deg); }
+    .sugg-panel-info { flex-shrink: 0; color: rgba(44,41,39,0.35); margin-top: 1px; position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; cursor: default; }
+    .sugg-panel-info-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: var(--warm-black); color: #fff; font-size: 11px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; padding: 5px 10px; border-radius: 6px; white-space: nowrap; z-index: 50; }
+    .sugg-panel-info:hover .sugg-panel-info-tip { display: block; }
     .sugg-divider { border: none; border-top: 1px solid var(--border); margin: 0 -28px 16px; }
     .sugg-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .sugg-item { background: var(--warm-grey); border-radius: 10px; padding: 16px 18px; }
@@ -1219,24 +1219,22 @@
       </div>`;
     }
 
-    const chevron = `<svg class="sugg-panel-chevron" width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
     return `
-      <details class="sugg-panel" open>
-        <summary class="sugg-panel-summary">
+      <div class="sugg-panel">
+        <div class="sugg-panel-header">
           <div style="display:flex;align-items:center;gap:10px;">
             <img src="AI Incident.png" alt="" style="width:24px;height:24px;flex-shrink:0;border-radius:6px;display:block;">
             <div class="sugg-panel-title">Roadmap Suggestions</div>
           </div>
-          ${chevron}
-        </summary>
+          <div class="sugg-panel-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="sugg-panel-info-tip">AI-powered suggestions based on current vote data</span></div>
+        </div>
         <hr class="sugg-divider">
         <div class="sugg-items">
           ${_suggItem('Most demand',      top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
           ${_suggItem('Consider accelerating', accel, accel ? 'High demand — candidate to pull into In Development' : '')}
           ${_suggItem('Review priority',  depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : '')}
         </div>
-      </details>`;
+      </div>`;
   }
 
   function _renderInsights(el) {
