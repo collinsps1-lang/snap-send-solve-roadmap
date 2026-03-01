@@ -635,6 +635,10 @@
           <span class="material-symbols-outlined nav-tab-icon">edit_note</span>
           Features
         </button>
+        <button class="nav-tab" data-tab="franks">
+          <span class="material-symbols-outlined nav-tab-icon">apartment</span>
+          Franks Customers
+        </button>
       </nav>
 
       <div class="sidebar-bottom">
@@ -658,6 +662,9 @@
       </button>
       <button class="sidebar-icon-btn" data-tab="cms" aria-label="Features">
         <span class="material-symbols-outlined" style="font-size:22px;">edit_note</span>
+      </button>
+      <button class="sidebar-icon-btn" data-tab="franks" aria-label="Franks Customers">
+        <span class="material-symbols-outlined" style="font-size:22px;">apartment</span>
       </button>
       <div class="sidebar-icon-spacer"></div>
       <button class="sidebar-icon-btn" id="signout-icon-btn" aria-label="Sign out">
@@ -722,6 +729,17 @@
       <div id="cms-content"><div class="loading">Loading…</div></div>
       </div><!-- /.panel-body -->
     </div><!-- /#tab-cms -->
+
+    <div class="tab-panel" id="tab-franks">
+      <div class="panel-header">
+        <div class="page-heading">Franks Customers</div>
+        <p class="page-sub">View and manage Franks customer accounts.</p>
+      </div>
+      <hr class="tab-divider">
+      <div class="panel-body">
+        <div id="franks-content"><div class="empty-msg">No data yet.</div></div>
+      </div>
+    </div><!-- /#tab-franks -->
 
   </main>
 </div>
@@ -985,6 +1003,7 @@
     if (tab === 'voters')    loadVoters();
     if (tab === 'community') loadCommunity();
     if (tab === 'cms')       loadCms();
+    if (tab === 'franks')    { /* placeholder */ }
   }
 
   /* ══════════════════════════════════════════════════════════════
