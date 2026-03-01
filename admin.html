@@ -1484,6 +1484,16 @@
         }
       });
     }
+    // Close other dropdowns when one opens (only one open at a time)
+    document.querySelectorAll('#filter-dock .dash-filter-dd, #dashboard-content .dash-filter-dd')
+      .forEach(dd => {
+        dd.addEventListener('toggle', () => {
+          if (dd.open) {
+            document.querySelectorAll('#filter-dock .dash-filter-dd[open], #dashboard-content .dash-filter-dd[open]')
+              .forEach(other => { if (other !== dd) other.removeAttribute('open'); });
+          }
+        });
+      });
     // Restore open dropdowns after re-render
     _openDds.forEach(id => {
       [filterDock, el].filter(Boolean).forEach(parent => {
