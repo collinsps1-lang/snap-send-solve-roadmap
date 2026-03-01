@@ -218,7 +218,7 @@
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;
     }
     .stat-card {
-      background: var(--card-bg); border: 1px solid var(--border);
+      background: var(--card-bg);
       border-radius: 14px; padding: 20px 22px;
     }
     .stat-value {
@@ -234,7 +234,7 @@
       display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 20px;
     }
     .chart-card {
-      background: var(--card-bg); border: 1px solid var(--border);
+      background: var(--card-bg);
       border-radius: 14px; padding: 20px;
     }
     .chart-title {
@@ -986,8 +986,8 @@
         datasets: [{
           data: top10.map(r => r.total),
           backgroundColor: top10.map((_, i) => i === 0 ? '#E0FF89' : '#2C2927'),
-          borderColor: top10.map((_, i) => i === 0 ? '#2C2927' : 'transparent'),
-          borderWidth: top10.map((_, i) => i === 0 ? 1 : 0),
+          borderColor: 'transparent',
+          borderWidth: 0,
           borderRadius: 4,
           borderSkipped: false,
         }],
@@ -1041,9 +1041,8 @@
         datasets: [{
           data: phaseEntries.map(([, v]) => v),
           backgroundColor: phaseEntries.map((_, i) => CHART_PALETTE[i] || '#ccc'),
-          borderWidth: 2,
-          borderColor: '#fff',
-          hoverBorderWidth: 3,
+          borderWidth: 0,
+          hoverBorderWidth: 0,
         }],
       },
       options: {
@@ -1075,9 +1074,8 @@
         datasets: [{
           data: audEntries.map(([, v]) => v),
           backgroundColor: audEntries.map((_, i) => CHART_PALETTE[i] || '#ccc'),
-          borderWidth: 2,
-          borderColor: '#fff',
-          hoverBorderWidth: 3,
+          borderWidth: 0,
+          hoverBorderWidth: 0,
         }],
       },
       options: {
