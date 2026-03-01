@@ -216,6 +216,13 @@
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
     .empty-msg { color: var(--text-muted); font-size: 14px; font-style: italic; padding: 20px 0; font-family: 'Work Sans', sans-serif; }
 
+    /* ── Dashboard section headings ── */
+    .dash-section-heading {
+      font-family: 'Bagoss', 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+      color: var(--warm-black); margin-bottom: 14px;
+    }
+
     /* ── Dashboard top two-column layout ── */
     .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
     .dash-left-panel details.sugg-panel { margin-bottom: 0; }
@@ -1344,6 +1351,8 @@
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
       </div>
 
+      <h2 class="dash-section-heading">Summary</h2>
+
       <div class="dash-top-row">
         <div class="dash-left-panel">
           ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
@@ -1359,6 +1368,8 @@
           <div class="chart-legend" id="legend-features"></div>
         </div>
       </div>
+
+      <h2 class="dash-section-heading">Voting Breakdown</h2>
 
       <div class="charts-row charts-row-3">
         <div class="chart-card">
