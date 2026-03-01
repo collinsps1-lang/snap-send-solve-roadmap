@@ -258,10 +258,6 @@
     .sugg-panel-chevron { flex-shrink: 0; color: rgba(255,255,255,0.4); transition: transform 0.22s ease; }
     details.sugg-panel[open] .sugg-panel-chevron { transform: rotate(180deg); }
     .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px -28px; }
-    /* When sugg panel lives in the full-width bar */
-    #sugg-bar details.sugg-panel { border-radius: 0; margin-bottom: 0; padding: 16px 24px 20px; }
-    #sugg-bar details.sugg-panel[open] { border-bottom: 1px solid rgba(255,255,255,0.1); }
-    #sugg-bar .sugg-divider { margin: 14px -24px; }
     .sugg-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
     .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; }
     .sugg-label-icon { width: 20px; height: 20px; object-fit: contain; margin-right: 5px; vertical-align: middle; }
@@ -664,7 +660,6 @@
         <p class="page-sub">Total votes allocated per feature, across all registered voters.</p>
       </div>
       <hr class="tab-divider">
-      <div id="sugg-bar"></div>
       <div id="filter-dock" class="filter-dock"></div>
       <div class="panel-body">
         <div id="dashboard-content"><div class="loading">Loading…</div></div>
@@ -1327,9 +1322,6 @@
 
     if (filterDock) filterDock.innerHTML = filterBarHtml;
 
-    const suggBar = document.getElementById('sugg-bar');
-    if (suggBar) suggBar.innerHTML = _buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals);
-
     el.innerHTML = `
       <div class="stats-row">
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
@@ -1338,6 +1330,8 @@
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
       </div>
+
+      ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
 
       <div class="chart-card chart-card-full">
         <div class="chart-header">
