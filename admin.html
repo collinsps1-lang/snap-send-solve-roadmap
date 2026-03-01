@@ -1148,6 +1148,9 @@
     const card = cmsCards.find(c => c.id === cardId);
     const title = card ? card.title : cardId;
     if (!confirm(`Delete "${title}"? This cannot be undone and will remove the card from the customer page.`)) return;
+    // Delete any votes referencing this card first (foreign key constraint)
+    const { error: vErr } = await _supabase.from('votes').delete().eq('card_id', cardId);
+    if (vErr) { alert('Delete failed (votes): ' + vErr.message); return; }
     const { error } = await _supabase.from('cards').delete().eq('id', cardId);
     if (error) { alert('Delete failed: ' + error.message); return; }
     if (activeTab === 'cms') loadCms();
