@@ -3002,28 +3002,14 @@
     if (!name || !org || !email || !role) return;
 
     const budget = parseInt(document.getElementById('reg-role').selectedOptions[0].dataset.budget, 10);
-    sessionStorage.setItem('sss_pending_profile', JSON.stringify({ name, org, email, role, budget }));
 
-    const btn = document.getElementById('reg-submit-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="btn-spinner"></span>';
-
-    const { error } = await _supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname }
-    });
-
-    if (error) {
-      errEl.textContent = error.message;
-      errEl.style.display = '';
-      sessionStorage.removeItem('sss_pending_profile');
-      btn.disabled = false;
-      btn.innerHTML = SUBMIT_BTN_LABEL;
-    } else {
-      btn.style.display = 'none';
-      document.getElementById('reg-magic-success').classList.remove('hidden');
-      document.getElementById('reg-step-pending').classList.remove('hidden');
-    }
+    // ── TEMP: magic link disabled (Supabase rate limit) — save session directly ──
+    currentUser = { name, org, email, role, budget, submitted: false };
+    saveSession();
+    regModal.classList.add('hidden');
+    await cardsLoadedPromise;
+    initVotingUI();
+    // ── END TEMP ──
   });
 
   document.getElementById('reg-resend-btn').addEventListener('click', () => {

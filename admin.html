@@ -584,20 +584,13 @@
   });
 
   /* Check for existing session on load */
+  // ── TEMP: magic link disabled (Supabase rate limit) — skip auth ──
   (async () => {
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (session) {
-      const email = session.user.email;
-      if (!ADMIN_EMAILS.includes(email.toLowerCase())) {
-        await _supabase.auth.signOut();
-        showAuthMsg('Access denied. This email is not on the admin allowlist.', true);
-        return;
-      }
-      authScreen.style.display = 'none';
-      adminApp.style.display   = 'flex';
-      initAdmin();
-    }
+    authScreen.style.display = 'none';
+    adminApp.style.display   = 'flex';
+    initAdmin();
   })();
+  // ── END TEMP ──
 
   /* ══════════════════════════════════════════════════════════════
      NAVIGATION
