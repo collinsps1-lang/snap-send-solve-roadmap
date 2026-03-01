@@ -6,6 +6,7 @@
   <title>Roadmap - Signals</title>
   <link rel="icon" type="image/svg+xml" href="logo-dark.svg" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Work+Sans:wght@400;500&display=swap" rel="stylesheet" />
@@ -166,6 +167,41 @@
     /* ── Loading / empty states ── */
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
     .empty-msg { color: var(--text-muted); font-size: 14px; font-style: italic; padding: 20px 0; font-family: 'Work Sans', sans-serif; }
+
+    /* ── Dashboard stats ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 22px;
+    }
+    .stat-value {
+      font-family: 'Bagoss', 'Space Grotesk', sans-serif;
+      font-size: 34px; font-weight: 700; line-height: 1;
+      margin-bottom: 6px; letter-spacing: -0.02em;
+    }
+    .stat-value-sm { font-size: 16px; letter-spacing: -0.01em; line-height: 1.3; }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; font-weight: 500; }
+
+    /* ── Dashboard charts ── */
+    .charts-row {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; margin-bottom: 20px;
+    }
+    .chart-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+    }
+    .chart-title {
+      font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 16px;
+    }
+    .chart-wrap-bar { height: 260px; position: relative; }
+    .chart-wrap-donut { height: 200px; position: relative; }
+    @media (max-width: 1000px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .charts-row { grid-template-columns: 1fr; }
+    }
 
     /* ── Cards / tables ── */
     .data-card {
@@ -743,12 +779,16 @@
   /* ══════════════════════════════════════════════════════════════
      TAB 1 — DASHBOARD (Vote Leaderboard)
   ══════════════════════════════════════════════════════════════ */
+
+  // Track Chart.js instances so we can destroy before re-render
+  let _chartFeatures = null, _chartPhase = null, _chartAudience = null;
+
   async function loadDashboard() {
     const el = document.getElementById('dashboard-content');
     el.innerHTML = '<div class="loading">Loading…</div>';
 
     const [{ data: votes, error: vErr }, { data: cardRows, error: cErr }] = await Promise.all([
-      _supabase.from('votes').select('card_id, votes'),
+      _supabase.from('votes').select('card_id, votes, user_email'),
       _supabase.from('cards').select('id, title, phase, audience'),
     ]);
 
@@ -757,10 +797,12 @@
       return;
     }
 
-    // Aggregate totals per card
+    // Aggregate
     const totals = {};
+    const uniqueVoters = new Set();
     (votes || []).forEach(v => {
       totals[v.card_id] = (totals[v.card_id] || 0) + (v.votes || 0);
+      if (v.user_email) uniqueVoters.add(v.user_email);
     });
 
     const cardMap = {};
@@ -772,13 +814,57 @@
       .sort((a, b) => b.total - a.total);
 
     if (ranked.length === 0) {
-      el.innerHTML = '<div class="empty-msg">No votes recorded yet. Votes will appear here once customers start allocating.</div>';
+      el.innerHTML = '<div class="empty-msg">No votes recorded yet. Charts will appear here once customers start allocating.</div>';
       return;
     }
 
-    const maxVotes = ranked[0].total;
+    const totalVotes   = ranked.reduce((s, r) => s + r.total, 0);
+    const topFeature   = ranked[0]?.card?.title || '—';
 
+    // Phase totals
+    const phaseTotals = { now: 0, next: 0, after: 0, launched: 0 };
+    ranked.forEach(r => { const p = r.card?.phase; if (p in phaseTotals) phaseTotals[p] += r.total; });
+
+    // Audience totals
+    const audTotals = {};
+    ranked.forEach(r => { const a = r.card?.audience; if (a) audTotals[a] = (audTotals[a] || 0) + r.total; });
+
+    // Render layout
     el.innerHTML = `
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value">${totalVotes}</div>
+          <div class="stat-label">Total votes cast</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${uniqueVoters.size}</div>
+          <div class="stat-label">Unique voters</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${ranked.length}</div>
+          <div class="stat-label">Features with votes</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value stat-value-sm">${escHtml(topFeature)}</div>
+          <div class="stat-label">Most voted feature</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Top features by votes</div>
+          <div class="chart-wrap-bar"><canvas id="chart-features"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Votes by phase</div>
+          <div class="chart-wrap-donut"><canvas id="chart-phase"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Votes by audience</div>
+          <div class="chart-wrap-donut"><canvas id="chart-audience"></canvas></div>
+        </div>
+      </div>
+
       <div class="data-card">
         <table class="data-table">
           <thead>
@@ -793,14 +879,14 @@
           <tbody>
             ${ranked.map((r, i) => `
               <tr>
-                <td><span class="rank ${i<3?`rank-${i+1}`:''}">${i+1}</span></td>
+                <td><span class="rank ${i < 3 ? `rank-${i+1}` : ''}">${i+1}</span></td>
                 <td style="font-weight:500;">${escHtml(r.card.title)}</td>
                 <td>${phaseBadge(r.card.phase)}</td>
                 <td>${audBadge(r.card.audience)}</td>
                 <td>
                   <div class="vote-bar-wrap">
                     <div class="vote-bar-bg">
-                      <div class="vote-bar-fill" style="width:${Math.round((r.total/maxVotes)*100)}%"></div>
+                      <div class="vote-bar-fill" style="width:${Math.round((r.total / ranked[0].total) * 100)}%"></div>
                     </div>
                     <span class="vote-bar-count">${r.total}</span>
                   </div>
@@ -809,6 +895,121 @@
           </tbody>
         </table>
       </div>`;
+
+    // Destroy any previous chart instances before creating new ones
+    if (_chartFeatures) { _chartFeatures.destroy(); _chartFeatures = null; }
+    if (_chartPhase)    { _chartPhase.destroy();    _chartPhase    = null; }
+    if (_chartAudience) { _chartAudience.destroy(); _chartAudience = null; }
+
+    const fontFamily = "'Space Grotesk', sans-serif";
+
+    // ── Chart 1: Horizontal bar — top 10 features ──
+    const top10 = ranked.slice(0, 10);
+    _chartFeatures = new Chart(document.getElementById('chart-features'), {
+      type: 'bar',
+      data: {
+        labels: top10.map(r => r.card.title),
+        datasets: [{
+          data: top10.map(r => r.total),
+          backgroundColor: top10.map((_, i) => i === 0 ? '#E0FF89' : '#2C2927'),
+          borderRadius: 4,
+          borderSkipped: false,
+        }],
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: ctx => ` ${ctx.parsed.x} vote${ctx.parsed.x !== 1 ? 's' : ''}` },
+          },
+        },
+        scales: {
+          x: {
+            grid: { color: '#E3DED7' },
+            border: { display: false },
+            ticks: { font: { family: fontFamily, size: 12 }, color: '#9A948E' },
+          },
+          y: {
+            grid: { display: false },
+            border: { display: false },
+            ticks: { font: { family: fontFamily, size: 12 }, color: '#2C2927' },
+          },
+        },
+      },
+    });
+
+    // ── Chart 2: Donut — votes by phase ──
+    const phaseLabels  = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
+    const phaseColors  = { now: '#A8CC4A', next: '#5BC8E8', after: '#F0A060', launched: '#68C468' };
+    const phaseEntries = Object.entries(phaseTotals).filter(([, v]) => v > 0);
+    _chartPhase = new Chart(document.getElementById('chart-phase'), {
+      type: 'doughnut',
+      data: {
+        labels: phaseEntries.map(([k]) => phaseLabels[k] || k),
+        datasets: [{
+          data: phaseEntries.map(([, v]) => v),
+          backgroundColor: phaseEntries.map(([k]) => phaseColors[k] || '#ccc'),
+          borderWidth: 2,
+          borderColor: '#fff',
+          hoverBorderWidth: 3,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { family: fontFamily, size: 11 }, boxWidth: 10, padding: 10 },
+          },
+          tooltip: {
+            callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} vote${ctx.parsed !== 1 ? 's' : ''}` },
+          },
+        },
+      },
+    });
+
+    // ── Chart 3: Donut — votes by audience ──
+    const audLabels = {
+      snappers: 'Snappers', solvers: 'Solvers',
+      'customer-service': 'Customer Service', 'depot-field': 'Depot & Field', 'it-teams': 'IT Teams',
+    };
+    const audColors = {
+      snappers: '#5BCFF4', solvers: '#FF964A',
+      'customer-service': '#C084FC', 'depot-field': '#FBBF24', 'it-teams': '#34D399',
+    };
+    const audEntries = Object.entries(audTotals).sort((a, b) => b[1] - a[1]);
+    _chartAudience = new Chart(document.getElementById('chart-audience'), {
+      type: 'doughnut',
+      data: {
+        labels: audEntries.map(([k]) => audLabels[k] || k),
+        datasets: [{
+          data: audEntries.map(([, v]) => v),
+          backgroundColor: audEntries.map(([k]) => audColors[k] || '#ccc'),
+          borderWidth: 2,
+          borderColor: '#fff',
+          hoverBorderWidth: 3,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { family: fontFamily, size: 11 }, boxWidth: 10, padding: 10 },
+          },
+          tooltip: {
+            callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} vote${ctx.parsed !== 1 ? 's' : ''}` },
+          },
+        },
+      },
+    });
   }
 
   /* ══════════════════════════════════════════════════════════════
