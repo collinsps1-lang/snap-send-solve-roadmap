@@ -1323,6 +1323,8 @@
     if (filterDock) filterDock.innerHTML = filterBarHtml;
 
     el.innerHTML = `
+      ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
+
       <div class="stats-row">
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
@@ -1330,8 +1332,6 @@
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
         <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
       </div>
-
-      ${_buildSuggPanel(ranked, filtered, totalVotes, voterEmails, notifyEmails, researchEmails, rgTotals)}
 
       <div class="chart-card chart-card-full">
         <div class="chart-header">
