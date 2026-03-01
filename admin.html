@@ -255,17 +255,16 @@
       font-size: 12.5px; color: rgba(255,255,255,0.55); font-family: 'Space Grotesk', sans-serif;
       line-height: 1.6;
     }
-    .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px 0; }
+    .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 18px -28px; }
     .sugg-items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .sugg-item {
-      background: rgba(255,255,255,0.06); border-radius: 10px; padding: 16px 18px;
-      border: 1px solid rgba(255,255,255,0.08);
+      background: #000; border-radius: 10px; padding: 16px 18px;
     }
     .sugg-item-label {
       font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-      color: rgba(255,255,255,0.35); font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px;
+      color: rgba(255,255,255,0.35); font-family: 'Space Grotesk', sans-serif; margin-bottom: 12px;
     }
-    .sugg-item-icon { font-size: 22px; margin-bottom: 8px; }
+    .sugg-item-icon { display: flex; margin-bottom: 14px; }
     .sugg-item-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
       font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.01em;
@@ -1217,9 +1216,29 @@
         </div>
         <hr class="sugg-divider">
         <div class="sugg-items">
-          ${_suggItem('Most demand', '🏆', top, `${top.total} vote${top.total === 1 ? '' : 's'}`, 'orange', escHtml(phaseDisp[top.card.phase] || top.card.phase))}
-          ${_suggItem('Consider accelerating', '⚡', accel, accel ? `${accel.total} vote${accel.total === 1 ? '' : 's'} in Coming Next` : '', 'green', accel ? 'High demand — candidate to pull into In Development' : '')}
-          ${_suggItem('Review priority', '↓', depr, depr ? `${depr.total} vote${depr.total === 1 ? '' : 's'} in Coming Next` : '', 'muted', depr ? 'Lowest demand in Coming Next — consider pushing out' : '')}
+          ${_suggItem('Most demand',
+            `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="19" cy="19" r="19" fill="#FF964A" fill-opacity="0.15"/>
+              <!-- pointing index finger up -->
+              <path d="M19 9c1.1 0 2 .9 2 2v7.5c.5-.3 1.1-.5 1.7-.5 1 0 1.8.6 2.1 1.5.4-.2.8-.3 1.2-.3 1 0 1.8.6 2.1 1.5.3-.1.6-.2 1-.2 1.1 0 2 .9 2 2V25c0 2.8-2.2 5-5 5h-5c-1.6 0-3-.8-3.9-2l-4.5-6c-.6-.8-.4-2 .4-2.6.8-.6 2-.4 2.6.4L17 21.5V11c0-1.1.9-2 2-2Z" fill="#FF964A"/>
+            </svg>`,
+            top, `${top.total} vote${top.total === 1 ? '' : 's'}`, 'orange', escHtml(phaseDisp[top.card.phase] || top.card.phase))}
+          ${_suggItem('Consider accelerating',
+            `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="19" cy="19" r="19" fill="#b2dd2f" fill-opacity="0.12"/>
+              <!-- hand pushing forward / snap gesture -->
+              <path d="M10 22c0-1.1.9-2 2-2h2v-6c0-1.1.9-2 2-2s2 .9 2 2v4c.3-.2.7-.3 1-.3.8 0 1.5.4 1.8 1 .3-.2.7-.3 1.2-.3.9 0 1.6.5 1.9 1.2.3-.1.6-.2.9-.2 1.1 0 2 .9 2 2V24c0 2.2-1.8 4-4 4h-4.5C18.4 28 17 27 16.3 25.6L14 22h-2c0 0 0 0 0 0Z" fill="#b2dd2f"/>
+              <path d="M25 10l3.5 3L25 16" stroke="#b2dd2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>`,
+            accel, accel ? `${accel.total} vote${accel.total === 1 ? '' : 's'} in Coming Next` : '', 'green', accel ? 'High demand — candidate to pull into In Development' : '')}
+          ${_suggItem('Review priority',
+            `<svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="19" cy="19" r="19" fill="rgba(255,255,255,0.06)"/>
+              <!-- hand holding back / palm out -->
+              <path d="M13 16c0-1.1.9-2 2-2s2 .9 2 2v2c0-1.1.9-2 2-2s2 .9 2 2c0-1.1.9-2 2-2s2 .9 2 2v2c0-1.1.9-2 2-2s2 .9 2 2v5c0 2.8-2.2 5-5 5h-3c-1.8 0-3.4-1-4.2-2.5L13 22v-6Z" fill="rgba(255,255,255,0.35)"/>
+              <path d="M13 20h-1.5c-.8 0-1.5-.7-1.5-1.5S10.7 17 11.5 17H13" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>`,
+            depr, depr ? `${depr.total} vote${depr.total === 1 ? '' : 's'} in Coming Next` : '', 'muted', depr ? 'Lowest demand in Coming Next — consider pushing out' : '')}
         </div>
       </div>`;
   }
