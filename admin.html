@@ -1210,13 +1210,11 @@
     if (notifyPct > 0 || researchPct > 0) narrative += '.';
 
     const phaseDisp = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
-    const li = `<img src="solver-icon.png" class="sugg-label-icon" aria-hidden="true">`;
-
     function _suggItem(label, item, meta) {
-      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${li}${label}</div><div class="sugg-item-meta" style="margin-top:8px;color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
+      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${label}</div><div class="sugg-item-meta" style="margin-top:8px;color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
       return `<div class="sugg-item">
         <div class="sugg-item-top">
-          <div class="sugg-item-label">${li}${label}</div>
+          <div class="sugg-item-label">${label}</div>
           <div class="sugg-vote-badge">
             <span class="sugg-vote-count">${item.total}</span>
             <span class="sugg-vote-label">VOTES</span>
@@ -1241,7 +1239,7 @@
         <hr class="sugg-divider">
         <div class="sugg-items">
           <div class="sugg-item">
-            <div class="sugg-item-label">${li}AI Summary</div>
+            <div class="sugg-item-label">AI Summary</div>
             <div class="sugg-item-ai">${narrative}</div>
           </div>
           ${_suggItem('Most demand',      top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
