@@ -1698,7 +1698,25 @@
         </tr>`;
     }).join('');
 
-    el.innerHTML = `
+    // Votes by role group metrics
+    const rgTotals = {};
+    voters.forEach(voter => {
+      const rg = ROLE_GROUPS[voter.role] || 'Other';
+      if (!rgTotals[rg]) rgTotals[rg] = { votes: 0, count: 0 };
+      rgTotals[rg].votes += voter.allocated;
+      rgTotals[rg].count += 1;
+    });
+    const rgEntries = Object.entries(rgTotals).sort((a, b) => b[1].votes - a[1].votes);
+    const roleMetricsHtml = `<div class="stats-row" style="grid-template-columns:repeat(${rgEntries.length || 1},1fr);margin-bottom:20px;">
+      ${rgEntries.map(([rg, d]) => `
+        <div class="stat-card">
+          <div class="stat-value">${d.votes}</div>
+          <div class="stat-label">${escHtml(rg)}</div>
+          <div style="margin-top:8px;font-size:12px;color:var(--text-muted);font-family:'Space Grotesk',sans-serif;">${d.count} voter${d.count !== 1 ? 's' : ''}</div>
+        </div>`).join('')}
+    </div>`;
+
+    el.innerHTML = roleMetricsHtml + `
       <div class="data-card">
         <table class="data-table">
           <thead>
