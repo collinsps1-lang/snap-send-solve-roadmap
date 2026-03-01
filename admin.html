@@ -207,7 +207,7 @@
       font-size: 40px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.03em; line-height: 1.05;
     }
     .page-sub { color: var(--text-dark); font-size: 14px; margin-bottom: 30px; font-family: 'Space Grotesk', sans-serif; line-height: 1.65; }
-    .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 0 -24px 28px; }
+    .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 1px -24px 28px; }
 
     /* ── Loading / empty states ── */
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
@@ -253,8 +253,6 @@
     }
     @media (max-width: 640px) {
       .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .filter-group { flex-direction: column; gap: 6px; }
-      .filter-group-label { min-width: unset; padding-top: 0; }
     }
 
     /* ── Cards / tables ── */
@@ -410,42 +408,57 @@
     .form-section-head { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 12px; }
     .detail-images-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    /* ── Dashboard filter bar ── */
-    .dash-filter-bar {
-      background: var(--card-bg); border-radius: 14px; padding: 18px 20px;
-      margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;
+    /* ── Dashboard filter bar (dropdowns) ── */
+    .dash-filter-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 20px; position: relative; z-index: 10; }
+    .dash-filter-dd { position: relative; }
+    .dash-filter-trigger {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 8px;
+      border: 1.5px solid var(--border); background: var(--white);
+      font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--text-dark); cursor: pointer; user-select: none;
+      list-style: none; white-space: nowrap; transition: border-color 0.15s, background 0.15s, color 0.15s;
     }
-    .filter-group { display: flex; align-items: flex-start; gap: 10px; }
-    .filter-group-label {
-      font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted);
-      padding-top: 5px; white-space: nowrap; min-width: 88px;
+    .dash-filter-trigger::-webkit-details-marker { display: none; }
+    .dash-filter-dd[open] > .dash-filter-trigger { background: var(--warm-black); color: #fff; border-color: var(--warm-black); }
+    .dash-filter-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--high-vis); color: var(--warm-black);
+      border-radius: 4px; font-size: 10px; font-weight: 700;
+      min-width: 16px; height: 16px; padding: 0 4px;
     }
-    .filter-chips { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; align-items: center; }
-    .filter-chip {
-      padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
-      font-family: 'Space Grotesk', sans-serif;
-      border: 1.5px solid var(--border); background: var(--white); color: var(--text-dark);
-      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    .dash-filter-chevron { width: 14px; height: 14px; flex-shrink: 0; transition: transform 0.15s; }
+    .dash-filter-dd[open] .dash-filter-chevron { transform: rotate(180deg); }
+    .dash-filter-body {
+      position: absolute; top: calc(100% + 6px); left: 0; z-index: 200;
+      background: var(--white); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 10px 14px; min-width: 190px;
+      box-shadow: 0 8px 24px rgba(44,41,39,0.13);
     }
-    .filter-chip:hover { border-color: var(--warm-black); }
-    .filter-chip.active { background: var(--warm-black); color: var(--white); border-color: var(--warm-black); }
-    .custom-date-inputs { display: flex; align-items: center; gap: 6px; }
-    .custom-date-inputs.hidden { display: none; }
-    .custom-date-inputs input[type="date"] {
-      padding: 4px 8px; border: 1.5px solid var(--border); border-radius: 8px;
+    .dash-filter-body-scroll { max-height: 260px; overflow-y: auto; }
+    .dash-filter-body label {
+      display: flex; align-items: center; gap: 8px; padding: 5px 0;
+      font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 500;
+      color: var(--text-dark); cursor: pointer; user-select: none; white-space: nowrap;
+    }
+    .dash-filter-body label:hover { color: var(--warm-black); }
+    .dash-filter-body input[type="checkbox"],
+    .dash-filter-body input[type="radio"] { width: 14px; height: 14px; accent-color: var(--warm-black); cursor: pointer; flex-shrink: 0; }
+    .custom-date-wrap { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+    .custom-date-wrap.hidden { display: none; }
+    .custom-date-wrap input[type="date"] {
+      width: 100%; padding: 5px 8px; border: 1.5px solid var(--border); border-radius: 6px;
       font-size: 12px; font-family: 'Space Grotesk', sans-serif; color: var(--text-dark);
-      background: var(--white); outline: none;
+      background: var(--white); outline: none; box-sizing: border-box;
     }
-    .custom-date-inputs input[type="date"]:focus { border-color: var(--warm-black); }
-    .custom-date-inputs span { color: var(--text-muted); font-size: 12px; }
-    .clear-filters-btn {
-      padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    .custom-date-wrap input[type="date"]:focus { border-color: var(--warm-black); }
+    .dash-clear-btn {
+      padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
       font-family: 'Space Grotesk', sans-serif;
-      border: 1.5px solid rgba(44,41,39,0.35); background: transparent; color: var(--text-muted);
-      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+      border: 1.5px solid rgba(44,41,39,0.3); background: transparent;
+      color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.15s;
     }
-    .clear-filters-btn:hover { border-color: var(--warm-black); color: var(--text-dark); }
+    .dash-clear-btn:hover { border-color: var(--warm-black); color: var(--text-dark); }
 
     /* ── Richer chart layout ── */
     .chart-card-full { background: var(--card-bg); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
@@ -895,7 +908,7 @@
   });
 
   function refreshTab(tab) {
-    if (tab === 'dashboard') { _rawVotes = null; loadDashboard(); _initDashData(); }
+    if (tab === 'dashboard') { loadDashboard(); _initDashData(); }
     if (tab === 'voters')    loadVoters();
     if (tab === 'community') loadCommunity();
     if (tab === 'cms')       loadCms();
@@ -1007,6 +1020,7 @@
   let _chartFeatures = null, _chartPhase = null, _chartRoleGroup = null,
       _chartLgaType  = null, _chartRegion  = null, _chartNotify   = null;
   let _rawVotes = null, _rawCards = null, _enrichedVotes = null;
+  let _isFetching = false;
 
   const dashFilters = {
     datePreset: 'all', dateFrom: null, dateTo: null,
@@ -1051,24 +1065,33 @@
 
   // Fetch data in background; re-renders dashboard when complete
   async function _initDashData() {
+    if (_isFetching) return;
+    _isFetching = true;
     try {
       const [{ data: votes, error: vErr }, { data: cardRows, error: cErr }] = await Promise.all([
         _supabase.from('votes').select('card_id,votes,user_email,user_name,user_org,user_role,notify,research,created_at'),
         _supabase.from('cards').select('id,title,phase,audience'),
       ]);
       if (vErr || cErr) {
-        const el = document.getElementById('dashboard-content');
-        if (el) el.innerHTML = `<div class="loading">Error: ${escHtml((vErr || cErr).message || 'Unknown')}</div>`;
+        _isFetching = false;
+        if (_rawVotes === null) {
+          const el = document.getElementById('dashboard-content');
+          if (el) el.innerHTML = `<div class="loading">Error: ${escHtml((vErr || cErr).message || 'Unknown')}</div>`;
+        }
         return;
       }
       _rawVotes      = votes || [];
       _rawCards      = cardRows || [];
       _enrichedVotes = _rawVotes.map(enrichVote);
     } catch (e) {
-      const el = document.getElementById('dashboard-content');
-      if (el) el.innerHTML = `<div class="loading">Network error. <button onclick="_initDashData()" class="btn-sm" style="margin-left:8px;">Retry</button></div>`;
+      _isFetching = false;
+      if (_rawVotes === null) {
+        const el = document.getElementById('dashboard-content');
+        if (el) el.innerHTML = `<div class="loading">Network error. <button onclick="_initDashData()" class="btn-sm" style="margin-left:8px;">Retry</button></div>`;
+      }
       return;
     }
+    _isFetching = false;
     if (activeTab === 'dashboard') loadDashboard();
   }
 
@@ -1130,48 +1153,50 @@
     const allPhases     = ['now','next','after','launched'];
     const phaseDisp     = { now:'In Development', next:'Coming Next', after:'Longer Term', launched:'Launched' };
 
-    function chip(label, fKey, val, set) {
-      const a = set.has(val) ? ' active' : '';
-      return `<button class="filter-chip${a}" data-filter="${escHtml(fKey)}" data-value="${escHtml(val)}">${escHtml(label)}</button>`;
+    // Save which dropdowns are open before re-render (so filter changes keep them open)
+    const _openDds = [...el.querySelectorAll('.dash-filter-dd[open]')].map(d => d.id);
+
+    const _chevron = `<svg class="dash-filter-chevron" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    function _badge(n) { return n > 0 ? `<span class="dash-filter-count">${n}</span>` : ''; }
+    function _cbs(items, fKey, set, labelFn) {
+      return items.map(v => `<label><input type="checkbox" data-filter="${escHtml(fKey)}" value="${escHtml(v)}"${set.has(v) ? ' checked' : ''}> ${escHtml(labelFn ? labelFn(v) : v)}</label>`).join('');
     }
     const presetLabels = { all:'All time', '30d':'Last 30 days', '90d':'Last 90 days', custom:'Custom' };
+    const dateActive = dashFilters.datePreset !== 'all' || dashFilters.dateFrom || dashFilters.dateTo ? 1 : 0;
 
     el.innerHTML = `
       <div class="dash-filter-bar">
-        <div class="filter-group">
-          <span class="filter-group-label">Date</span>
-          <div class="filter-chips">
-            ${['all','30d','90d','custom'].map(p =>
-              `<button class="filter-chip date-preset-btn${dashFilters.datePreset===p?' active':''}" data-preset="${p}">${presetLabels[p]}</button>`
-            ).join('')}
-            <div class="custom-date-inputs${dashFilters.datePreset==='custom'?'':' hidden'}">
+        <details class="dash-filter-dd" id="dd-date">
+          <summary class="dash-filter-trigger">Date ${_badge(dateActive)} ${_chevron}</summary>
+          <div class="dash-filter-body">
+            ${['all','30d','90d','custom'].map(p => `<label><input type="radio" name="date-preset" value="${p}"${dashFilters.datePreset===p?' checked':''}> ${presetLabels[p]}</label>`).join('')}
+            <div class="custom-date-wrap${dashFilters.datePreset==='custom'?'':' hidden'}">
               <input type="date" id="dash-date-from" value="${dashFilters.dateFrom ? dashFilters.dateFrom.toISOString().split('T')[0] : ''}">
-              <span>&ndash;</span>
               <input type="date" id="dash-date-to" value="${dashFilters.dateTo ? dashFilters.dateTo.toISOString().split('T')[0] : ''}">
             </div>
           </div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group-label">Phase</span>
-          <div class="filter-chips">${allPhases.map(p => chip(phaseDisp[p],'phases',p,dashFilters.phases)).join('')}</div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group-label">Role</span>
-          <div class="filter-chips">${allRoleGroups.map(r => chip(r,'roleGroups',r,dashFilters.roleGroups)).join('')}</div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group-label">LGA Type</span>
-          <div class="filter-chips">${allLgaTypes.map(t => chip(t,'lgaTypes',t,dashFilters.lgaTypes)).join('')}</div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group-label">State / Region</span>
-          <div class="filter-chips">${allRegions.map(r => chip(r,'regions',r,dashFilters.regions)).join('')}</div>
-        </div>
-        <div class="filter-group">
-          <span class="filter-group-label">Council</span>
-          <div class="filter-chips">${allCouncils.map(c => chip(c,'councils',c,dashFilters.councils)).join('')}</div>
-        </div>
-        ${_hasActiveFilters() ? `<div class="filter-group"><span class="filter-group-label"></span><div class="filter-chips"><button class="clear-filters-btn" id="clear-filters-btn">Clear all filters</button></div></div>` : ''}
+        </details>
+        <details class="dash-filter-dd" id="dd-phase">
+          <summary class="dash-filter-trigger">Phase ${_badge(dashFilters.phases.size)} ${_chevron}</summary>
+          <div class="dash-filter-body">${_cbs(allPhases,'phases',dashFilters.phases, p => phaseDisp[p])}</div>
+        </details>
+        <details class="dash-filter-dd" id="dd-role">
+          <summary class="dash-filter-trigger">Role ${_badge(dashFilters.roleGroups.size)} ${_chevron}</summary>
+          <div class="dash-filter-body">${_cbs(allRoleGroups,'roleGroups',dashFilters.roleGroups)}</div>
+        </details>
+        <details class="dash-filter-dd" id="dd-lga">
+          <summary class="dash-filter-trigger">LGA Type ${_badge(dashFilters.lgaTypes.size)} ${_chevron}</summary>
+          <div class="dash-filter-body">${_cbs(allLgaTypes,'lgaTypes',dashFilters.lgaTypes)}</div>
+        </details>
+        <details class="dash-filter-dd" id="dd-region">
+          <summary class="dash-filter-trigger">State / Region ${_badge(dashFilters.regions.size)} ${_chevron}</summary>
+          <div class="dash-filter-body">${_cbs(allRegions,'regions',dashFilters.regions)}</div>
+        </details>
+        <details class="dash-filter-dd" id="dd-council">
+          <summary class="dash-filter-trigger">Council ${_badge(dashFilters.councils.size)} ${_chevron}</summary>
+          <div class="dash-filter-body dash-filter-body-scroll">${_cbs(allCouncils,'councils',dashFilters.councils)}</div>
+        </details>
+        ${_hasActiveFilters() ? '<button class="dash-clear-btn" id="clear-filters-btn">Clear all</button>' : ''}
       </div>
 
       <div class="stats-row">
@@ -1231,8 +1256,9 @@
         </table>
       </div>`;
 
-    el.querySelectorAll('.date-preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => { dashFilters.datePreset = btn.dataset.preset; _renderInsights(el); });
+    // Date preset radios
+    el.querySelectorAll('input[name="date-preset"]').forEach(r => {
+      r.addEventListener('change', () => { dashFilters.datePreset = r.value; _renderInsights(el); });
     });
     const dfrom = el.querySelector('#dash-date-from');
     const dto   = el.querySelector('#dash-date-to');
@@ -1242,13 +1268,15 @@
     if (dto) dto.addEventListener('change', e => {
       dashFilters.dateTo = e.target.value ? new Date(e.target.value + 'T23:59:59') : null; _renderInsights(el);
     });
-    el.querySelectorAll('.filter-chip[data-filter]').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const key = chip.dataset.filter, val = chip.dataset.value;
-        if (dashFilters[key].has(val)) dashFilters[key].delete(val); else dashFilters[key].add(val);
+    // Multi-select checkboxes
+    el.querySelectorAll('input[data-filter]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const key = cb.dataset.filter, val = cb.value;
+        if (cb.checked) dashFilters[key].add(val); else dashFilters[key].delete(val);
         _renderInsights(el);
       });
     });
+    // Clear all
     const clearBtn = el.querySelector('#clear-filters-btn');
     if (clearBtn) clearBtn.addEventListener('click', () => {
       dashFilters.datePreset = 'all'; dashFilters.dateFrom = null; dashFilters.dateTo = null;
@@ -1256,6 +1284,18 @@
       dashFilters.lgaTypes.clear(); dashFilters.roleGroups.clear(); dashFilters.phases.clear();
       _renderInsights(el);
     });
+    // Close dropdowns on outside click (attach once per dashboard-content element)
+    if (!el.dataset.outsideClick) {
+      el.dataset.outsideClick = '1';
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.dash-filter-dd')) {
+          document.querySelectorAll('#dashboard-content .dash-filter-dd[open]')
+            .forEach(d => d.removeAttribute('open'));
+        }
+      });
+    }
+    // Restore open dropdowns after re-render
+    _openDds.forEach(id => { const d = el.querySelector('#' + id); if (d) d.open = true; });
 
     _clearDashCharts();
 
