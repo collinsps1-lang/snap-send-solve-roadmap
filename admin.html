@@ -207,7 +207,7 @@
       font-size: 40px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.03em; line-height: 1.05;
     }
     .page-sub { color: var(--text-dark); font-size: 14px; margin-bottom: 30px; font-family: 'Space Grotesk', sans-serif; line-height: 1.65; }
-    .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 1px -24px 28px; }
+    .tab-divider { border: none; border-top: 1px solid rgba(44,41,39,0.1); margin: 0 -24px 28px; }
 
     /* ── Loading / empty states ── */
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
@@ -220,7 +220,16 @@
     .stat-card {
       background: var(--warm-black);
       border-radius: 14px; padding: 20px 22px;
+      position: relative;
     }
+    .stat-overflow {
+      position: absolute; top: 10px; right: 10px;
+      background: transparent; border: none; cursor: pointer;
+      color: rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 5px;
+      font-size: 18px; line-height: 1; letter-spacing: 2px;
+      display: flex; align-items: center; transition: color 0.15s, background 0.15s;
+    }
+    .stat-overflow:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.1); }
     .stat-value {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
       font-size: 34px; font-weight: 700; line-height: 1; color: #fff;
@@ -237,10 +246,27 @@
       background: var(--card-bg);
       border-radius: 14px; padding: 20px;
     }
-    .chart-title {
-      font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 16px;
+    .chart-title { font-family: 'Bagoss', 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--warm-black); flex: 1; }
+    .chart-header { display: flex; align-items: flex-start; gap: 8px; padding-bottom: 14px; }
+    .chart-info {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+      font-size: 11px; font-weight: 700; font-style: italic; font-family: 'Space Grotesk', sans-serif;
+      background: rgba(44,41,39,0.1); color: rgba(44,41,39,0.4); cursor: default;
     }
+    .chart-info-tip {
+      display: none; position: absolute; top: calc(100% + 6px); right: 0;
+      background: var(--warm-black); color: #fff; font-size: 11px; font-weight: 500;
+      font-style: normal; font-family: 'Space Grotesk', sans-serif;
+      padding: 5px 10px; border-radius: 6px; white-space: nowrap; z-index: 50; letter-spacing: 0;
+    }
+    .chart-info:hover .chart-info-tip { display: block; }
+    .chart-header-divider { border: none; border-top: 1px solid var(--border); margin: 0 -20px 16px; }
+    .chart-footer-divider { border: none; border-top: 1px solid var(--border); margin: 16px -20px 0; }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; padding-top: 14px; }
+    .chart-legend-item { display: flex; align-items: center; gap: 6px; }
+    .chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .chart-legend-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 500; color: var(--text-dark); }
     .chart-wrap-bar { height: 260px; position: relative; }
     .chart-wrap-donut { height: 200px; position: relative; }
     @media (max-width: 1300px) {
@@ -1200,28 +1226,64 @@
       </div>
 
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
-        <div class="stat-card"><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
-        <div class="stat-card"><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
-        <div class="stat-card"><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
-        <div class="stat-card"><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
         <div class="stat-card"><div class="stat-value stat-value-sm">${escHtml(ranked[0]?.card?.title || '—')}</div><div class="stat-label">Most voted</div></div>
       </div>
 
       <div class="chart-card chart-card-full">
-        <div class="chart-title">Top features by votes</div>
+        <div class="chart-header">
+          <span class="chart-title">Top features by votes</span>
+          <div class="chart-info">i<span class="chart-info-tip">Features ranked by total votes across all voters</span></div>
+        </div>
+        <hr class="chart-header-divider">
         <div class="chart-wrap-bar-lg"><canvas id="chart-features"></canvas></div>
+        <hr class="chart-footer-divider">
+        <div class="chart-legend" id="legend-features"></div>
       </div>
 
       <div class="charts-row charts-row-3">
-        <div class="chart-card"><div class="chart-title">Votes by phase</div><div class="chart-wrap-donut"><canvas id="chart-phase"></canvas></div></div>
-        <div class="chart-card"><div class="chart-title">Votes by role group</div><div class="chart-wrap-donut"><canvas id="chart-rolegroup"></canvas></div></div>
-        <div class="chart-card"><div class="chart-title">Votes by LGA type</div><div class="chart-wrap-donut"><canvas id="chart-lgatype"></canvas></div></div>
+        <div class="chart-card">
+          <div class="chart-header"><span class="chart-title">Votes by phase</span><div class="chart-info">i<span class="chart-info-tip">How votes spread across roadmap stages</span></div></div>
+          <hr class="chart-header-divider">
+          <div class="chart-wrap-donut"><canvas id="chart-phase"></canvas></div>
+          <hr class="chart-footer-divider">
+          <div class="chart-legend" id="legend-phase"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><span class="chart-title">Votes by role group</span><div class="chart-info">i<span class="chart-info-tip">Which seniority levels are most engaged</span></div></div>
+          <hr class="chart-header-divider">
+          <div class="chart-wrap-donut"><canvas id="chart-rolegroup"></canvas></div>
+          <hr class="chart-footer-divider">
+          <div class="chart-legend" id="legend-rolegroup"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><span class="chart-title">Votes by LGA type</span><div class="chart-info">i<span class="chart-info-tip">Engagement by council classification</span></div></div>
+          <hr class="chart-header-divider">
+          <div class="chart-wrap-donut"><canvas id="chart-lgatype"></canvas></div>
+          <hr class="chart-footer-divider">
+          <div class="chart-legend" id="legend-lgatype"></div>
+        </div>
       </div>
 
       <div class="charts-row charts-row-2">
-        <div class="chart-card"><div class="chart-title">Votes by state / region</div><div class="chart-wrap-bar-md"><canvas id="chart-region"></canvas></div></div>
-        <div class="chart-card"><div class="chart-title">Notify &amp; research interest by feature</div><div class="chart-wrap-bar-md"><canvas id="chart-notify"></canvas></div></div>
+        <div class="chart-card">
+          <div class="chart-header"><span class="chart-title">Votes by state / region</span><div class="chart-info">i<span class="chart-info-tip">Geographic spread of voter interest</span></div></div>
+          <hr class="chart-header-divider">
+          <div class="chart-wrap-bar-md"><canvas id="chart-region"></canvas></div>
+          <hr class="chart-footer-divider">
+          <div class="chart-legend" id="legend-region"></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><span class="chart-title">Notify &amp; research interest</span><div class="chart-info">i<span class="chart-info-tip">Per-feature demand signals beyond the vote count</span></div></div>
+          <hr class="chart-header-divider">
+          <div class="chart-wrap-bar-md"><canvas id="chart-notify"></canvas></div>
+          <hr class="chart-footer-divider">
+          <div class="chart-legend" id="legend-notify"></div>
+        </div>
       </div>
 
       <div class="data-card">
@@ -1299,6 +1361,14 @@
 
     _clearDashCharts();
 
+    function buildLegend(id, items) {
+      const el = document.getElementById(id);
+      if (!el || !items || !items.length) return;
+      el.innerHTML = items.map(function(item) {
+        return '<div class="chart-legend-item"><div class="chart-legend-dot" style="background:' + item.color + ';"></div><span class="chart-legend-label">' + escHtml(item.label) + '</span></div>';
+      }).join('');
+    }
+
     const ff  = "'Space Grotesk', sans-serif";
     const PAL = ['#E0FF89','#2C2927','#9A948E','#E3DED7','#C4DC50','#6B6560','#B0A99F','#4D4744','#D4F55A','#3D3A38'];
 
@@ -1309,7 +1379,7 @@
         options: {
           responsive: true, maintainAspectRatio: false, cutout: '68%',
           plugins: {
-            legend: { position: 'bottom', labels: { font: { family: ff, size: 11 }, boxWidth: 10, padding: 10 } },
+            legend: { display: false },
             tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} vote${ctx.parsed !== 1 ? 's' : ''}` } },
           },
         },
@@ -1367,7 +1437,7 @@
       options: {
         indexAxis: 'y', responsive: true, maintainAspectRatio: false,
         plugins: {
-          legend: { display: true, position: 'top', labels: { font: { family: ff, size: 11 }, boxWidth: 10, padding: 10 } },
+          legend: { display: false },
           tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x} voter${ctx.parsed.x !== 1 ? 's' : ''}` } },
         },
         scales: {
@@ -1376,6 +1446,13 @@
         },
       },
     });
+
+    buildLegend('legend-features', [{ color: '#E0FF89', label: 'Top ranked' }, { color: '#2C2927', label: 'All others' }]);
+    buildLegend('legend-phase',    phEnt.map(function([k], i) { return { color: PAL[i] || '#ccc', label: phDisp[k] || k }; }));
+    buildLegend('legend-rolegroup',rgEnt.map(function([k], i) { return { color: PAL[i] || '#ccc', label: k }; }));
+    buildLegend('legend-lgatype',  lgaEnt.map(function([k], i) { return { color: PAL[i] || '#ccc', label: k }; }));
+    buildLegend('legend-region',   [{ color: '#E0FF89', label: 'Highest' }, { color: '#2C2927', label: 'All others' }]);
+    buildLegend('legend-notify',   [{ color: '#E0FF89', label: 'Notify on launch' }, { color: '#2C2927', label: 'Research willing' }]);
   }
 
   /* ══════════════════════════════════════════════════════════════
