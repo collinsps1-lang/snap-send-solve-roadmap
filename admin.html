@@ -283,6 +283,12 @@
     .sugg-items { display: flex; flex-direction: column; gap: 12px; flex: 1; }
     .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; flex: 1; }
     .sugg-item-label { display: inline-block; align-self: flex-start; background: var(--warm-black); color: var(--high-vis); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px; }
+    .sugg-aud-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 5px; border: 1.5px solid #2C2927; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; }
+    .sugg-aud-cs       { background: #FFCDA8; color: #2C2927; }
+    .sugg-aud-df       { background: #FFB380; color: #2C2927; }
+    .sugg-aud-it       { background: #E8E5E0; color: #2C2927; }
+    .sugg-aud-snappers { background: #BDECFB; color: #2C2927; }
+    .sugg-aud-solvers  { background: #FFCDA8; color: #2C2927; }
     .sugg-item-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
     .sugg-item-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
@@ -1011,6 +1017,17 @@
       'customer-service':'badge-cs', 'depot-field':'badge-df', 'it-teams':'badge-it' }[a] || '';
     return `<span class="badge ${cls}">${AUD_LABELS[a] || a}</span>`;
   }
+  function _suggAudBadge(a) {
+    const map = {
+      'customer-service': ['sugg-aud-cs',       'For Customer Service Teams'],
+      'depot-field':      ['sugg-aud-df',       'For Depot & Field Teams'],
+      'it-teams':         ['sugg-aud-it',       'For IT Teams'],
+      'snappers':         ['sugg-aud-snappers', 'For Snappers'],
+      'solvers':          ['sugg-aud-solvers',  'For Solvers'],
+    }[a];
+    if (!map) return '';
+    return `<span class="sugg-aud-tag ${map[0]}">${map[1]}</span>`;
+  }
 
   function escHtml(s) {
     return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1220,7 +1237,7 @@
         <div class="sugg-item-bottom">
           <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
             <div class="sugg-item-title">${escHtml(item.card.title)}</div>
-            ${item.card.audience ? audBadge(item.card.audience) : ''}
+            ${item.card.audience ? _suggAudBadge(item.card.audience) : ''}
           </div>
           <div class="sugg-vote-badge">
             <span class="sugg-vote-count">${item.total}</span>
