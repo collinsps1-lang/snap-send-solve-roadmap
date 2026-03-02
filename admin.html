@@ -220,7 +220,7 @@
     .dash-divider { border: none; border-top: 1px solid rgba(44,41,39,0.15); margin: 24px -24px; }
 
     /* ── Dashboard top two-column layout ── */
-    .dash-top-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
+    .dash-top-row { display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 20px; align-items: stretch; }
     .dash-left-panel { display: flex; flex-direction: column; }
     .dash-left-panel .sugg-panel { margin-bottom: 0; flex: 1; }
     .dash-features-chart { display: flex; flex-direction: column; margin-bottom: 0; background: var(--warm-black); border-color: var(--warm-black); }
@@ -256,6 +256,11 @@
     }
     .stat-value-sm { font-size: 16px; letter-spacing: -0.01em; line-height: 1.3; }
     .stat-label { display: inline-block; background: var(--warm-black); color: var(--high-vis); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; }
+    .stat-card-footer { display: flex; align-items: center; gap: 8px; }
+    .stat-trend { font-size: 11px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; padding: 2px 6px; border-radius: 4px; }
+    .stat-trend-up   { background: #E0FFE8; color: #1a7a3a; }
+    .stat-trend-down { background: #FFE8E8; color: #a83030; }
+    .stat-trend-flat { background: rgba(44,41,39,0.08); color: var(--text-muted); }
 
     /* ── Roadmap Suggestions panel ── */
     .sugg-panel {
@@ -1238,7 +1243,49 @@
       </div>`;
   }
 
+  function _calcTrends(rawVotes) {
+    const now  = Date.now();
+    const W    = 30 * 24 * 60 * 60 * 1000;
+    let cur  = rawVotes.filter(v => { const t = +new Date(v.created_at); return t >= now - W && t <= now; });
+    let prev = rawVotes.filter(v => { const t = +new Date(v.created_at); return t >= now - 2*W && t < now - W; });
+    // Fallback: if no votes land in either rolling window (data is older than 60d),
+    // split all chronologically so there's always a meaningful comparison.
+    if (!cur.length && !prev.length) {
+      const valid = rawVotes.filter(v => !isNaN(+new Date(v.created_at)))
+                            .sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at));
+      const mid = Math.floor(valid.length / 2);
+      prev = valid.slice(0, mid);
+      cur  = valid.slice(mid);
+    }
+    function trend(curVal, prevVal) {
+      if (prevVal === 0 && curVal === 0) return { dir: null, pct: null };
+      if (prevVal === 0) return { dir: 'up', pct: null };
+      const pct = Math.round((curVal - prevVal) / prevVal * 100);
+      return { dir: pct > 5 ? 'up' : pct < -5 ? 'down' : 'flat', pct: Math.abs(pct) };
+    }
+    const uniqSet = fn => arr => new Set(arr.filter(fn).map(v => v.user_email)).size;
+    return {
+      totalVotes:    trend(cur.reduce((s,v) => s+(v.votes||0), 0),  prev.reduce((s,v) => s+(v.votes||0), 0)),
+      uniqueVoters:  trend(new Set(cur.map(v=>v.user_email)).size,   new Set(prev.map(v=>v.user_email)).size),
+      featuresVoted: trend(new Set(cur.map(v=>v.card_id)).size,      new Set(prev.map(v=>v.card_id)).size),
+      wantUpdates:   trend(uniqSet(v=>v.notify)(cur),                uniqSet(v=>v.notify)(prev)),
+      research:      trend(uniqSet(v=>v.research)(cur),              uniqSet(v=>v.research)(prev)),
+    };
+  }
+
+  function _trendBadge(t) {
+    if (!t || t.dir === null) return '';
+    const cfg = {
+      up:   { icon: '↑', cls: 'stat-trend-up' },
+      down: { icon: '↓', cls: 'stat-trend-down' },
+      flat: { icon: '→', cls: 'stat-trend-flat' },
+    }[t.dir];
+    const label = t.pct != null ? `${cfg.icon} ${t.pct}%` : cfg.icon;
+    return `<span class="stat-trend ${cfg.cls}">${label}</span>`;
+  }
+
   function _renderInsights(el) {
+    const trends   = _calcTrends(_rawVotes || []);
     const filtered = _filterVotes(_enrichedVotes);
     const cardMap  = {};
     (_rawCards || []).forEach(c => { cardMap[c.id] = c; });
@@ -1331,11 +1378,11 @@
 
     el.innerHTML = `
       <div class="stats-row">
-        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-label">Total votes</div></div>
-        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-label">Unique voters</div></div>
-        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${ranked.length}</div><div class="stat-label">Features voted</div></div>
-        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-label">Want updates</div></div>
-        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-label">Research willing</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${totalVotes}</div><div class="stat-card-footer"><div class="stat-label">Total votes</div>${_trendBadge(trends.totalVotes)}</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${voterEmails.size}</div><div class="stat-card-footer"><div class="stat-label">Unique voters</div>${_trendBadge(trends.uniqueVoters)}</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${ranked.length}</div><div class="stat-card-footer"><div class="stat-label">Features voted</div>${_trendBadge(trends.featuresVoted)}</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${notifyEmails.size}</div><div class="stat-card-footer"><div class="stat-label">Want updates</div>${_trendBadge(trends.wantUpdates)}</div></div>
+        <div class="stat-card"><button class="stat-overflow" title="Options"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="2" cy="7" r="1.5"/><circle cx="7" cy="7" r="1.5"/><circle cx="12" cy="7" r="1.5"/></svg></button><div class="stat-value">${researchEmails.size}</div><div class="stat-card-footer"><div class="stat-label">Research willing</div>${_trendBadge(trends.research)}</div></div>
       </div>
 
       <hr class="dash-divider">
