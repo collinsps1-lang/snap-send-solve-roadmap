@@ -263,7 +263,7 @@
       display: flex; flex-direction: column;
     }
     .sugg-panel-header {
-      display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 14px;
+      display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 8px;
     }
     .sugg-panel-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
@@ -272,23 +272,18 @@
     .sugg-panel-info { flex-shrink: 0; color: rgba(255,255,255,0.4); margin-top: 1px; position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; cursor: default; }
     .sugg-panel-info-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: #fff; color: var(--warm-black); font-size: 11px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; padding: 5px 10px; border-radius: 6px; white-space: nowrap; z-index: 50; }
     .sugg-panel-info:hover .sugg-panel-info-tip { display: block; }
+    .sugg-col-labels { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; padding-bottom: 14px; }
+    .sugg-col-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif; }
     .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 0 -28px 16px; }
-    .sugg-items { display: flex; flex-direction: column; gap: 12px; flex: 1; }
-    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; flex: 1; }
-    .sugg-label-icon { width: 20px; height: 20px; object-fit: contain; margin-right: 5px; vertical-align: middle; }
-    .sugg-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-    .sugg-item-label {
-      display: flex; align-items: center;
-      font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-      color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif;
-    }
+    .sugg-items { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; flex: 1; min-height: 0; }
+    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; }
+    .sugg-item-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
     .sugg-item-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
-      font-size: 13px; font-weight: 700; color: var(--warm-black); letter-spacing: -0.01em;
-      margin-bottom: 5px; line-height: 1.3;
-      display: inline-block; background: var(--high-vis); border-radius: 5px; padding: 2px 7px;
+      font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -0.02em;
+      line-height: 1.2; flex: 1;
     }
-    .sugg-item-meta { font-size: 12px; color: rgba(255,255,255,0.45); font-family: 'Space Grotesk', sans-serif; }
+    .sugg-item-meta { font-size: 11px; color: rgba(255,255,255,0.4); font-family: 'Space Grotesk', sans-serif; margin-bottom: 8px; }
     .sugg-vote-badge { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; flex-shrink: 0; background: #fff; border-radius: 10px; padding: 8px 12px 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
     .sugg-vote-count { font-family: 'Bagoss', 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; color: var(--warm-black); line-height: 1; }
     .sugg-vote-label { font-size: 8px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); line-height: 1; }
@@ -1210,18 +1205,18 @@
     if (notifyPct > 0 || researchPct > 0) narrative += '.';
 
     const phaseDisp = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
-    function _suggItem(label, item, meta) {
-      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${label}</div><div class="sugg-item-meta" style="margin-top:8px;color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
+    function _suggItem(item, meta) {
+      if (!item) return `<div class="sugg-item" style="justify-content:flex-end;"><div class="sugg-item-meta" style="color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
       return `<div class="sugg-item">
-        <div class="sugg-item-top">
-          <div class="sugg-item-label">${label}</div>
+        <div style="flex:1"></div>
+        ${meta ? `<div class="sugg-item-meta">${meta}</div>` : ''}
+        <div class="sugg-item-bottom">
+          <div class="sugg-item-title">${escHtml(item.card.title)}</div>
           <div class="sugg-vote-badge">
             <span class="sugg-vote-count">${item.total}</span>
             <span class="sugg-vote-label">VOTES</span>
           </div>
         </div>
-        <div class="sugg-item-title">${escHtml(item.card.title)}</div>
-        <div class="sugg-item-meta">${meta}</div>
       </div>`;
     }
 
@@ -1234,11 +1229,16 @@
           </div>
           <div class="sugg-panel-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="sugg-panel-info-tip">AI-powered suggestions based on current vote data</span></div>
         </div>
+        <div class="sugg-col-labels">
+          <div class="sugg-col-label">Most demand</div>
+          <div class="sugg-col-label">Consider accelerating</div>
+          <div class="sugg-col-label">Review priority</div>
+        </div>
         <hr class="sugg-divider">
         <div class="sugg-items">
-          ${_suggItem('Most demand',      top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
-          ${_suggItem('Consider accelerating', accel, accel ? 'High demand — candidate to pull into In Development' : '')}
-          ${_suggItem('Review priority',  depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : '')}
+          ${_suggItem(top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
+          ${_suggItem(accel, accel ? 'High demand — candidate to pull into In Development' : null)}
+          ${_suggItem(depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : null)}
         </div>
       </div>`;
   }
