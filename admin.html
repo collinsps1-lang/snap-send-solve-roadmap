@@ -263,7 +263,7 @@
       display: flex; flex-direction: column;
     }
     .sugg-panel-header {
-      display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 8px;
+      display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 14px;
     }
     .sugg-panel-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
@@ -272,11 +272,10 @@
     .sugg-panel-info { flex-shrink: 0; color: rgba(255,255,255,0.4); margin-top: 1px; position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; cursor: default; }
     .sugg-panel-info-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; background: #fff; color: var(--warm-black); font-size: 11px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; padding: 5px 10px; border-radius: 6px; white-space: nowrap; z-index: 50; }
     .sugg-panel-info:hover .sugg-panel-info-tip { display: block; }
-    .sugg-col-labels { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; padding-bottom: 14px; }
-    .sugg-col-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif; }
     .sugg-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 0 -28px 16px; }
-    .sugg-items { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; flex: 1; min-height: 0; }
-    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; }
+    .sugg-items { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .sugg-item { background: #000; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; flex: 1; }
+    .sugg-item-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-family: 'Space Grotesk', sans-serif; margin-bottom: 4px; }
     .sugg-item-bottom { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
     .sugg-item-title {
       font-family: 'Bagoss', 'Space Grotesk', sans-serif;
@@ -1205,9 +1204,10 @@
     if (notifyPct > 0 || researchPct > 0) narrative += '.';
 
     const phaseDisp = { now: 'In Development', next: 'Coming Next', after: 'Longer Term', launched: 'Launched' };
-    function _suggItem(item, meta) {
-      if (!item) return `<div class="sugg-item" style="justify-content:flex-end;"><div class="sugg-item-meta" style="color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
+    function _suggItem(label, item, meta) {
+      if (!item) return `<div class="sugg-item"><div class="sugg-item-label">${label}</div><div style="flex:1"></div><div class="sugg-item-meta" style="color:rgba(255,255,255,0.25);">Not enough data</div></div>`;
       return `<div class="sugg-item">
+        <div class="sugg-item-label">${label}</div>
         <div style="flex:1"></div>
         ${meta ? `<div class="sugg-item-meta">${meta}</div>` : ''}
         <div class="sugg-item-bottom">
@@ -1229,16 +1229,11 @@
           </div>
           <div class="sugg-panel-info"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.6"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.75" fill="currentColor"/></svg><span class="sugg-panel-info-tip">AI-powered suggestions based on current vote data</span></div>
         </div>
-        <div class="sugg-col-labels">
-          <div class="sugg-col-label">Most demand</div>
-          <div class="sugg-col-label">Consider accelerating</div>
-          <div class="sugg-col-label">Review priority</div>
-        </div>
         <hr class="sugg-divider">
         <div class="sugg-items">
-          ${_suggItem(top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
-          ${_suggItem(accel, accel ? 'High demand — candidate to pull into In Development' : null)}
-          ${_suggItem(depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : null)}
+          ${_suggItem('Most demand',         top,   escHtml(phaseDisp[top.card.phase] || top.card.phase))}
+          ${_suggItem('Consider accelerating', accel, accel ? 'High demand — candidate to pull into In Development' : null)}
+          ${_suggItem('Review priority',     depr,  depr  ? 'Lowest demand in Coming Next — consider pushing out' : null)}
         </div>
       </div>`;
   }
