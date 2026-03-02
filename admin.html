@@ -215,6 +215,17 @@
     /* ── Loading / empty states ── */
     .loading { color: var(--text-muted); font-size: 14px; padding: 40px 0; text-align: center; font-family: 'Work Sans', sans-serif; }
     .empty-msg { color: var(--text-muted); font-size: 14px; font-style: italic; padding: 20px 0; font-family: 'Work Sans', sans-serif; }
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .empty-state h2 { font-family: 'Bagoss', 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--warm-black); }
+    .empty-state p  { font-size: 14px; font-family: 'Work Sans', sans-serif; }
+    .tumbleweed-wrap { display: inline-flex; margin: 0 auto 24px; animation: tw-traverse 5s ease-in-out infinite alternate; }
+    .tumbleweed-wrap svg { width: 140px; height: 140px; display: block; margin: 0; animation: tw-bob 1.6s ease-in-out infinite alternate; }
+    .tw-ball   { transform-origin: 100px 108px; animation: tw-spin 2.2s linear infinite; }
+    .tw-shadow { transform-origin: 102px 172px; animation: tw-shadow-pulse 1.6s ease-in-out infinite alternate; }
+    @keyframes tw-traverse     { from { transform: translateX(-52px); } to { transform: translateX(52px); } }
+    @keyframes tw-bob          { from { transform: translateY(0px);   } to { transform: translateY(-10px); } }
+    @keyframes tw-spin         { to   { transform: rotate(360deg); } }
+    @keyframes tw-shadow-pulse { from { transform: scaleX(1);    opacity: 1; } to { transform: scaleX(0.55); opacity: 0.45; } }
 
     /* ── Dashboard section dividers ── */
     .dash-divider { border: none; border-top: 1px solid rgba(44,41,39,0.15); margin: 24px -24px; }
@@ -1868,7 +1879,51 @@
     }
 
     if (!ideas || ideas.length === 0) {
-      el.innerHTML = '<div class="empty-msg">No community contributions yet. Ideas submitted by customers will appear here.</div>';
+      el.innerHTML = `<div class="empty-state">
+        <div class="tumbleweed-wrap">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none">
+            <ellipse class="tw-shadow" cx="102" cy="172" rx="48" ry="7" fill="#D4C9BC"/>
+            <g class="tw-ball">
+              <circle cx="100" cy="108" r="54" fill="#EDE6DF" opacity="0.55"/>
+              <circle cx="100" cy="108" r="54" stroke="#C8BFB5" stroke-width="1" stroke-dasharray="3 5"/>
+              <path d="M 48,108 C 62,73 138,73 152,108"   stroke="#7C6F63" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M 48,108 C 62,143 138,143 152,108"  stroke="#7C6F63" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M 100,54 C 135,68 135,148 100,162"  stroke="#8B7E72" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M 100,54 C 65,68 65,148 100,162"    stroke="#8B7E72" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M 64,67 C 86,92 114,124 136,149"    stroke="#9A8A7A" stroke-width="3"   stroke-linecap="round"/>
+              <path d="M 136,67 C 114,92 86,124 64,149"    stroke="#9A8A7A" stroke-width="3"   stroke-linecap="round"/>
+              <path d="M 57,87 C 76,95 124,121 143,129"    stroke="#BDB0A5" stroke-width="2"   stroke-linecap="round"/>
+              <path d="M 57,129 C 76,121 124,95 143,87"    stroke="#BDB0A5" stroke-width="2"   stroke-linecap="round"/>
+              <path d="M 78,58 C 84,82 116,134 122,158"    stroke="#BDB0A5" stroke-width="2"   stroke-linecap="round"/>
+              <path d="M 122,58 C 116,82 84,134 78,158"    stroke="#BDB0A5" stroke-width="2"   stroke-linecap="round"/>
+              <circle cx="100" cy="108" r="5.5" fill="#9A8878"/>
+              <circle cx="82"  cy="90"  r="4"   fill="#9A8878"/>
+              <circle cx="118" cy="90"  r="4"   fill="#9A8878"/>
+              <circle cx="82"  cy="126" r="4"   fill="#9A8878"/>
+              <circle cx="118" cy="126" r="4"   fill="#9A8878"/>
+              <circle cx="100" cy="70"  r="3"   fill="#B0A49A"/>
+              <circle cx="100" cy="146" r="3"   fill="#B0A49A"/>
+              <circle cx="65"  cy="108" r="3"   fill="#B0A49A"/>
+              <circle cx="135" cy="108" r="3"   fill="#B0A49A"/>
+              <circle cx="73"  cy="77"  r="2.5" fill="#C0B4AA"/>
+              <circle cx="127" cy="77"  r="2.5" fill="#C0B4AA"/>
+              <circle cx="73"  cy="139" r="2.5" fill="#C0B4AA"/>
+              <circle cx="127" cy="139" r="2.5" fill="#C0B4AA"/>
+            </g>
+            <circle cx="26"  cy="100" r="2.5" fill="#C8C0B8" opacity="0.65"/>
+            <circle cx="20"  cy="116" r="1.8" fill="#C8C0B8" opacity="0.5"/>
+            <circle cx="170" cy="93"  r="2"   fill="#C8C0B8" opacity="0.6"/>
+            <circle cx="174" cy="112" r="2.5" fill="#C8C0B8" opacity="0.55"/>
+            <circle cx="35"  cy="142" r="1.5" fill="#C8C0B8" opacity="0.4"/>
+            <circle cx="164" cy="136" r="1.5" fill="#C8C0B8" opacity="0.4"/>
+            <circle cx="42"  cy="80"  r="1.5" fill="#C8C0B8" opacity="0.35"/>
+            <path d="M 16,156 L 34,156" stroke="#C8C0B8" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+            <path d="M 12,163 L 36,163" stroke="#C8C0B8" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+          </svg>
+        </div>
+        <h2>No community contributions yet</h2>
+        <p>Ideas submitted by customers on the public page will appear here.</p>
+      </div>`;
       return;
     }
 
