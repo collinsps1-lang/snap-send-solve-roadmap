@@ -257,10 +257,12 @@
     .stat-value-sm { font-size: 16px; letter-spacing: -0.01em; line-height: 1.3; }
     .stat-label { display: inline-block; background: var(--warm-black); color: var(--high-vis); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; }
     .stat-card-footer { display: flex; align-items: center; gap: 8px; }
-    .stat-trend { font-size: 11px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; padding: 2px 6px; border-radius: 4px; }
+    .stat-trend { position: relative; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; padding: 3px 7px; border-radius: 4px; }
     .stat-trend-up   { background: #E0FFE8; color: #1a7a3a; }
     .stat-trend-down { background: #FFE8E8; color: #a83030; }
     .stat-trend-flat { background: rgba(44,41,39,0.08); color: var(--text-muted); }
+    .stat-trend-tip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--warm-black); color: #fff; font-size: 11px; font-weight: 500; font-family: 'Space Grotesk', sans-serif; padding: 5px 10px; border-radius: 6px; white-space: nowrap; z-index: 50; letter-spacing: 0; pointer-events: none; }
+    .stat-trend:hover .stat-trend-tip { display: block; }
 
     /* ── Roadmap Suggestions panel ── */
     .sugg-panel {
@@ -1246,8 +1248,10 @@
   function _calcTrends(rawVotes) {
     const now  = Date.now();
     const W    = 30 * 24 * 60 * 60 * 1000;
+    const fmt  = d => d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
     let cur  = rawVotes.filter(v => { const t = +new Date(v.created_at); return t >= now - W && t <= now; });
     let prev = rawVotes.filter(v => { const t = +new Date(v.created_at); return t >= now - 2*W && t < now - W; });
+    let prevLabel, curLabel;
     // Fallback: if no votes land in either rolling window (data is older than 60d),
     // split all chronologically so there's always a meaningful comparison.
     if (!cur.length && !prev.length) {
@@ -1256,12 +1260,22 @@
       const mid = Math.floor(valid.length / 2);
       prev = valid.slice(0, mid);
       cur  = valid.slice(mid);
+      if (prev.length) prevLabel = `${fmt(new Date(prev[0].created_at))} – ${fmt(new Date(prev[prev.length-1].created_at))}`;
+      if (cur.length)  curLabel  = `${fmt(new Date(cur[0].created_at))} – ${fmt(new Date(cur[cur.length-1].created_at))}`;
+    } else {
+      prevLabel = `${fmt(new Date(now - 2*W))} – ${fmt(new Date(now - W))}`;
+      curLabel  = `${fmt(new Date(now - W))} – ${fmt(new Date(now))}`;
     }
     function trend(curVal, prevVal) {
-      if (prevVal === 0 && curVal === 0) return { dir: null, pct: null };
-      if (prevVal === 0) return { dir: 'up', pct: null };
+      if (prevVal === 0 && curVal === 0) return { dir: null, pct: null, tip: '' };
+      if (prevVal === 0) return { dir: 'up', pct: null, tip: `New activity since ${curLabel}` };
       const pct = Math.round((curVal - prevVal) / prevVal * 100);
-      return { dir: pct > 5 ? 'up' : pct < -5 ? 'down' : 'flat', pct: Math.abs(pct) };
+      const abs = Math.abs(pct);
+      const dir = pct > 5 ? 'up' : pct < -5 ? 'down' : 'flat';
+      const tip = dir === 'up'   ? `${abs}% increase vs ${prevLabel}`
+                : dir === 'down' ? `${abs}% decrease vs ${prevLabel}`
+                :                  `Roughly flat vs ${prevLabel} (${abs}% change)`;
+      return { dir, pct: abs, tip };
     }
     const uniqSet = fn => arr => new Set(arr.filter(fn).map(v => v.user_email)).size;
     return {
@@ -1281,7 +1295,9 @@
       flat: { icon: '→', cls: 'stat-trend-flat' },
     }[t.dir];
     const label = t.pct != null ? `${cfg.icon} ${t.pct}%` : cfg.icon;
-    return `<span class="stat-trend ${cfg.cls}">${label}</span>`;
+    const iSvg  = `<svg width="11" height="11" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;opacity:0.65"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M8 7v4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="4.5" r="0.8" fill="currentColor"/></svg>`;
+    const tip   = t.tip ? `<span class="stat-trend-tip">${t.tip}</span>` : '';
+    return `<span class="stat-trend ${cfg.cls}">${label}${iSvg}${tip}</span>`;
   }
 
   function _renderInsights(el) {
