@@ -4880,6 +4880,20 @@
     };
     communityIdeas.push(idea);
     saveCommunityIdeas();
+    // Write to Supabase (fire-and-forget)
+    if (typeof _supabase !== 'undefined') {
+      _supabase.from('community_ideas').upsert({
+        id:          id,
+        title:       idea.title,
+        description: idea.description || null,
+        audience:    idea.audience    || null,
+        user_email:  currentUser?.email        || null,
+        user_name:   idea.submitterName        || null,
+        user_org:    idea.submitterOrg         || null,
+        votes:       0,
+        created_at:  idea.createdAt,
+      }, { onConflict: 'id' }).then(() => {}).catch(() => {});
+    }
     const grid = document.getElementById('suggestions-grid');
     const card = buildCommunityCard(idea);
     if (grid) grid.appendChild(card);
