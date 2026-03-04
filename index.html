@@ -2807,6 +2807,9 @@
     card.dataset.category = c.category || 'customer-facing';
     if (c.added_label)    card.dataset.addedLabel    = c.added_label;
     if (c.launched_label) card.dataset.launchedLabel = c.launched_label;
+    if (Array.isArray(c.detail_images) && c.detail_images.length) {
+      card.dataset.gallery = c.detail_images.filter(Boolean).join(',');
+    }
 
     // Illustration
     const illusDiv = document.createElement('div');

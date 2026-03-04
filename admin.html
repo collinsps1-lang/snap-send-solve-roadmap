@@ -504,6 +504,8 @@
     .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
     .upload-status { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-family: 'Work Sans', sans-serif; }
     .upload-preview { max-width: 100%; max-height: 120px; border-radius: 6px; margin-top: 6px; display: none; }
+    .img-remove-btn { display: inline-block; margin-top: 4px; padding: 2px 8px; background: rgba(200,40,40,0.08); color: #a83030; border: 1px solid rgba(200,40,40,0.25); border-radius: 4px; font-size: 11px; font-family: 'Space Grotesk', sans-serif; font-weight: 600; cursor: pointer; }
+    .img-remove-btn:hover { background: rgba(200,40,40,0.18); }
     .section-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
     .form-section-head { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 12px; }
     .detail-images-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -832,6 +834,7 @@
         <label class="form-label" for="cms-header-img">Header image</label>
         <input type="file" id="cms-header-img" accept="image/*" />
         <img class="upload-preview" id="cms-header-preview" alt="" />
+        <button type="button" class="img-remove-btn" id="cms-header-remove" style="display:none;">✕ Remove</button>
         <p class="upload-status" id="cms-header-status"></p>
       </div>
 
@@ -841,26 +844,31 @@
           <div>
             <input type="file" id="cms-detail-0" accept="image/*" data-idx="0" class="detail-img-input" />
             <img class="upload-preview" id="cms-detail-preview-0" alt="" />
+            <button type="button" class="img-remove-btn detail-img-remove" id="cms-detail-remove-0" data-idx="0" style="display:none;">✕ Remove</button>
             <p class="upload-status" id="cms-detail-status-0"></p>
           </div>
           <div>
             <input type="file" id="cms-detail-1" accept="image/*" data-idx="1" class="detail-img-input" />
             <img class="upload-preview" id="cms-detail-preview-1" alt="" />
+            <button type="button" class="img-remove-btn detail-img-remove" id="cms-detail-remove-1" data-idx="1" style="display:none;">✕ Remove</button>
             <p class="upload-status" id="cms-detail-status-1"></p>
           </div>
           <div>
             <input type="file" id="cms-detail-2" accept="image/*" data-idx="2" class="detail-img-input" />
             <img class="upload-preview" id="cms-detail-preview-2" alt="" />
+            <button type="button" class="img-remove-btn detail-img-remove" id="cms-detail-remove-2" data-idx="2" style="display:none;">✕ Remove</button>
             <p class="upload-status" id="cms-detail-status-2"></p>
           </div>
           <div>
             <input type="file" id="cms-detail-3" accept="image/*" data-idx="3" class="detail-img-input" />
             <img class="upload-preview" id="cms-detail-preview-3" alt="" />
+            <button type="button" class="img-remove-btn detail-img-remove" id="cms-detail-remove-3" data-idx="3" style="display:none;">✕ Remove</button>
             <p class="upload-status" id="cms-detail-status-3"></p>
           </div>
           <div>
             <input type="file" id="cms-detail-4" accept="image/*" data-idx="4" class="detail-img-input" />
             <img class="upload-preview" id="cms-detail-preview-4" alt="" />
+            <button type="button" class="img-remove-btn detail-img-remove" id="cms-detail-remove-4" data-idx="4" style="display:none;">✕ Remove</button>
             <p class="upload-status" id="cms-detail-status-4"></p>
           </div>
         </div>
@@ -2056,20 +2064,24 @@
     document.getElementById('cms-tags').value       = card && Array.isArray(card.tags) ? card.tags.join(', ') : '';
 
     // Show existing header image
-    const headerPrev = document.getElementById('cms-header-preview');
-    const headerStat = document.getElementById('cms-header-status');
+    const headerPrev   = document.getElementById('cms-header-preview');
+    const headerStat   = document.getElementById('cms-header-status');
+    const headerRemBtn = document.getElementById('cms-header-remove');
     headerPrev.src     = card && card.header_image_url ? card.header_image_url : '';
-    headerPrev.style.display = card && card.header_image_url ? 'block' : 'none';
-    headerStat.textContent   = '';
+    headerPrev.style.display   = card && card.header_image_url ? 'block' : 'none';
+    headerRemBtn.style.display = card && card.header_image_url ? ''      : 'none';
+    headerStat.textContent     = '';
     document.getElementById('cms-header-img').value = '';
 
     // Show existing detail images
     const existingDetails = card && Array.isArray(card.detail_images) ? card.detail_images : [];
     for (let i = 0; i < 5; i++) {
-      const prev = document.getElementById(`cms-detail-preview-${i}`);
-      const stat = document.getElementById(`cms-detail-status-${i}`);
-      const url  = existingDetails[i] || '';
+      const prev   = document.getElementById(`cms-detail-preview-${i}`);
+      const stat   = document.getElementById(`cms-detail-status-${i}`);
+      const remBtn = document.getElementById(`cms-detail-remove-${i}`);
+      const url    = existingDetails[i] || '';
       prev.src = url; prev.style.display = url ? 'block' : 'none';
+      remBtn.style.display = url ? '' : 'none';
       stat.textContent = '';
       document.getElementById(`cms-detail-${i}`).value = '';
     }
@@ -2101,6 +2113,7 @@
       const url = await uploadImage(file, `${id}/header`);
       pendingHeaderUrl = url;
       prev.src = url; prev.style.display = 'block';
+      document.getElementById('cms-header-remove').style.display = '';
       stat.textContent = 'Uploaded ✓';
     } catch(e) {
       stat.textContent = 'Upload failed: ' + e.message;
@@ -2121,10 +2134,33 @@
         const url = await uploadImage(file, `${id}/detail-${idx}`);
         pendingDetailUrls[idx] = url;
         prev.src = url; prev.style.display = 'block';
+        const remBtn = document.getElementById(`cms-detail-remove-${idx}`);
+        if (remBtn) remBtn.style.display = '';
         stat.textContent = 'Uploaded ✓';
       } catch(e) {
         stat.textContent = 'Upload failed: ' + e.message;
       }
+    });
+  });
+
+  /* ── Remove image buttons ── */
+  document.getElementById('cms-header-remove').addEventListener('click', function() {
+    pendingHeaderUrl = '';
+    const prev = document.getElementById('cms-header-preview');
+    prev.src = ''; prev.style.display = 'none';
+    document.getElementById('cms-header-img').value = '';
+    document.getElementById('cms-header-status').textContent = '';
+    this.style.display = 'none';
+  });
+  document.querySelectorAll('.detail-img-remove').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const idx = parseInt(this.dataset.idx, 10);
+      pendingDetailUrls[idx] = '';
+      const prev = document.getElementById(`cms-detail-preview-${idx}`);
+      prev.src = ''; prev.style.display = 'none';
+      document.getElementById(`cms-detail-${idx}`).value = '';
+      document.getElementById(`cms-detail-status-${idx}`).textContent = '';
+      this.style.display = 'none';
     });
   });
 
@@ -2150,8 +2186,8 @@
     const existingDetails = existingCard && Array.isArray(existingCard.detail_images)
       ? [...existingCard.detail_images]
       : [null, null, null, null, null];
-    const detailImages = existingDetails.map((url, i) =>
-      pendingDetailUrls[i] !== null ? pendingDetailUrls[i] : url
+    const detailImages = Array.from({ length: 5 }, (_, i) =>
+      pendingDetailUrls[i] !== null ? (pendingDetailUrls[i] || null) : (existingDetails[i] || null)
     ).filter(Boolean);
 
     const payload = {
