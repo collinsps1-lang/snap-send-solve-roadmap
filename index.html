@@ -4463,8 +4463,10 @@
           if (url) images.push({ type: 'custom', src: url });
         });
       }
-      // Simulation: pad to 4 slides with gradient placeholders
-      GRADIENT_PLACEHOLDERS.forEach(g => images.push({ type: 'gradient', gradient: g }));
+      // Only use gradient placeholders if no real gallery images were uploaded
+      if (!gallery) {
+        GRADIENT_PLACEHOLDERS.forEach(g => images.push({ type: 'gradient', gradient: g }));
+      }
       return images;
     }
 
